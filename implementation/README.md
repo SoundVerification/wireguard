@@ -5,7 +5,7 @@
 The sources of this verified implementation together with the code verifier Gobra and its dependencies are provided as a Docker image.
 The image can be pulled and started in interactive mode as follows (assuming that Docker has been installed):
 ```
-docker run -it ghcr.io/soundverification/wireguard:latest bash
+docker run -it ghcr.io/soundverification/wireguard-gobra:latest bash
 ```
 An interactive shell at the working directory `/gobra` is started.
 In this directory, you find the source code of our WireGuard case study.
