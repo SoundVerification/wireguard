@@ -1,5 +1,6 @@
 # Wireguard
-[![Verification](https://github.com/soundverification/wireguard/actions/workflows/workflow.yml/badge.svg)](https://github.com/soundverification/wireguard/actions/workflows/workflow.yml)
+[![Code Verification](https://github.com/soundverification/wireguard/actions/workflows/workflow.yml/badge.svg?branch=main)](https://github.com/soundverification/wireguard/actions/workflows/workflow.yml?query=branch%3Amain)
+[![License: MPL 2.0](https://img.shields.io/badge/License-MPL%202.0-brightgreen.svg)](./LICENSE)
 
 ## Verifying & Running in Docker
 The sources of this verified implementation together with the code verifier Gobra and its dependencies are provided as a Docker image.
