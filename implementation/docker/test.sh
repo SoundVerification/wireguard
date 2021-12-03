@@ -28,6 +28,8 @@ function responder() {
 # execute initiator and responder in parallel and wait until they are done:
 RESPONDER_TEMP_FILE=$(mktemp)
 responder > $RESPONDER_TEMP_FILE &
+# wait for 1 sec to make sure that responder has started up
+sleep 1
 INITIATOR_TEMP_FILE=$(mktemp)
 initiator > $INITIATOR_TEMP_FILE &
 wait

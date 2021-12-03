@@ -5,6 +5,7 @@ import (
 	"encoding/binary"
 	"fmt"
 	"os"
+	"sync"
 
 	"wireguard-gobra/wireguard/device"
 	"wireguard-gobra/wireguard/log"
@@ -20,6 +21,7 @@ type StandardIO struct {
 	closed				chan struct{}
 	scanner				*bufio.Scanner
 	log					*log.Logger
+	mu					sync.Mutex // protects access to the following 3 fields
 	emptyMsgSent		bool
 	emptyMsgReceived	bool
 	isClosed			bool
@@ -48,7 +50,9 @@ func (standardIO *StandardIO) read() {
 		if (len(text) == 0) {
 			standardIO.emptyMsgSent = true
 		}
+		standardIO.mu.Lock()
 		standardIO.sendString(text)
+		standardIO.mu.Unlock()
 		if (len(text) == 0) {
 			break
 		}
@@ -59,6 +63,7 @@ func (standardIO *StandardIO) read() {
 	}
 	// if `Scan()` returned false AND not error occurred, EOF has been reached
 	// send an empty message in both directions to indicate shutdown to both parties
+	standardIO.mu.Lock()
 	if (!standardIO.emptyMsgSent) {
 		fmt.Println("Sending empty msg")
 		standardIO.emptyMsgSent = true
@@ -69,17 +74,20 @@ func (standardIO *StandardIO) read() {
 		standardIO.isClosed = true
 		standardIO.close()
 	}
+	standardIO.mu.Unlock()
 }
 
+/** standardIO.mu musst be locked */
 func (standardIO *StandardIO) sendString(s string) {
 	// send slice of bytes to channel but prepend transport header many bytes:
-	// TODO check if channel is still open
 	// we prepend the string length such that we can easily decode it without
 	// needing to worry about padding
 	var stringLen [binary.MaxVarintLen64]byte
 	binary.LittleEndian.PutUint64(stringLen[:], uint64(len(s)))
 	buf := append(stringLen[:], []byte(s)...)
-	standardIO.inputChannel <- buf
+	if (!standardIO.isClosed) {
+		standardIO.inputChannel <- buf
+	}
 }
 
 func (standardIO *StandardIO) write() {
@@ -93,12 +101,14 @@ func (standardIO *StandardIO) write() {
 			msg := string(buf[binary.MaxVarintLen64:binary.MaxVarintLen64+stringLen])
 			if len(msg) == 0 {
 				fmt.Println("Empty msg received")
+				standardIO.mu.Lock()
 				standardIO.emptyMsgReceived = true
 				if (standardIO.emptyMsgSent && standardIO.emptyMsgReceived && !standardIO.isClosed) {
 					// thus, shutdown application
 					standardIO.isClosed = true
 					standardIO.close()
 				}
+				standardIO.mu.Unlock()
 			} else {
 				fmt.Println("Message received:", msg)
 			}
@@ -113,6 +123,7 @@ func (standardIO *StandardIO) Wait() <-chan struct{} {
 	return standardIO.closed
 }
 
+/** standardIO.mu musst be locked */
 func (standardIO *StandardIO) close() {
 	standardIO.log.Verbosef("Closing standard IO input channel")
 	close(standardIO.inputChannel)
