@@ -1,0 +1,351 @@
+package messageResponder
+
+import by "wireguard-gobra/wireguard/verification/bytes"
+import tm "wireguard-gobra/wireguard/verification/term"
+
+
+
+// bytes
+
+ghost 
+ensures res == (by.expB(by.generatorB(), kR))
+pure func Bytes_pkR(kR by.Bytes) (res by.Bytes) {
+	return by.expB(by.generatorB(), kR)
+}
+
+ghost 
+ensures res == (by.expB(by.generatorB(), ekR))
+pure func Bytes_epkR(ekR by.Bytes) (res by.Bytes) {
+	return by.expB(by.generatorB(), ekR)
+}
+
+ghost 
+ensures res == (by.hashB(by.infoBytesB()))
+pure func Bytes_c0() (res by.Bytes) {
+	return by.hashB(by.infoBytesB())
+}
+
+ghost 
+ensures res == (by.hashB(by.tuple2B(Bytes_c0(), by.prologueBytesB())))
+pure func Bytes_h0() (res by.Bytes) {
+	return by.hashB(by.tuple2B(Bytes_c0(), by.prologueBytesB()))
+}
+
+ghost 
+ensures res == (by.hashB(by.tuple2B(Bytes_h0(), Bytes_pkR(kR))))
+pure func Bytes_h1(kR by.Bytes) (res by.Bytes) {
+	return by.hashB(by.tuple2B(Bytes_h0(), Bytes_pkR(kR)))
+}
+
+ghost 
+ensures res == (by.kdf1B(by.tuple2B(Bytes_c0(), epkI)))
+pure func Bytes_c1(epkI by.Bytes) (res by.Bytes) {
+	return by.kdf1B(by.tuple2B(Bytes_c0(), epkI))
+}
+
+ghost 
+ensures res == (by.hashB(by.tuple2B(Bytes_h1(kR),epkI)))
+pure func Bytes_h2(kR, epkI by.Bytes) (res by.Bytes) {
+	return by.hashB(by.tuple2B(Bytes_h1(kR),epkI))
+}
+
+ghost 
+ensures res == (by.kdf1B(by.tuple2B(Bytes_c1(epkI), by.expB(epkI, kR))))
+pure func Bytes_c2(kR, epkI by.Bytes) (res by.Bytes) {
+	return by.kdf1B(by.tuple2B(Bytes_c1(epkI), by.expB(epkI, kR)))
+}
+
+ghost 
+ensures res == (by.kdf2B(by.tuple2B(Bytes_c1(epkI), by.expB(epkI, kR))))
+pure func Bytes_k1(kR, epkI by.Bytes) (res by.Bytes) {
+	return by.kdf2B(by.tuple2B(Bytes_c1(epkI), by.expB(epkI, kR)))
+}
+
+ghost 
+ensures res == (by.aeadB(Bytes_k1(kR, epkI), by.zeroStringB(12), pkI, Bytes_h2(kR, epkI)))
+pure func Bytes_c_pkI(kR, pkI, epkI by.Bytes) (res by.Bytes) {
+	return by.aeadB(Bytes_k1(kR, epkI), by.zeroStringB(12), pkI, Bytes_h2(kR, epkI))
+}
+
+ghost 
+ensures res == (by.hashB(by.tuple2B(Bytes_h2(kR, epkI), Bytes_c_pkI(kR, pkI, epkI))))
+pure func Bytes_h3(kR, pkI, epkI by.Bytes) (res by.Bytes) {
+	return by.hashB(by.tuple2B(Bytes_h2(kR, epkI), Bytes_c_pkI(kR, pkI, epkI)))
+}
+
+ghost 
+ensures res == (by.kdf1B(by.tuple2B(Bytes_c2(kR, epkI), by.expB(pkI, kR))))
+pure func Bytes_c3(kR, pkI, epkI by.Bytes) (res by.Bytes) {
+	return by.kdf1B(by.tuple2B(Bytes_c2(kR, epkI), by.expB(pkI, kR)))
+}
+
+ghost 
+ensures res == (by.kdf2B(by.tuple2B(Bytes_c2(kR, epkI), by.expB(pkI, kR))))
+pure func Bytes_k2(kR, pkI, epkI by.Bytes) (res by.Bytes) {
+	return by.kdf2B(by.tuple2B(Bytes_c2(kR, epkI), by.expB(pkI, kR)))
+}
+
+ghost 
+ensures res == (by.aeadB(Bytes_k2(kR, pkI, epkI), by.zeroStringB(12), ts, Bytes_h3(kR, pkI, epkI)))
+pure func Bytes_c_ts(kR, pkI, epkI, ts by.Bytes) (res by.Bytes) {
+	return by.aeadB(Bytes_k2(kR, pkI, epkI), by.zeroStringB(12), ts, Bytes_h3(kR, pkI, epkI))
+}
+
+ghost 
+ensures res == (by.hashB(by.tuple2B(Bytes_h3(kR, pkI, epkI), Bytes_c_ts(kR, pkI, epkI, ts))))
+pure func Bytes_h4(kR, pkI, epkI, ts by.Bytes) (res by.Bytes) {
+	return by.hashB(by.tuple2B(Bytes_h3(kR, pkI, epkI), Bytes_c_ts(kR, pkI, epkI, ts)))
+}
+
+ghost 
+ensures res == (by.tuple7B(by.integer32B(1),sidI,epkI,Bytes_c_pkI(kR,pkI,epkI),Bytes_c_ts(kR,pkI,epkI,ts),mac1,mac2))
+pure func Bytes_M1(sidI, kR, pkI, epkI, ts, mac1, mac2 by.Bytes) (res by.Bytes) {
+	return by.tuple7B(by.integer32B(1),sidI,epkI,Bytes_c_pkI(kR,pkI,epkI),Bytes_c_ts(kR,pkI,epkI,ts),mac1,mac2)
+}
+
+
+
+ghost 
+ensures res == (by.kdf1B(by.tuple2B(c3, Bytes_epkR(ekR))))
+pure func Bytes_c4(c3, ekR by.Bytes) (res by.Bytes) {
+	return by.kdf1B(by.tuple2B(c3, Bytes_epkR(ekR)))
+}
+
+ghost 
+ensures res == (by.hashB(by.tuple2B(h4, Bytes_epkR(ekR))))
+pure func Bytes_h5(h4, ekR by.Bytes) (res by.Bytes) {
+	return by.hashB(by.tuple2B(h4, Bytes_epkR(ekR)))
+}
+
+ghost 
+ensures res == (by.kdf1B(by.tuple2B(Bytes_c4(c3, ekR), by.expB(epkI, ekR))))
+pure func Bytes_c5(epkI, c3, ekR by.Bytes) (res by.Bytes) {
+	return by.kdf1B(by.tuple2B(Bytes_c4(c3, ekR), by.expB(epkI, ekR)))
+}
+
+ghost 
+ensures res == (by.kdf1B(by.tuple2B(Bytes_c5(epkI, c3, ekR), by.expB(pkI, ekR))))
+pure func Bytes_c6(pkI, epkI, c3, ekR by.Bytes) (res by.Bytes) {
+	return by.kdf1B(by.tuple2B(Bytes_c5(epkI, c3, ekR), by.expB(pkI, ekR)))
+}
+
+ghost 
+ensures res == (by.kdf1B(by.tuple2B(Bytes_c6(pkI, epkI, c3, ekR), psk)))
+pure func Bytes_c7(pkI, psk, epkI, c3, ekR by.Bytes) (res by.Bytes) {
+	return by.kdf1B(by.tuple2B(Bytes_c6(pkI, epkI, c3, ekR), psk))
+}
+
+ghost 
+ensures res == (by.kdf2B(by.tuple2B(Bytes_c6(pkI, epkI, c3, ekR), psk)))
+pure func Bytes_pi(pkI, psk, epkI, c3, ekR by.Bytes) (res by.Bytes) {
+	return by.kdf2B(by.tuple2B(Bytes_c6(pkI, epkI, c3, ekR), psk))
+}
+
+ghost 
+ensures res == (by.kdf3B(by.tuple2B(Bytes_c6(pkI, epkI, c3, ekR), psk)))
+pure func Bytes_k3(pkI, psk, epkI, c3, ekR by.Bytes) (res by.Bytes) {
+	return by.kdf3B(by.tuple2B(Bytes_c6(pkI, epkI, c3, ekR), psk))
+}
+
+ghost 
+ensures res == (by.hashB(by.tuple2B(Bytes_h5(h4, ekR), Bytes_pi(pkI, psk, epkI, c3, ekR))))
+pure func Bytes_h6(pkI, psk, epkI, c3, h4, ekR by.Bytes) (res by.Bytes) {
+	return by.hashB(by.tuple2B(Bytes_h5(h4, ekR), Bytes_pi(pkI, psk, epkI, c3, ekR)))
+}
+
+ghost 
+ensures res == (by.aeadB(Bytes_k3(pkI, psk, epkI, c3, ekR), by.zeroStringB(12), by.zeroStringB(0), Bytes_h6(pkI, psk, epkI, c3, h4, ekR)))
+pure func Bytes_c_empty(pkI, psk, epkI, c3, h4, ekR by.Bytes) (res by.Bytes) {
+	return by.aeadB(Bytes_k3(pkI, psk, epkI, c3, ekR), by.zeroStringB(12), by.zeroStringB(0), Bytes_h6(pkI, psk, epkI, c3, h4, ekR))
+}
+
+ghost 
+ensures res == (by.tuple7B(by.integer32B(2), sidR, sidI, Bytes_epkR(ekR), Bytes_c_empty(pkI, psk, epkI, c3, h4, ekR), mac1, mac2))
+pure func Bytes_M2(sidI, sidR, pkI, psk, epkI, c3, h4, ekR, mac1, mac2 by.Bytes) (res by.Bytes) {
+	return by.tuple7B(by.integer32B(2), sidR, sidI, Bytes_epkR(ekR), Bytes_c_empty(pkI, psk, epkI, c3, h4, ekR), mac1, mac2)
+}
+
+ghost 
+ensures res == (by.kdf1B(Bytes_c7(pkI, psk, epkI, c3, ekR)))
+pure func Bytes_k_IR(pkI, psk, epkI, c3, ekR by.Bytes) (res by.Bytes) {
+	return by.kdf1B(Bytes_c7(pkI, psk, epkI, c3, ekR))
+}
+
+ghost 
+ensures res == (by.kdf2B(Bytes_c7(pkI, psk, epkI, c3, ekR)))
+pure func Bytes_k_RI(pkI, psk, epkI, c3, ekR by.Bytes) (res by.Bytes) {
+	return by.kdf2B(Bytes_c7(pkI, psk, epkI, c3, ekR))
+}
+
+
+// terms
+
+ghost 
+ensures res == (tm.exp(tm.generator(), kR))
+pure func Term_pkR(kR tm.Term) (res tm.Term) {
+	return tm.exp(tm.generator(), kR)
+}
+
+ghost 
+ensures res == (tm.exp(tm.generator(), ekR))
+pure func Term_epkR(ekR tm.Term) (res tm.Term) {
+	return tm.exp(tm.generator(), ekR)
+}
+
+ghost 
+ensures res == (tm.hash(tm.infoTerm()))
+pure func Term_c0() (res tm.Term) {
+	return tm.hash(tm.infoTerm())
+}
+
+ghost 
+ensures res == (tm.hash(tm.tuple2(Term_c0(), tm.prologueTerm())))
+pure func Term_h0() (res tm.Term) {
+	return tm.hash(tm.tuple2(Term_c0(), tm.prologueTerm()))
+}
+
+ghost 
+ensures res == (tm.hash(tm.tuple2(Term_h0(), Term_pkR(kR))))
+pure func Term_h1(kR tm.Term) (res tm.Term) {
+	return tm.hash(tm.tuple2(Term_h0(), Term_pkR(kR)))
+}
+
+ghost 
+ensures res == (tm.kdf1(tm.tuple2(Term_c0(), epkI)))
+pure func Term_c1(epkI tm.Term) (res tm.Term) {
+	return tm.kdf1(tm.tuple2(Term_c0(), epkI))
+}
+
+ghost 
+ensures res == (tm.hash(tm.tuple2(Term_h1(kR),epkI)))
+pure func Term_h2(kR, epkI tm.Term) (res tm.Term) {
+	return tm.hash(tm.tuple2(Term_h1(kR),epkI))
+}
+
+ghost 
+ensures res == (tm.kdf1(tm.tuple2(Term_c1(epkI), tm.exp(epkI, kR))))
+pure func Term_c2(kR, epkI tm.Term) (res tm.Term) {
+	return tm.kdf1(tm.tuple2(Term_c1(epkI), tm.exp(epkI, kR)))
+}
+
+ghost 
+ensures res == (tm.kdf2(tm.tuple2(Term_c1(epkI), tm.exp(epkI, kR))))
+pure func Term_k1(kR, epkI tm.Term) (res tm.Term) {
+	return tm.kdf2(tm.tuple2(Term_c1(epkI), tm.exp(epkI, kR)))
+}
+
+ghost 
+ensures res == (tm.aead(Term_k1(kR, epkI), tm.zeroString(12), pkI, Term_h2(kR, epkI)))
+pure func Term_c_pkI(kR, pkI, epkI tm.Term) (res tm.Term) {
+	return tm.aead(Term_k1(kR, epkI), tm.zeroString(12), pkI, Term_h2(kR, epkI))
+}
+
+ghost 
+ensures res == (tm.hash(tm.tuple2(Term_h2(kR, epkI), Term_c_pkI(kR, pkI, epkI))))
+pure func Term_h3(kR, pkI, epkI tm.Term) (res tm.Term) {
+	return tm.hash(tm.tuple2(Term_h2(kR, epkI), Term_c_pkI(kR, pkI, epkI)))
+}
+
+ghost 
+ensures res == (tm.kdf1(tm.tuple2(Term_c2(kR, epkI), tm.exp(pkI, kR))))
+pure func Term_c3(kR, pkI, epkI tm.Term) (res tm.Term) {
+	return tm.kdf1(tm.tuple2(Term_c2(kR, epkI), tm.exp(pkI, kR)))
+}
+
+ghost 
+ensures res == (tm.kdf2(tm.tuple2(Term_c2(kR, epkI), tm.exp(pkI, kR))))
+pure func Term_k2(kR, pkI, epkI tm.Term) (res tm.Term) {
+	return tm.kdf2(tm.tuple2(Term_c2(kR, epkI), tm.exp(pkI, kR)))
+}
+
+ghost 
+ensures res == (tm.aead(Term_k2(kR, pkI, epkI), tm.zeroString(12), ts, Term_h3(kR, pkI, epkI)))
+pure func Term_c_ts(kR, pkI, epkI, ts tm.Term) (res tm.Term) {
+	return tm.aead(Term_k2(kR, pkI, epkI), tm.zeroString(12), ts, Term_h3(kR, pkI, epkI))
+}
+
+ghost 
+ensures res == (tm.hash(tm.tuple2(Term_h3(kR, pkI, epkI), Term_c_ts(kR, pkI, epkI, ts))))
+pure func Term_h4(kR, pkI, epkI, ts tm.Term) (res tm.Term) {
+	return tm.hash(tm.tuple2(Term_h3(kR, pkI, epkI), Term_c_ts(kR, pkI, epkI, ts)))
+}
+
+ghost 
+ensures res == (tm.tuple7(tm.integer32(1),sidI,epkI,Term_c_pkI(kR,pkI,epkI),Term_c_ts(kR,pkI,epkI,ts),mac1,mac2))
+pure func Term_M1(sidI, kR, pkI, epkI, ts, mac1, mac2 tm.Term) (res tm.Term) {
+	return tm.tuple7(tm.integer32(1),sidI,epkI,Term_c_pkI(kR,pkI,epkI),Term_c_ts(kR,pkI,epkI,ts),mac1,mac2)
+}
+
+
+
+ghost 
+ensures res == (tm.kdf1(tm.tuple2(c3, Term_epkR(ekR))))
+pure func Term_c4(c3, ekR tm.Term) (res tm.Term) {
+	return tm.kdf1(tm.tuple2(c3, Term_epkR(ekR)))
+}
+
+ghost 
+ensures res == (tm.hash(tm.tuple2(h4, Term_epkR(ekR))))
+pure func Term_h5(h4, ekR tm.Term) (res tm.Term) {
+	return tm.hash(tm.tuple2(h4, Term_epkR(ekR)))
+}
+
+ghost 
+ensures res == (tm.kdf1(tm.tuple2(Term_c4(c3, ekR), tm.exp(epkI, ekR))))
+pure func Term_c5(epkI, c3, ekR tm.Term) (res tm.Term) {
+	return tm.kdf1(tm.tuple2(Term_c4(c3, ekR), tm.exp(epkI, ekR)))
+}
+
+ghost 
+ensures res == (tm.kdf1(tm.tuple2(Term_c5(epkI, c3, ekR), tm.exp(pkI, ekR))))
+pure func Term_c6(pkI, epkI, c3, ekR tm.Term) (res tm.Term) {
+	return tm.kdf1(tm.tuple2(Term_c5(epkI, c3, ekR), tm.exp(pkI, ekR)))
+}
+
+ghost 
+ensures res == (tm.kdf1(tm.tuple2(Term_c6(pkI, epkI, c3, ekR), psk)))
+pure func Term_c7(pkI, psk, epkI, c3, ekR tm.Term) (res tm.Term) {
+	return tm.kdf1(tm.tuple2(Term_c6(pkI, epkI, c3, ekR), psk))
+}
+
+ghost 
+ensures res == (tm.kdf2(tm.tuple2(Term_c6(pkI, epkI, c3, ekR), psk)))
+pure func Term_pi(pkI, psk, epkI, c3, ekR tm.Term) (res tm.Term) {
+	return tm.kdf2(tm.tuple2(Term_c6(pkI, epkI, c3, ekR), psk))
+}
+
+ghost 
+ensures res == (tm.kdf3(tm.tuple2(Term_c6(pkI, epkI, c3, ekR), psk)))
+pure func Term_k3(pkI, psk, epkI, c3, ekR tm.Term) (res tm.Term) {
+	return tm.kdf3(tm.tuple2(Term_c6(pkI, epkI, c3, ekR), psk))
+}
+
+ghost 
+ensures res == (tm.hash(tm.tuple2(Term_h5(h4, ekR), Term_pi(pkI, psk, epkI, c3, ekR))))
+pure func Term_h6(pkI, psk, epkI, c3, h4, ekR tm.Term) (res tm.Term) {
+	return tm.hash(tm.tuple2(Term_h5(h4, ekR), Term_pi(pkI, psk, epkI, c3, ekR)))
+}
+
+ghost 
+ensures res == (tm.aead(Term_k3(pkI, psk, epkI, c3, ekR), tm.zeroString(12), tm.zeroString(0), Term_h6(pkI, psk, epkI, c3, h4, ekR)))
+pure func Term_c_empty(pkI, psk, epkI, c3, h4, ekR tm.Term) (res tm.Term) {
+	return tm.aead(Term_k3(pkI, psk, epkI, c3, ekR), tm.zeroString(12), tm.zeroString(0), Term_h6(pkI, psk, epkI, c3, h4, ekR))
+}
+
+ghost 
+ensures res == (tm.tuple7(tm.integer32(2), sidR, sidI, Term_epkR(ekR), Term_c_empty(pkI, psk, epkI, c3, h4, ekR), mac1, mac2))
+pure func Term_M2(sidI, sidR, pkI, psk, epkI, c3, h4, ekR, mac1, mac2 tm.Term) (res tm.Term) {
+	return tm.tuple7(tm.integer32(2), sidR, sidI, Term_epkR(ekR), Term_c_empty(pkI, psk, epkI, c3, h4, ekR), mac1, mac2)
+}
+
+ghost 
+ensures res == (tm.kdf1(Term_c7(pkI, psk, epkI, c3, ekR)))
+pure func Term_k_IR(pkI, psk, epkI, c3, ekR tm.Term) (res tm.Term) {
+	return tm.kdf1(Term_c7(pkI, psk, epkI, c3, ekR))
+}
+
+ghost 
+ensures res == (tm.kdf2(Term_c7(pkI, psk, epkI, c3, ekR)))
+pure func Term_k_RI(pkI, psk, epkI, c3, ekR tm.Term) (res tm.Term) {
+	return tm.kdf2(Term_c7(pkI, psk, epkI, c3, ekR))
+}

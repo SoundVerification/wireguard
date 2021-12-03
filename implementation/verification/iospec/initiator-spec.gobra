@@ -1,0 +1,159 @@
+package iospec
+
+import . "wireguard-gobra/wireguard/verification/claim"
+import . "wireguard-gobra/wireguard/verification/fact"
+import . "wireguard-gobra/wireguard/verification/messages/initiator"
+import . "wireguard-gobra/wireguard/verification/place"
+import . "wireguard-gobra/wireguard/verification/term"
+import . "wireguard-gobra/wireguard/verification/theta"
+
+pred P_i(t Place, rid Term, ghost s mset[Fact]) {
+    P_i1(t, rid, s) &&
+    P_i2(t, rid, s) &&
+    P_i3(t, rid, s) &&
+    P_i4(t, rid, s) &&
+    P_i5(t, rid, s) &&
+    P_i6(t, rid, s) && 
+    P_i7(t, rid, s) &&
+    P_i8(t, rid, s) &&
+    P_i9(t, rid, s) &&
+    P_i10(t, rid, s) &&
+    P_i11(t, rid, s) &&
+    P_i12(t, rid, s) &&
+    P_i13(t, rid, s) &&
+    P_i14(t, rid, s) &&
+    P_i15(t, rid, s) &&
+    P_i16(t, rid, s)
+}
+
+pred P_i1(t Place, rid Term, ghost s mset[Fact]) {
+    forall theta Theta, l mset[Fact], a mset[Claim], r mset[Fact] :: { e_1I(t, theta, l, a, r) } (
+        G(l, s) &&
+        l == mset[Fact]{
+            init0(rid, getPP(theta)), 
+            ltK(getFirst(getPP(theta)), getKI(theta)), 
+            ltpK(getSecond(getPP(theta)), getPkR(theta)), 
+            psK(getFirst(getPP(theta)), getSecond(getPP(theta)), getPsk(theta)), 
+            fr(getEkI(theta)),
+            timestamp(getTs(theta)),
+            mac(getMac1I(theta)),
+            mac(getMac2I(theta)),
+        } &&
+        a == mset[Claim]{ } &&
+        r == mset[Fact]{ 
+            init1(rid, getPP(theta), getKI(theta), getPkR(theta), getEkI(theta), getPsk(theta), Term_c3(getKI(theta), getPkR(theta), getEkI(theta)), Term_h4(getKI(theta), getPkR(theta), getEkI(theta), getTs(theta))), 
+            outFact(Term_M1(rid, getKI(theta), getPkR(theta), getEkI(theta), getTs(theta), getMac1I(theta), getMac2I(theta))),
+        }) ==>
+        e_1I(t, theta, l, a, r) && P_i(get_e_1I_t1(t, theta, l, a, r), rid, U(l, r, s))
+}
+
+pred P_i2(t Place, rid Term, ghost s mset[Fact]) {
+    forall theta Theta, l mset[Fact], a mset[Claim], r mset[Fact] :: { e_2I(t, theta, l, a, r) } (
+        G(l, s) &&
+        l == mset[Fact]{ 
+            init1(rid, getPP(theta), getKI(theta), getPkR(theta), getEkI(theta), getPsk(theta), getC3(theta), getH4(theta)), 
+            inFact(tuple7(integer32(2), getSidR(theta), rid, getEpkR(theta), getCEmpty(theta), getMac1R(theta), getMac2R(theta))),
+        } &&
+        a == mset[Claim]{ 
+            commitInitResp(tuple4(getFirst(getPP(theta)), getSecond(getPP(theta)), getKIR(theta), getKRI(theta))),
+            secret(getFirst(getPP(theta)), getSecond(getPP(theta)), tuple2(getKIR(theta), getKRI(theta))),
+        } &&
+        r == mset[Fact]{ 
+            init2(rid, getPP(theta), getKIR(theta), getKRI(theta), zeroString(1), zeroString(1)),
+        }) ==>
+        e_2I(t, theta, l, a, r) && P_i(get_e_2I_t1(t, theta, l, a, r), rid, U(l, r, s))
+}
+
+pred P_i3(t Place, rid Term, ghost s mset[Fact]) {
+    forall theta Theta, l mset[Fact], a mset[Claim], r mset[Fact] :: { e_3I(t, theta, l, a, r) } (
+        G(l, s) &&
+        l == mset[Fact]{ 
+            init2(rid, getPP(theta), getKIR(theta), getKRI(theta), zeroString(1), zeroString(1)), 
+            message(getP(theta)),
+        } &&
+        a == mset[Claim]{ 
+            sentFirstInit(rid, getFirst(getPP(theta)), getSecond(getPP(theta)), getKIR(theta), getP(theta)),
+            runningRespInit(tuple5(getFirst(getPP(theta)), getSecond(getPP(theta)), getKIR(theta), getKRI(theta), getP(theta))),
+        } &&
+        r == mset[Fact]{ 
+            init3(rid, getPP(theta), getKIR(theta), getKRI(theta)), 
+            outFact(tuple4(integer32(4), getSidR(theta), integer64(0), aead(getKIR(theta), integer64(0), getP(theta), zeroString(0)))),
+        }) ==>
+        e_3I(t, theta, l, a, r) && P_i(get_e_3I_t1(t, theta, l, a, r), rid, U(l, r, s))
+}
+
+pred P_i4(t Place, rid Term, ghost s mset[Fact]) {
+    forall theta Theta, l mset[Fact], a mset[Claim], r mset[Fact] :: { e_4I(t, theta, l, a, r) } (
+        G(l, s) &&
+        l == mset[Fact]{ 
+            init3(rid, getPP(theta), getKIR(theta), getKRI(theta)), 
+            counter(integer64(getNIR(theta) + 1)),
+            message(getP(theta)),
+        } &&
+        a == mset[Claim]{ } &&
+        r == mset[Fact]{ 
+            init3(rid, getPP(theta), getKIR(theta), getKRI(theta)), 
+            outFact(tuple4(integer32(4), getSidR(theta), integer64(getNIR(theta) + 1), aead(getKIR(theta), integer64(getNIR(theta) + 1), getP(theta), zeroString(0)))),
+        }) ==>
+        e_4I(t, theta, l, a, r) && P_i(get_e_4I_t1(t, theta, l, a, r), rid, U(l, r, s))
+}
+
+pred P_i5(t Place, rid Term, ghost s mset[Fact]) {
+    forall theta Theta, l mset[Fact], a mset[Claim], r mset[Fact] :: { e_5I(t, theta, l, a, r) } (
+        G(l, s) &&
+        l == mset[Fact]{ 
+            init3(rid, getPP(theta), getKIR(theta), getKRI(theta)),
+            inFact(tuple4(integer32(4), rid, getNRITerm(theta), aead(getKRI(theta), getNRITerm(theta), getP(theta), zeroString(0)))),
+        } &&
+        a == mset[Claim]{ } &&
+        r == mset[Fact]{
+            init3(rid, getPP(theta), getKIR(theta), getKRI(theta)),
+        }) ==>
+        e_5I(t, theta, l, a, r) && P_i(get_e_5I_t1(t, theta, l, a, r), rid, U(l, r, s))
+}
+
+pred P_i6(t Place, rid Term, ghost s mset[Fact]) {
+    forall m Term ::
+        (outFact(m) # s) > 0 ==> 
+        e_out(t, rid, m) && P_i(get_e_out_t1(t, rid, m), rid, s setminus mset[Fact]{ outFact(m) })
+}
+
+pred P_i7(t Place, rid Term, ghost s mset[Fact]) {
+    e_in(t, rid) && P_i(get_e_in_t1(t, rid), rid, s union mset[Fact]{ inFact(get_e_in_m(t, rid)) })
+}
+
+pred P_i8(t Place, rid Term, ghost s mset[Fact]) {
+    e_fr(t, rid) && P_i(get_e_fr_t1(t, rid), rid, s union mset[Fact]{ fr(get_e_fr_n(t, rid)) })
+}
+
+pred P_i9(t Place, rid Term, ghost s mset[Fact]) {
+    e_LtK(t, rid) && P_i(get_e_LtK_t1(t, rid), rid, s union mset[Fact]{ ltK(get_e_LtK_m1(t, rid), get_e_LtK_m2(t, rid)) })
+}
+
+pred P_i10(t Place, rid Term, ghost s mset[Fact]) {
+    e_LtpK(t, rid) && P_i(get_e_LtpK_t1(t, rid), rid, s union mset[Fact]{ ltpK(get_e_LtpK_m1(t, rid), get_e_LtpK_m2(t, rid)) })
+}
+
+pred P_i11(t Place, rid Term, ghost s mset[Fact]) {
+    e_PsK(t, rid) && P_i(get_e_PsK_t1(t, rid), rid, s union mset[Fact]{ psK(get_e_PsK_m1(t, rid), get_e_PsK_m2(t, rid), get_e_PsK_m3(t, rid)) })
+}
+
+pred P_i12(t Place, rid Term, ghost s mset[Fact]) {
+    e_Counter(t, rid) && P_i(get_e_Counter_t1(t, rid), rid, s union mset[Fact]{ counter(get_e_Counter_n(t, rid)) })
+}
+
+pred P_i13(t Place, rid Term, ghost s mset[Fact]) {
+    e_Message(t, rid) && P_i(get_e_Message_t1(t, rid), rid, s union mset[Fact]{ message(get_e_Message_m(t, rid)) })
+}
+
+pred P_i14(t Place, rid Term, ghost s mset[Fact]) {
+    e_Timestamp(t, rid) && P_i(get_e_Timestamp_t1(t, rid), rid, s union mset[Fact]{ timestamp(get_e_Timestamp_m(t, rid)) })
+}
+
+pred P_i15(t Place, rid Term, ghost s mset[Fact]) {
+    e_MAC(t, rid) && P_i(get_e_MAC_t1(t, rid), rid, s union mset[Fact]{ mac(get_e_MAC_m(t, rid)) })
+}
+
+pred P_i16(t Place, rid Term, ghost s mset[Fact]) {
+    e_init0I(t, rid) && P_i(get_e_init0I_t1(t, rid), rid, s union mset[Fact]{ init0(rid, tuple4(get_e_init0I_m1(t, rid), get_e_init0I_m2(t, rid), get_e_init0I_m3(t, rid), get_e_init0I_m4(t, rid))) })
+}

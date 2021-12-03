@@ -1,0 +1,8 @@
+{
+    "gobraSettings.moduleName": "wireguard-gobra/wireguard",
+    "gobraSettings.includeDirs": [
+        "verification",
+        "."
+    ],
+    "gobraSettings.autoVerify": false
+}
