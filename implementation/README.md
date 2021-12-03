@@ -1,4 +1,5 @@
 # Wireguard
+[![Verification](https://github.com/soundverification/wireguard/actions/workflows/workflow.yml/badge.svg)](https://github.com/soundverification/wireguard/actions/workflows/workflow.yml)
 
 ## Verifying & Running in Docker
 The sources of this verified implementation together with the code verifier Gobra and its dependencies are provided as a Docker image.
