@@ -1,4 +1,4 @@
-name: workflow
+name: Verification
 
 on:
   push:
