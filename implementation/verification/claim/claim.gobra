@@ -1,0 +1,19 @@
+package claim
+
+import . "wireguard-gobra/wireguard/verification/term"
+
+type Claim domain {
+    // corresponds to `Commit('Init', 'Resp', Term)`
+    func commitInitResp(Term) Claim
+    func commitRespInit(Term) Claim
+
+    // corresponds to `Running('Init', 'Resp', Term)`
+    func runningInitResp(Term) Claim
+    func runningRespInit(Term) Claim
+
+    func sentFirstInit(Term, Term, Term, Term, Term) Claim
+
+    func receivedFirstResp(Term, Term, Term, Term, Term, Term) Claim
+
+    func secret(Term, Term, Term) Claim
+}

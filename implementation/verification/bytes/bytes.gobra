@@ -1,0 +1,135 @@
+package bytes
+
+import . "wireguard-gobra/wireguard/verification/term"
+
+type Bytes domain {
+
+    // constructors
+    func tuple2B(Bytes, Bytes) Bytes
+    func tuple4B(Bytes, Bytes, Bytes, Bytes) Bytes
+    func tuple5B(Bytes, Bytes, Bytes, Bytes, Bytes) Bytes
+    func tuple7B(Bytes, Bytes, Bytes, Bytes, Bytes, Bytes, Bytes) Bytes
+    func hashB(Bytes) Bytes
+    func kdf1B(Bytes) Bytes
+    func kdf2B(Bytes) Bytes
+    func kdf3B(Bytes) Bytes
+    func okB() Bytes
+    func aeadB(Bytes, Bytes, Bytes, Bytes) Bytes
+    func const1B() Bytes
+    func expB(Bytes, Bytes) Bytes
+    func multB(Bytes, Bytes) Bytes
+
+    func msgB(string) Bytes
+    func zeroStringB(int) Bytes
+    func integer64B(uint64) Bytes
+    func integer32B(uint32) Bytes
+    func infoBytesB() Bytes
+    func prologueBytesB() Bytes
+    func generatorB() Bytes
+
+    // deconstructors
+    func getFirstB(Bytes) Bytes
+    func getSecondB(Bytes) Bytes
+    func getThirdB(Bytes) Bytes
+    func getForthB(Bytes) Bytes
+    func getFifthB(Bytes) Bytes
+    func getSixthB(Bytes) Bytes
+    func getSeventhB(Bytes) Bytes
+    func decryptB(Bytes, Bytes, Bytes) Bytes
+    func verifyB(Bytes, Bytes, Bytes, Bytes) Bytes
+    func invB(Bytes) Bytes
+
+    // // (x^y)^z == x^(y*z)
+    // axiom {
+    //     forall x, y, z Bytes :: { expB(expB(x, y), z) } { expB(x, multB(y, z)) } expB(expB(x, y), z) == expB(x, multB(y, z))
+    // }
+
+    // // x^1 == x
+    // axiom {
+    //     forall x Bytes :: { expB(x, const1B()) } expB(x, const1B()) == x
+    // }
+
+    // // multB is commutative
+    // axiom {
+    //     forall x, y Bytes :: { multB(x, y) } multB(x, y) == multB(y, x)
+    // }
+
+    // // multB is associative
+    // axiom {
+    //     forall x, y, z Bytes :: { multB(multB(x, y), z) } { multB(x, multB(y, z)) } multB(multB(x, y), z) == multB(x, multB(y, z))
+    // }
+
+    // // x*1 == x
+    // axiom {
+    //     forall x Bytes :: { multB(x, const1B()) } multB(x, const1B()) == x
+    // }
+
+    // // x * invB(x) == 1
+    // axiom {
+    //     forall x Bytes :: { multB(x, invB(x)) } multB(x, invB(x)) == const1B()
+    // }
+
+    // tuple2B deconstructors
+    axiom {
+        forall t1, t2 Bytes :: { tuple2B(t1, t2) } getFirstB(tuple2B(t1, t2)) == t1 && getSecondB(tuple2B(t1, t2)) == t2
+    }
+
+    // tuple4B deconstructors
+    axiom {
+        forall t1, t2, t3, t4 Bytes :: { tuple4B(t1, t2, t3, t4) } getFirstB(tuple4B(t1, t2, t3, t4)) == t1 && getSecondB(tuple4B(t1, t2, t3, t4)) == t2 && getThirdB(tuple4B(t1, t2, t3, t4)) == t3 && getForthB(tuple4B(t1, t2, t3, t4)) == t4
+    }
+
+    // tuple5B deconstructors
+    axiom {
+        forall t1, t2, t3, t4, t5 Bytes :: { tuple5B(t1, t2, t3, t4, t5) } getFirstB(tuple5B(t1, t2, t3, t4, t5)) == t1 && getSecondB(tuple5B(t1, t2, t3, t4, t5)) == t2 && getThirdB(tuple5B(t1, t2, t3, t4, t5)) == t3 && getForthB(tuple5B(t1, t2, t3, t4, t5)) == t4 && getFifthB(tuple5B(t1, t2, t3, t4, t5)) == t5
+    }
+
+    // tuple7B deconstructors
+    axiom {
+        forall t1, t2, t3, t4, t5, t6, t7 Bytes :: { tuple7B(t1, t2, t3, t4, t5, t6, t7) } getFirstB(tuple7B(t1, t2, t3, t4, t5, t6, t7)) == t1 && getSecondB(tuple7B(t1, t2, t3, t4, t5, t6, t7)) == t2 && getThirdB(tuple7B(t1, t2, t3, t4, t5, t6, t7)) == t3 && getForthB(tuple7B(t1, t2, t3, t4, t5, t6, t7)) == t4 && getFifthB(tuple7B(t1, t2, t3, t4, t5, t6, t7)) == t5 && getSixthB(tuple7B(t1, t2, t3, t4, t5, t6, t7)) == t6 && getSeventhB(tuple7B(t1, t2, t3, t4, t5, t6, t7)) == t7
+    }
+
+    // decryptB aeadB with same key and nonce
+    axiom {
+        forall key, nonce, plaintext, additionalData Bytes :: { decryptB(key, nonce, aeadB(key, nonce, plaintext, additionalData)) } decryptB(key, nonce, aeadB(key, nonce, plaintext, additionalData)) == plaintext
+    }
+
+    // verifyB aeadB with same key and nonce
+    axiom {
+        forall key, nonce, plaintext, additionalData Bytes :: { verifyB(key, nonce, additionalData, aeadB(key, nonce, plaintext, additionalData)) } verifyB(key, nonce, additionalData, aeadB(key, nonce, plaintext, additionalData)) == okB()
+    }
+}
+
+type Gamma domain {
+  func gamma(Term) Bytes
+
+  func oneTerm(Bytes) Term
+
+  axiom { // totality
+    forall b Bytes :: {oneTerm(b)} gamma(oneTerm(b)) == b
+  }
+
+  axiom { // homomorphism
+    (forall t1, t2 Term :: {gamma(tuple2(t1,t2))} gamma(tuple2(t1,t2)) == tuple2B(gamma(t1), gamma(t2))) &&
+    (forall t1, t2, t3, t4 Term :: {gamma(tuple4(t1,t2,t3,t4))} gamma(tuple4(t1,t2,t3,t4)) == tuple4B(gamma(t1), gamma(t2), gamma(t3), gamma(t4))) &&
+    (forall t1, t2, t3, t4, t5 Term :: {gamma(tuple5(t1,t2,t3,t4,t5))} gamma(tuple5(t1,t2,t3,t4,t5)) == tuple5B(gamma(t1), gamma(t2), gamma(t3), gamma(t4), gamma(t5))) &&
+    (forall t1, t2, t3, t4, t5, t6, t7 Term :: {gamma(tuple7(t1,t2,t3,t4,t5,t6,t7))} gamma(tuple7(t1,t2,t3,t4,t5,t6,t7)) == tuple7B(gamma(t1), gamma(t2), gamma(t3), gamma(t4), gamma(t5), gamma(t6), gamma(t7))) &&
+    (forall k, n, p, a Term :: {gamma(aead(k,n,p,a))} gamma(aead(k,n,p,a)) == aeadB(gamma(k), gamma(n), gamma(p), gamma(a))) &&
+    (forall b Term :: {gamma(hash(b))} gamma(hash(b)) == hashB(gamma(b))) &&
+    (forall b Term :: {gamma(kdf1(b))} gamma(kdf1(b)) == kdf1B(gamma(b))) &&
+    (forall b Term :: {gamma(kdf2(b))} gamma(kdf2(b)) == kdf2B(gamma(b))) &&
+    (forall b Term :: {gamma(kdf3(b))} gamma(kdf3(b)) == kdf3B(gamma(b))) &&
+    (gamma(ok()) == okB()) &&
+    (forall l int :: {gamma(zeroString(l))} gamma(zeroString(l)) == zeroStringB(l)) &&
+    (gamma(infoTerm()) == infoBytesB()) &&
+    (gamma(prologueTerm()) == prologueBytesB()) &&
+    (forall i uint64 :: {gamma(integer64(i))} gamma(integer64(i)) == integer64B(i)) &&
+    (forall i uint32 :: {gamma(integer32(i))} gamma(integer32(i)) == integer32B(i)) &&
+    (forall s string :: {gamma(msg(s))} gamma(msg(s)) == msgB(s)) &&
+    (gamma(const1()) == const1B()) &&
+    (gamma(generator()) == generatorB()) &&
+    (forall l, r Term :: {gamma(exp(l,r))} gamma(exp(l,r)) == expB(gamma(l), gamma(r))) &&
+    (forall l, r Term :: {gamma(mult(l,r))} gamma(mult(l,r)) == multB(gamma(l), gamma(r)))
+  }
+}
+
