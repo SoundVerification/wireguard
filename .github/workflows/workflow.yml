@@ -24,7 +24,7 @@ jobs:
       - name: Build image
         uses: docker/build-push-action@v2
         with:
-          context: .
+          context: implementation
           load: true
           file: docker/Dockerfile
           tags: ${{ env.IMAGE_TAG }}
@@ -49,7 +49,7 @@ jobs:
       - name: Push image
         uses: docker/build-push-action@v2
         with:
-          context: .
+          context: implementation
           file: docker/Dockerfile
           tags: ${{ env.IMAGE_TAG }}
           labels: "runnumber=${{ github.run_id }}"
