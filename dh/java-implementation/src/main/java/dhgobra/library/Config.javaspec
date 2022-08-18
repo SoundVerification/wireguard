@@ -1,0 +1,19 @@
+package dhgobra.library;
+
+public final class Config {
+  public final int idA;
+  public final int idB;
+  public final byte[] skB;
+  public final byte[] pkA;
+
+  public Config(int idA, int idB, byte[] skB, byte[] pkA) 
+  //@ requires true;
+  //@ ensures  this.idA |-> idA &*& this.idB |-> idB &*& this.skB |-> skB &*& this.pkA |-> pkA;
+  {
+    this.idA = idA;
+    this.idB = idB;
+    this.skB = skB;
+    this.pkA = pkA;
+  }
+  
+}

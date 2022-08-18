@@ -1,0 +1,20 @@
+package pub;
+
+
+
+
+// TODO: provide constructors for Pub type e.g.:
+/*@
+
+   inductive Pub =
+            pub_msg(String)
+        |   pub_int(int)
+
+
+    // Constants
+        |   const_g_pub
+        |   const_0_pub
+        |   const_R_pub
+        |   const_I_pub
+        |   const_1_pub;
+@*/

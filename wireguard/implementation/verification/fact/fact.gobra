@@ -1,0 +1,341 @@
+package fact
+
+
+
+import . "wireguard-gobra/wireguard/verification/term"
+import . "wireguard-gobra/wireguard/verification/pub"
+import . "wireguard-gobra/wireguard/verification/fresh"
+
+
+type Fact domain {
+    // tag 0
+    func Setup_Init(t1 Term, t2 Term, t3 Term, t4 Term, t5 Term) Fact
+    func getSetup_Init(f Fact) seq[Term]
+    axiom  {
+        forall t1 Term, t2 Term, t3 Term, t4 Term, t5 Term :: 
+            { Setup_Init(t1, t2, t3, t4, t5) } (
+                getSetup_Init(Setup_Init(t1, t2, t3, t4, t5)) ==
+                seq[Term]{t1, t2, t3, t4, t5} &&
+                                             getTag(Setup_Init(t1, t2, t3, t4, t5)) == 0)
+    }
+
+    // tag 1
+    func LtK_Init(t1 Term, t2 Term, t3 Term) Fact
+    func getLtK_Init(f Fact) seq[Term]
+    axiom  {
+        forall t1 Term, t2 Term, t3 Term :: 
+            { LtK_Init(t1, t2, t3) } (
+                getLtK_Init(LtK_Init(t1, t2, t3)) ==
+                seq[Term]{t1, t2, t3} &&
+                                     getTag(LtK_Init(t1, t2, t3)) == 1)
+    }
+
+    // tag 2
+    func LtpK_Init(t1 Term, t2 Term, t3 Term) Fact
+    func getLtpK_Init(f Fact) seq[Term]
+    axiom  {
+        forall t1 Term, t2 Term, t3 Term :: 
+            { LtpK_Init(t1, t2, t3) } (
+                getLtpK_Init(LtpK_Init(t1, t2, t3)) ==
+                seq[Term]{t1, t2, t3} &&
+                                     getTag(LtpK_Init(t1, t2, t3)) == 2)
+    }
+
+    // tag 3
+    func PsK_Init(t1 Term, t2 Term, t3 Term, t4 Term) Fact
+    func getPsK_Init(f Fact) seq[Term]
+    axiom  {
+        forall t1 Term, t2 Term, t3 Term, t4 Term :: 
+            { PsK_Init(t1, t2, t3, t4) } (
+                getPsK_Init(PsK_Init(t1, t2, t3, t4)) ==
+                seq[Term]{t1, t2, t3, t4} &&
+                                         getTag(PsK_Init(t1, t2, t3, t4)) == 3)
+    }
+
+    // tag 4
+    func FrFact_Init(t1 Term, t2 Term) Fact
+    func getFrFact_Init(f Fact) seq[Term]
+    axiom  {
+        forall t1 Term, t2 Term :: 
+            { FrFact_Init(t1, t2) } (
+                getFrFact_Init(FrFact_Init(t1, t2)) ==
+                seq[Term]{t1, t2} &&
+                                 getTag(FrFact_Init(t1, t2)) == 4)
+    }
+
+    // tag 5
+    func Timestamp_Init(t1 Term, t2 Term) Fact
+    func getTimestamp_Init(f Fact) seq[Term]
+    axiom  {
+        forall t1 Term, t2 Term :: 
+            { Timestamp_Init(t1, t2) } (
+                getTimestamp_Init(Timestamp_Init(t1, t2)) ==
+                seq[Term]{t1, t2} &&
+                                 getTag(Timestamp_Init(t1, t2)) == 5)
+    }
+
+    // tag 6
+    func MAC_Init(t1 Term, t2 Term) Fact
+    func getMAC_Init(f Fact) seq[Term]
+    axiom  {
+        forall t1 Term, t2 Term :: 
+            { MAC_Init(t1, t2) } (
+                getMAC_Init(MAC_Init(t1, t2)) ==
+                seq[Term]{t1, t2} &&
+                                 getTag(MAC_Init(t1, t2)) == 6)
+    }
+
+    // tag 7
+    func St_Init_1(t1 Term, t2 Term, t3 Term, t4 Term, t5 Term, t6 Term, t7 Term, t8 Term, t9 Term, t10 Term, t11 Term) Fact
+    func getSt_Init_1(f Fact) seq[Term]
+    axiom  {
+        forall t1 Term, t2 Term, t3 Term, t4 Term, t5 Term, t6 Term, t7 Term, t8 Term, t9 Term, t10 Term, t11 Term :: 
+            { St_Init_1(t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11) } (
+                getSt_Init_1(St_Init_1(t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11)) ==
+                seq[Term]{t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11} &&
+                                                                       getTag(St_Init_1(t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11)) == 7)
+    }
+
+    // tag 8
+    func OutFact_Init(t1 Term, t2 Term) Fact
+    func getOutFact_Init(f Fact) seq[Term]
+    axiom  {
+        forall t1 Term, t2 Term :: 
+            { OutFact_Init(t1, t2) } (
+                getOutFact_Init(OutFact_Init(t1, t2)) ==
+                seq[Term]{t1, t2} &&
+                                 getTag(OutFact_Init(t1, t2)) == 8)
+    }
+
+    // tag 9
+    func InFact_Init(t1 Term, t2 Term) Fact
+    func getInFact_Init(f Fact) seq[Term]
+    axiom  {
+        forall t1 Term, t2 Term :: 
+            { InFact_Init(t1, t2) } (
+                getInFact_Init(InFact_Init(t1, t2)) ==
+                seq[Term]{t1, t2} &&
+                                 getTag(InFact_Init(t1, t2)) == 9)
+    }
+
+    // tag 10
+    func St_Init_2(t1 Term, t2 Term, t3 Term, t4 Term, t5 Term, t6 Term, t7 Term, t8 Term) Fact
+    func getSt_Init_2(f Fact) seq[Term]
+    axiom  {
+        forall t1 Term, t2 Term, t3 Term, t4 Term, t5 Term, t6 Term, t7 Term, t8 Term :: 
+            { St_Init_2(t1, t2, t3, t4, t5, t6, t7, t8) } (
+                getSt_Init_2(St_Init_2(t1, t2, t3, t4, t5, t6, t7, t8)) ==
+                seq[Term]{t1, t2, t3, t4, t5, t6, t7, t8} &&
+                                                         getTag(St_Init_2(t1, t2, t3, t4, t5, t6, t7, t8)) == 10)
+    }
+
+    // tag 11
+    func Message_Init(t1 Term, t2 Term) Fact
+    func getMessage_Init(f Fact) seq[Term]
+    axiom  {
+        forall t1 Term, t2 Term :: 
+            { Message_Init(t1, t2) } (
+                getMessage_Init(Message_Init(t1, t2)) ==
+                seq[Term]{t1, t2} &&
+                                 getTag(Message_Init(t1, t2)) == 11)
+    }
+
+    // tag 12
+    func St_Init_3(t1 Term, t2 Term, t3 Term, t4 Term, t5 Term, t6 Term, t7 Term, t8 Term) Fact
+    func getSt_Init_3(f Fact) seq[Term]
+    axiom  {
+        forall t1 Term, t2 Term, t3 Term, t4 Term, t5 Term, t6 Term, t7 Term, t8 Term :: 
+            { St_Init_3(t1, t2, t3, t4, t5, t6, t7, t8) } (
+                getSt_Init_3(St_Init_3(t1, t2, t3, t4, t5, t6, t7, t8)) ==
+                seq[Term]{t1, t2, t3, t4, t5, t6, t7, t8} &&
+                                                         getTag(St_Init_3(t1, t2, t3, t4, t5, t6, t7, t8)) == 12)
+    }
+
+    // tag 13
+    func Counter_Init(t1 Term, t2 Term) Fact
+    func getCounter_Init(f Fact) seq[Term]
+    axiom  {
+        forall t1 Term, t2 Term :: 
+            { Counter_Init(t1, t2) } (
+                getCounter_Init(Counter_Init(t1, t2)) ==
+                seq[Term]{t1, t2} &&
+                                 getTag(Counter_Init(t1, t2)) == 13)
+    }
+
+    // tag 14
+    func Setup_Resp(t1 Term, t2 Term, t3 Term, t4 Term, t5 Term) Fact
+    func getSetup_Resp(f Fact) seq[Term]
+    axiom  {
+        forall t1 Term, t2 Term, t3 Term, t4 Term, t5 Term :: 
+            { Setup_Resp(t1, t2, t3, t4, t5) } (
+                getSetup_Resp(Setup_Resp(t1, t2, t3, t4, t5)) ==
+                seq[Term]{t1, t2, t3, t4, t5} &&
+                                             getTag(Setup_Resp(t1, t2, t3, t4, t5)) == 14)
+    }
+
+    // tag 15
+    func LtK_Resp(t1 Term, t2 Term, t3 Term) Fact
+    func getLtK_Resp(f Fact) seq[Term]
+    axiom  {
+        forall t1 Term, t2 Term, t3 Term :: 
+            { LtK_Resp(t1, t2, t3) } (
+                getLtK_Resp(LtK_Resp(t1, t2, t3)) ==
+                seq[Term]{t1, t2, t3} &&
+                                     getTag(LtK_Resp(t1, t2, t3)) == 15)
+    }
+
+    // tag 16
+    func LtpK_Resp(t1 Term, t2 Term, t3 Term) Fact
+    func getLtpK_Resp(f Fact) seq[Term]
+    axiom  {
+        forall t1 Term, t2 Term, t3 Term :: 
+            { LtpK_Resp(t1, t2, t3) } (
+                getLtpK_Resp(LtpK_Resp(t1, t2, t3)) ==
+                seq[Term]{t1, t2, t3} &&
+                                     getTag(LtpK_Resp(t1, t2, t3)) == 16)
+    }
+
+    // tag 17
+    func PsK_Resp(t1 Term, t2 Term, t3 Term, t4 Term) Fact
+    func getPsK_Resp(f Fact) seq[Term]
+    axiom  {
+        forall t1 Term, t2 Term, t3 Term, t4 Term :: 
+            { PsK_Resp(t1, t2, t3, t4) } (
+                getPsK_Resp(PsK_Resp(t1, t2, t3, t4)) ==
+                seq[Term]{t1, t2, t3, t4} &&
+                                         getTag(PsK_Resp(t1, t2, t3, t4)) == 17)
+    }
+
+    // tag 18
+    func InFact_Resp(t1 Term, t2 Term) Fact
+    func getInFact_Resp(f Fact) seq[Term]
+    axiom  {
+        forall t1 Term, t2 Term :: 
+            { InFact_Resp(t1, t2) } (
+                getInFact_Resp(InFact_Resp(t1, t2)) ==
+                seq[Term]{t1, t2} &&
+                                 getTag(InFact_Resp(t1, t2)) == 18)
+    }
+
+    // tag 19
+    func St_Resp_1(t1 Term, t2 Term, t3 Term, t4 Term, t5 Term, t6 Term, t7 Term, t8 Term, t9 Term, t10 Term, t11 Term, t12 Term) Fact
+    func getSt_Resp_1(f Fact) seq[Term]
+    axiom  {
+        forall t1 Term, t2 Term, t3 Term, t4 Term, t5 Term, t6 Term, t7 Term, t8 Term, t9 Term, t10 Term, t11 Term, t12 Term :: 
+            { St_Resp_1(t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12) } (
+                getSt_Resp_1(St_Resp_1(t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12)) ==
+                seq[Term]{t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12} &&
+                                                                            getTag(St_Resp_1(t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12)) == 19)
+    }
+
+    // tag 20
+    func FrFact_Resp(t1 Term, t2 Term) Fact
+    func getFrFact_Resp(f Fact) seq[Term]
+    axiom  {
+        forall t1 Term, t2 Term :: 
+            { FrFact_Resp(t1, t2) } (
+                getFrFact_Resp(FrFact_Resp(t1, t2)) ==
+                seq[Term]{t1, t2} &&
+                                 getTag(FrFact_Resp(t1, t2)) == 20)
+    }
+
+    // tag 21
+    func MAC_Resp(t1 Term, t2 Term) Fact
+    func getMAC_Resp(f Fact) seq[Term]
+    axiom  {
+        forall t1 Term, t2 Term :: 
+            { MAC_Resp(t1, t2) } (
+                getMAC_Resp(MAC_Resp(t1, t2)) ==
+                seq[Term]{t1, t2} &&
+                                 getTag(MAC_Resp(t1, t2)) == 21)
+    }
+
+    // tag 22
+    func St_Resp_2(t1 Term, t2 Term, t3 Term, t4 Term, t5 Term, t6 Term, t7 Term, t8 Term) Fact
+    func getSt_Resp_2(f Fact) seq[Term]
+    axiom  {
+        forall t1 Term, t2 Term, t3 Term, t4 Term, t5 Term, t6 Term, t7 Term, t8 Term :: 
+            { St_Resp_2(t1, t2, t3, t4, t5, t6, t7, t8) } (
+                getSt_Resp_2(St_Resp_2(t1, t2, t3, t4, t5, t6, t7, t8)) ==
+                seq[Term]{t1, t2, t3, t4, t5, t6, t7, t8} &&
+                                                         getTag(St_Resp_2(t1, t2, t3, t4, t5, t6, t7, t8)) == 22)
+    }
+
+    // tag 23
+    func OutFact_Resp(t1 Term, t2 Term) Fact
+    func getOutFact_Resp(f Fact) seq[Term]
+    axiom  {
+        forall t1 Term, t2 Term :: 
+            { OutFact_Resp(t1, t2) } (
+                getOutFact_Resp(OutFact_Resp(t1, t2)) ==
+                seq[Term]{t1, t2} &&
+                                 getTag(OutFact_Resp(t1, t2)) == 23)
+    }
+
+    // tag 24
+    func St_Resp_3(t1 Term, t2 Term, t3 Term, t4 Term, t5 Term, t6 Term, t7 Term, t8 Term) Fact
+    func getSt_Resp_3(f Fact) seq[Term]
+    axiom  {
+        forall t1 Term, t2 Term, t3 Term, t4 Term, t5 Term, t6 Term, t7 Term, t8 Term :: 
+            { St_Resp_3(t1, t2, t3, t4, t5, t6, t7, t8) } (
+                getSt_Resp_3(St_Resp_3(t1, t2, t3, t4, t5, t6, t7, t8)) ==
+                seq[Term]{t1, t2, t3, t4, t5, t6, t7, t8} &&
+                                                         getTag(St_Resp_3(t1, t2, t3, t4, t5, t6, t7, t8)) == 24)
+    }
+
+    // tag 25
+    func Counter_Resp(t1 Term, t2 Term) Fact
+    func getCounter_Resp(f Fact) seq[Term]
+    axiom  {
+        forall t1 Term, t2 Term :: 
+            { Counter_Resp(t1, t2) } (
+                getCounter_Resp(Counter_Resp(t1, t2)) ==
+                seq[Term]{t1, t2} &&
+                                 getTag(Counter_Resp(t1, t2)) == 25)
+    }
+
+    // tag 26
+    func Message_Resp(t1 Term, t2 Term) Fact
+    func getMessage_Resp(f Fact) seq[Term]
+    axiom  {
+        forall t1 Term, t2 Term :: 
+            { Message_Resp(t1, t2) } (
+                getMessage_Resp(Message_Resp(t1, t2)) ==
+                seq[Term]{t1, t2} &&
+                                 getTag(Message_Resp(t1, t2)) == 26)
+    }
+
+    // each fact has a unique tag:
+    func getTag(f Fact) int
+
+    func persistent(f Fact) bool
+    axiom  {
+        forall f Fact :: 
+            { persistent(f) } (
+                persistent(f) ==
+                (getTag(f) == 1 || getTag(f) == 2 || getTag(f) == 3 || getTag(f) == 15 || getTag(f) == 16 || getTag(f) == 17))
+    }
+
+}
+ghost
+// returns a multiset containing just the persistent facts of l all with multiplicity 1
+ensures forall f Fact :: { f # result } (f # result) == (persistent(f) && (f # l) > 0 ? 1 : 0)
+pure func persistentFacts(l mset[Fact]) (result mset[Fact])
+
+ghost
+// returns a multiset containing just the non-persistent facts of l while retaining their multiplicity
+ensures forall f Fact :: { f # result } (f # result) == (persistent(f) ? 0 : (f # l))
+pure func linearFacts(l mset[Fact]) (result mset[Fact])
+
+ghost
+ensures res == (linearFacts(l) subset s && persistentFacts(l) subset s)
+pure func M(l mset[Fact], s mset[Fact]) (res bool) {
+    // non-persistent facts
+    return linearFacts(l) subset s &&
+        // persistent facts
+        persistentFacts(l) subset s
+}
+
+ghost
+ensures result == s setminus linearFacts(l) union r
+pure func U(l mset[Fact], r mset[Fact], s mset[Fact]) (result mset[Fact])

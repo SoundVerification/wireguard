@@ -1,0 +1,180 @@
+package term
+
+
+
+import . "dh-gobra/verification/pub"
+import . "dh-gobra/verification/fresh"
+
+
+type Term domain {
+    func freshTerm(f Fresh) Term
+    func getFreshTerm(t Term) Fresh
+    axiom  {
+        forall f Fresh :: 
+            { freshTerm(f) } (
+                getFreshTerm(freshTerm(f)) == f)
+    }
+    func pubTerm(p Pub) Term
+    func getPubTerm(t Term) Pub
+    axiom  {
+        forall p Pub :: 
+            { pubTerm(p) } (
+                getPubTerm(pubTerm(p)) == p)
+    }
+
+    func ex1(t1 Term) Term
+    func ex2(t1 Term) Term
+    func ex3(t1 Term) Term
+    func ex4(t1 Term) Term
+    func ex5(t1 Term) Term
+    func exp(t1 Term, t2 Term) Term
+    func extract(t1 Term) Term
+    func format(t1 Term, t2 Term, t3 Term, t4 Term, t5 Term) Term
+    func fst(t1 Term) Term
+    func inv(t1 Term) Term
+    func one() Term
+    func pair(t1 Term, t2 Term) Term
+    func pk(t1 Term) Term
+    func sign(t1 Term, t2 Term) Term
+    func snd(t1 Term) Term
+    func ok() Term
+    func verify(t1 Term, t2 Term) Term
+    func Mult(x Term, y Term) Term
+    // associativity
+    axiom  {
+        forall x_1, x_2, x_3 Term :: 
+            { Mult(x_1, Mult(x_2, x_3)) } (
+                Mult(x_1, Mult(x_2, x_3)) == Mult(Mult(x_1, x_2), x_3))
+    }
+    // commutativity
+    axiom  {
+        forall x_1, x_2 Term :: 
+            { Mult(x_1, x_2) } (
+                Mult(x_1, x_2) == Mult(x_2, x_1))
+    }
+    
+
+    axiom  {
+        forall x1, x2, x3, x4, x5 Term :: 
+            { ex1(format(x1, x2, x3, x4, x5)) } (
+                ex1(format(x1, x2, x3, x4, x5)) == x1)
+    }
+
+    axiom  {
+        forall x1, x2, x3, x4, x5 Term :: 
+            { ex2(format(x1, x2, x3, x4, x5)) } (
+                ex2(format(x1, x2, x3, x4, x5)) == x2)
+    }
+
+    axiom  {
+        forall x1, x2, x3, x4, x5 Term :: 
+            { ex3(format(x1, x2, x3, x4, x5)) } (
+                ex3(format(x1, x2, x3, x4, x5)) == x3)
+    }
+
+    axiom  {
+        forall x1, x2, x3, x4, x5 Term :: 
+            { ex4(format(x1, x2, x3, x4, x5)) } (
+                ex4(format(x1, x2, x3, x4, x5)) == x4)
+    }
+
+    axiom  {
+        forall x1, x2, x3, x4, x5 Term :: 
+            { ex5(format(x1, x2, x3, x4, x5)) } (
+                ex5(format(x1, x2, x3, x4, x5)) == x5)
+    }
+
+    axiom  {
+        forall x_1 Term :: 
+            { exp(x_1, one()) } (
+                exp(x_1, one()) == x_1)
+    }
+
+    axiom  {
+        forall x_1, x_2, x_3 Term :: 
+            { exp(exp(x_1, x_2), x_3) } (
+                exp(exp(x_1, x_2), x_3) == exp(x_1, Mult(x_2, x_3)))
+    }
+
+    axiom  {
+        forall k, m Term :: 
+            { extract(sign(m, k)) } (
+                extract(sign(m, k)) == m)
+    }
+
+    axiom  {
+        forall x_1, x_2 Term :: 
+            { fst(pair(x_1, x_2)) } (
+                fst(pair(x_1, x_2)) == x_1)
+    }
+
+    axiom  {
+        forall x_1 Term :: 
+            { inv(inv(x_1)) } (
+                inv(inv(x_1)) == x_1)
+    }
+
+    axiom  {
+        inv(one()) == one()
+    }
+
+    axiom  {
+        forall x_1, x_2 Term :: 
+            { inv(Mult(x_2, inv(x_1))) } (
+                inv(Mult(x_2, inv(x_1))) == Mult(x_1, inv(x_2)))
+    }
+
+    axiom  {
+        forall x_1, x_2 Term :: 
+            { snd(pair(x_1, x_2)) } (
+                snd(pair(x_1, x_2)) == x_2)
+    }
+
+    axiom  {
+        forall k, m Term :: 
+            { verify(sign(m, k), pk(k)) } (
+                verify(sign(m, k), pk(k)) == ok())
+    }
+
+    axiom  {
+        forall x_1, x_2 Term :: 
+            { Mult(x_1, Mult(x_2, inv(x_1))) } (
+                Mult(x_1, Mult(x_2, inv(x_1))) == x_2)
+    }
+
+    axiom  {
+        forall x_1 Term :: 
+            { Mult(x_1, inv(x_1)) } (
+                Mult(x_1, inv(x_1)) == one())
+    }
+
+    axiom  {
+        forall x_1 Term :: 
+            { Mult(x_1, one()) } (
+                Mult(x_1, one()) == x_1)
+    }
+
+    axiom  {
+        forall x_1, x_2, x_3 Term :: 
+            { Mult(x_2, Mult(x_3, inv(Mult(x_1, x_2)))) } (
+                Mult(x_2, Mult(x_3, inv(Mult(x_1, x_2)))) == Mult(x_3, inv(x_1)))
+    }
+
+    axiom  {
+        forall x_1, x_2 Term :: 
+            { Mult(x_2, inv(Mult(x_1, x_2))) } (
+                Mult(x_2, inv(Mult(x_1, x_2))) == inv(x_1))
+    }
+
+    axiom  {
+        forall x_1, x_2, x_3 Term :: 
+            { Mult(x_3, Mult(inv(x_1), inv(x_2))) } (
+                Mult(x_3, Mult(inv(x_1), inv(x_2))) == Mult(x_3, inv(Mult(x_1, x_2))))
+    }
+
+    axiom  {
+        forall x_1, x_2 Term :: 
+            { Mult(inv(x_1), inv(x_2)) } (
+                Mult(inv(x_1), inv(x_2)) == inv(Mult(x_1, x_2)))
+    }
+}

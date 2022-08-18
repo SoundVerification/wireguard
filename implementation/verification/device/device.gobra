@@ -1,6 +1,0 @@
-// this file provides the necessary stubs such that the structs 
-// and signatures of procedures in `library` typecheck.
-
-package device
-
-type Device = int // abstract type

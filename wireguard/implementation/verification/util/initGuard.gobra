@@ -1,0 +1,131 @@
+package util
+
+import . "wireguard-gobra/wireguard/verification/claim"
+import . "wireguard-gobra/wireguard/verification/fact"
+import . "wireguard-gobra/wireguard/verification/term"
+import . "wireguard-gobra/wireguard/verification/pub"
+import . "wireguard-gobra/wireguard/verification/fresh"
+
+ghost 
+pure func InternalInit1L(sidI Term, a Term, b Term, prologue Term, info Term, kI Term, pkR Term, psk Term, ekI Term, timestamp Term, mac1I Term, mac2I Term) (res mset[Fact]) {
+	return mset[Fact] { 
+		Setup_Init(sidI, a, b, prologue, info),
+		LtK_Init(sidI, a, kI),
+		LtpK_Init(sidI, b, pkR),
+		PsK_Init(sidI, a, b, psk),
+		FrFact_Init(sidI, ekI),
+		Timestamp_Init(sidI, timestamp),
+		MAC_Init(sidI, mac1I),
+		MAC_Init(sidI, mac2I) }
+}
+
+ghost 
+pure func InternalInit1A(sidI Term, a Term, b Term, prologue Term, info Term, kI Term, pkR Term, psk Term, ekI Term, timestamp Term, mac1I Term, mac2I Term) (res mset[Claim]) {
+	return mset[Claim] { 
+		SendSIDI(sidI),
+    	OutFormat1(format1(pubTerm(const_1_pub()), sidI, exp(pubTerm(const_g_pub()), ekI), aead(kdf2(kdf1(h_(info), exp(pubTerm(const_g_pub()), ekI)), exp(pkR, ekI)), pubTerm(const_0_pub()), exp(pubTerm(const_g_pub()), kI), h(h(h(h_(info), prologue), pkR), exp(pubTerm(const_g_pub()), ekI))), aead(kdf2(kdf1(kdf1(h_(info), exp(pubTerm(const_g_pub()), ekI)), exp(pkR, ekI)), exp(pkR, kI)), pubTerm(const_0_pub()), timestamp, h(h(h(h(h_(info), prologue), pkR), exp(pubTerm(const_g_pub()), ekI)), aead(kdf2(kdf1(h_(info), exp(pubTerm(const_g_pub()), ekI)), exp(pkR, ekI)), pubTerm(const_0_pub()), exp(pubTerm(const_g_pub()), kI), h(h(h(h_(info), prologue), pkR), exp(pubTerm(const_g_pub()), ekI))))), mac1I, mac2I))}
+}
+
+ghost 
+pure func InternalInit1R(sidI Term, a Term, b Term, prologue Term, info Term, kI Term, pkR Term, psk Term, ekI Term, timestamp Term, mac1I Term, mac2I Term) (res mset[Fact]) {
+	return mset[Fact] { 
+		St_Init_1(sidI, a, b, prologue, info, kI, pkR, ekI, psk, kdf1(kdf1(kdf1(h_(info), exp(pubTerm(const_g_pub()), ekI)), exp(pkR, ekI)), exp(pkR, kI)), h(h(h(h(h(h_(info), prologue), pkR), exp(pubTerm(const_g_pub()), ekI)), aead(kdf2(kdf1(h_(info), exp(pubTerm(const_g_pub()), ekI)), exp(pkR, ekI)), pubTerm(const_0_pub()), exp(pubTerm(const_g_pub()), kI), h(h(h(h_(info), prologue), pkR), exp(pubTerm(const_g_pub()), ekI)))), aead(kdf2(kdf1(kdf1(h_(info), exp(pubTerm(const_g_pub()), ekI)), exp(pkR, ekI)), exp(pkR, kI)), pubTerm(const_0_pub()), timestamp, h(h(h(h(h_(info), prologue), pkR), exp(pubTerm(const_g_pub()), ekI)), aead(kdf2(kdf1(h_(info), exp(pubTerm(const_g_pub()), ekI)), exp(pkR, ekI)), pubTerm(const_0_pub()), exp(pubTerm(const_g_pub()), kI), h(h(h(h_(info), prologue), pkR), exp(pubTerm(const_g_pub()), ekI))))))),
+    	OutFact_Init(sidI, format1(pubTerm(const_1_pub()), sidI, exp(pubTerm(const_g_pub()), ekI), aead(kdf2(kdf1(h_(info), exp(pubTerm(const_g_pub()), ekI)), exp(pkR, ekI)), pubTerm(const_0_pub()), exp(pubTerm(const_g_pub()), kI), h(h(h(h_(info), prologue), pkR), exp(pubTerm(const_g_pub()), ekI))), aead(kdf2(kdf1(kdf1(h_(info), exp(pubTerm(const_g_pub()), ekI)), exp(pkR, ekI)), exp(pkR, kI)), pubTerm(const_0_pub()), timestamp, h(h(h(h(h_(info), prologue), pkR), exp(pubTerm(const_g_pub()), ekI)), aead(kdf2(kdf1(h_(info), exp(pubTerm(const_g_pub()), ekI)), exp(pkR, ekI)), pubTerm(const_0_pub()), exp(pubTerm(const_g_pub()), kI), h(h(h(h_(info), prologue), pkR), exp(pubTerm(const_g_pub()), ekI))))), mac1I, mac2I)) }
+}
+
+
+
+ghost 
+pure func InternalInit2L(sidI Term, a Term, b Term, prologue Term, info Term, kI Term, pkR Term, ekI Term, psk Term, c3 Term, h4 Term, sidR Term, epkR Term, mac1R Term, mac2R Term) (res mset[Fact]) {
+	return mset[Fact] { 
+		St_Init_1(sidI, a, b, prologue, info, kI, pkR, ekI, psk, c3, h4),
+        InFact_Init(sidI, format2(pubTerm(const_2_pub()), sidR, sidI, epkR, aead(kdf3(kdf1(kdf1(kdf1(c3, epkR), exp(epkR, ekI)), exp(epkR, kI)), psk), pubTerm(const_0_pub()), pubTerm(const_e_pub()), h(h(h4, epkR), kdf2(kdf1(kdf1(kdf1(c3, epkR), exp(epkR, ekI)), exp(epkR, kI)), psk))), mac1R, mac2R))}
+}
+
+ghost 
+pure func InternalInit2A(sidI Term, a Term, b Term, prologue Term, info Term, kI Term, pkR Term, ekI Term, psk Term, c3 Term, h4 Term, sidR Term, epkR Term, mac1R Term, mac2R Term) (res mset[Claim]) {
+	return mset[Claim] { 
+		Commit(pubTerm(const_Init_pub()), pubTerm(const_Resp_pub()), pair(a, pair(b, pair(kdf1_(kdf1(kdf1(kdf1(kdf1(c3, epkR), exp(epkR, ekI)), exp(epkR, kI)), psk)), kdf2_(kdf1(kdf1(kdf1(kdf1(c3, epkR), exp(epkR, ekI)), exp(epkR, kI)), psk)))))),
+        Secret(a, b, pair(kdf1_(kdf1(kdf1(kdf1(kdf1(c3, epkR), exp(epkR, ekI)), exp(epkR, kI)), psk)), kdf2_(kdf1(kdf1(kdf1(kdf1(c3, epkR), exp(epkR, ekI)), exp(epkR, kI)), psk)))),
+        InFormat2(format2(pubTerm(const_2_pub()), sidR, sidI, epkR, aead(kdf3(kdf1(kdf1(kdf1(c3, epkR), exp(epkR, ekI)), exp(epkR, kI)), psk), pubTerm(const_0_pub()), pubTerm(const_e_pub()), h(h(h4, epkR), kdf2(kdf1(kdf1(kdf1(c3, epkR), exp(epkR, ekI)), exp(epkR, kI)), psk))), mac1R, mac2R))}
+}
+
+ghost 
+pure func InternalInit2R(sidI Term, a Term, b Term, prologue Term, info Term, kI Term, pkR Term, ekI Term, psk Term, c3 Term, h4 Term, sidR Term, epkR Term, mac1R Term, mac2R Term) (res mset[Fact]) {
+	return mset[Fact] { 
+		St_Init_2(sidI, a, b, prologue, info, sidR, kdf1_(kdf1(kdf1(kdf1(kdf1(c3, epkR), exp(epkR, ekI)), exp(epkR, kI)), psk)), kdf2_(kdf1(kdf1(kdf1(kdf1(c3, epkR), exp(epkR, ekI)), exp(epkR, kI)), psk))) }
+}
+
+
+
+ghost 
+pure func InternalInit3L(sidI Term, a Term, b Term, prologue Term, info Term, sidR Term, kIR Term, kRI Term, p Term) (res mset[Fact]) {
+	return mset[Fact] { 
+		St_Init_2(sidI, a, b, prologue, info, sidR, kIR, kRI), Message_Init(sidI, p)}
+}
+
+ghost 
+pure func InternalInit3A(sidI Term, a Term, b Term, prologue Term, info Term, sidR Term, kIR Term, kRI Term, p Term) (res mset[Claim]) {
+	return mset[Claim] { 
+		SentFirstInit(sidI, sidR, a, b, kIR, kRI, p),
+        Running(pubTerm(const_Resp_pub()), pubTerm(const_Init_pub()), pair(a, pair(b, pair(kIR, kRI)))),
+        OutFormat4(format4(pubTerm(const_4_pub()), sidR, pubTerm(const_0_pub()), aead(kIR, pubTerm(const_0_pub()), p, pubTerm(const_e_pub()))))}
+}
+
+ghost 
+pure func InternalInit3R(sidI Term, a Term, b Term, prologue Term, info Term, sidR Term, kIR Term, kRI Term, p Term) (res mset[Fact]) {
+	return mset[Fact] { 
+		St_Init_3(sidI, a, b, prologue, info, sidR, kIR, kRI),
+        OutFact_Init(sidI, format4(pubTerm(const_4_pub()), sidR, pubTerm(const_0_pub()), aead(kIR, pubTerm(const_0_pub()), p, pubTerm(const_e_pub())))) }
+}
+
+
+
+
+
+ghost 
+pure func InternalInit4L(sidI Term, a Term, b Term, prologue Term, info Term, sidR Term, kIR Term, kRI Term, nIR Term, p Term) (res mset[Fact]) {
+	return mset[Fact] {
+		St_Init_3(sidI, a, b, prologue, info, sidR, kIR, kRI),
+		Counter_Init(sidI, nIR),
+		Message_Init(sidI, p) }
+}
+
+ghost 
+pure func InternalInit4A(sidI Term, a Term, b Term, prologue Term, info Term, sidR Term, kIR Term, kRI Term, nIR Term, p Term) (res mset[Claim]) {
+	return mset[Claim] {
+		SentInitLoop(sidI, sidR, a, b, kIR, kRI),
+		AlreadyKnownSIDR(sidR),
+		OutFormat4(format4(pubTerm(const_4_pub()), sidR, nIR, aead(kIR, nIR, p, pubTerm(const_e_pub())))) }
+}
+
+ghost 
+pure func InternalInit4R(sidI Term, a Term, b Term, prologue Term, info Term, sidR Term, kIR Term, kRI Term, nIR Term, p Term) (res mset[Fact]) {
+	return mset[Fact] {
+		St_Init_3(sidI, a, b, prologue, info, sidR, kIR, kRI),
+		OutFact_Init(sidI, format4(pubTerm(const_4_pub()), sidR, nIR, aead(kIR, nIR, p, pubTerm(const_e_pub())))) }
+}
+
+
+
+
+
+ghost 
+pure func InternalInit5L(sidI Term, a Term, b Term, prologue Term, info Term, sidR Term, kIR Term, kRI Term, x Term, nRI Term, p Term) (res mset[Fact]) {
+	return mset[Fact] {
+		St_Init_3(sidI, a, b, prologue, info, sidR, kIR, kRI), InFact_Init(sidI,
+		format4(pubTerm(const_4_pub()), x, nRI, aead(kRI, nRI, p, pubTerm(const_e_pub())))) }
+}
+
+ghost 
+pure func InternalInit5A(sidI Term, a Term, b Term, prologue Term, info Term, sidR Term, kIR Term, kRI Term, x Term, nRI Term, p Term) (res mset[Claim]) {
+	return mset[Claim] {
+		ReceivedInitLoop(sidI, sidR, a, b, kIR, kRI), AlreadyKnownSIDR(sidR),
+		InFormat4(format4(pubTerm(const_4_pub()), x, nRI, aead(kRI, nRI, p, pubTerm(const_e_pub())))) }
+}
+
+ghost 
+pure func InternalInit5R(sidI Term, a Term, b Term, prologue Term, info Term, sidR Term, kIR Term, kRI Term, x Term, nRI Term, p Term) (res mset[Fact]) {
+	return mset[Fact] {
+		St_Init_3(sidI, a, b, prologue, info, sidR, kIR, kRI) }
+}

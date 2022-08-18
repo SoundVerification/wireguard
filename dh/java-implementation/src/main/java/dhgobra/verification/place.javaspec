@@ -1,0 +1,21 @@
+package place;
+
+
+
+
+/*@
+
+   inductive Place = place(int);
+    predicate token(Place p);
+    
+
+
+    predicate bigstar<T>(predicate(T) p, list<T> used);
+    
+
+    lemma void bigstar_extract<T>(predicate(T) p, T value);
+    requires bigstar<T>(p, ?used) &*& !mem(value, used);
+    ensures bigstar<T>(p, cons(value, used)) &*& p(value);
+    
+
+@*/

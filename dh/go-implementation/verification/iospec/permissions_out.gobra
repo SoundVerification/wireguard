@@ -1,0 +1,19 @@
+package iospec
+
+
+
+import . "dh-gobra/verification/claim"
+import . "dh-gobra/verification/fact"
+import . "dh-gobra/verification/term"
+import . "dh-gobra/verification/place"
+import . "dh-gobra/verification/pub"
+import . "dh-gobra/verification/fresh"
+
+
+// permission e_OutFact
+pred e_OutFact(ghost tami_p Place, ghost tami_rid Term, ghost new_x Term)
+
+ghost
+requires e_OutFact(tami_p, tami_rid, new_x)
+pure func get_e_OutFact_placeDst(tami_p Place, tami_rid Term, new_x Term) (placeDst Place)
+

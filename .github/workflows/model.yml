@@ -1,4 +1,4 @@
-name: Protocol Model Verification
+name: DH & WireGuard Protocol Model Verification
 
 on:
   push:
@@ -6,9 +6,13 @@ on:
 jobs:
   build-verify:
     runs-on: ubuntu-latest
-    env:
-      IMAGE_ID: ghcr.io/soundverification/wireguard-tamarin
+    timeout-minutes: 20
     steps:
+      - name: Create Image ID
+        run: |
+          REPO_OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
+          echo "IMAGE_ID=ghcr.io/$REPO_OWNER/tamarin" >> $GITHUB_ENV
+
       - name: Checkout repo
         uses: actions/checkout@v2
 
@@ -24,17 +28,20 @@ jobs:
       - name: Build image
         uses: docker/build-push-action@v2
         with:
-          context: model
+          context: .
           load: true
-          file: model/docker/Dockerfile
+          file: tamarin-docker/Dockerfile
           tags: ${{ env.IMAGE_TAG }}
           labels: "runnumber=${{ github.run_id }}"
           push: false
           cache-from: type=gha, scope=${{ github.workflow }}
           cache-to: type=gha, scope=${{ github.workflow }}
 
-      - name: Verify Tamarin model
-        run: docker run ${{ env.IMAGE_TAG }} ./tamarin-prover --heuristic=O --oraclename="wireguard.oracle" --prove wireguard.spthy
+      - name: Verify DH Tamarin model
+        run: docker run ${{ env.IMAGE_TAG }} ./verify-dh.sh
+
+      - name: Verify WireGuard Tamarin model
+        run: docker run ${{ env.IMAGE_TAG }} ./verify-wireguard.sh
 
       - name: Login to Github Packages
         uses: docker/login-action@v1
@@ -46,8 +53,8 @@ jobs:
       - name: Push image
         uses: docker/build-push-action@v2
         with:
-          context: model
-          file: model/docker/Dockerfile
+          context: .
+          file: tamarin-docker/Dockerfile
           tags: ${{ env.IMAGE_TAG }}
           labels: "runnumber=${{ github.run_id }}"
           push: true

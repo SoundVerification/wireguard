@@ -1,0 +1,167 @@
+package iospec
+
+
+
+import . "wireguard-gobra/wireguard/verification/claim"
+import . "wireguard-gobra/wireguard/verification/fact"
+import . "wireguard-gobra/wireguard/verification/term"
+import . "wireguard-gobra/wireguard/verification/place"
+import . "wireguard-gobra/wireguard/verification/pub"
+import . "wireguard-gobra/wireguard/verification/fresh"
+
+
+// permission e_LtK
+pred e_LtK(ghost tami_p Place, ghost tami_rid Term)
+
+ghost
+requires e_LtK(tami_p, tami_rid)
+pure func get_e_LtK_r1(tami_p Place, tami_rid Term) (r1 Term)
+
+ghost
+requires e_LtK(tami_p, tami_rid)
+pure func get_e_LtK_r2(tami_p Place, tami_rid Term) (r2 Term)
+
+ghost
+requires e_LtK(tami_p, tami_rid)
+pure func get_e_LtK_placeDst(tami_p Place, tami_rid Term) (placeDst Place)
+
+
+// permission e_LtpK
+pred e_LtpK(ghost tami_p Place, ghost tami_rid Term)
+
+ghost
+requires e_LtpK(tami_p, tami_rid)
+pure func get_e_LtpK_r1(tami_p Place, tami_rid Term) (r1 Term)
+
+ghost
+requires e_LtpK(tami_p, tami_rid)
+pure func get_e_LtpK_r2(tami_p Place, tami_rid Term) (r2 Term)
+
+ghost
+requires e_LtpK(tami_p, tami_rid)
+pure func get_e_LtpK_placeDst(tami_p Place, tami_rid Term) (placeDst Place)
+
+
+// permission e_PsK
+pred e_PsK(ghost tami_p Place, ghost tami_rid Term)
+
+ghost
+requires e_PsK(tami_p, tami_rid)
+pure func get_e_PsK_r1(tami_p Place, tami_rid Term) (r1 Term)
+
+ghost
+requires e_PsK(tami_p, tami_rid)
+pure func get_e_PsK_r2(tami_p Place, tami_rid Term) (r2 Term)
+
+ghost
+requires e_PsK(tami_p, tami_rid)
+pure func get_e_PsK_r3(tami_p Place, tami_rid Term) (r3 Term)
+
+ghost
+requires e_PsK(tami_p, tami_rid)
+pure func get_e_PsK_placeDst(tami_p Place, tami_rid Term) (placeDst Place)
+
+
+// permission e_FrFact
+pred e_FrFact(ghost tami_p Place, ghost tami_rid Term)
+
+ghost
+requires e_FrFact(tami_p, tami_rid)
+pure func get_e_FrFact_r1(tami_p Place, tami_rid Term) (r1 Term)
+
+ghost
+requires e_FrFact(tami_p, tami_rid)
+pure func get_e_FrFact_placeDst(tami_p Place, tami_rid Term) (placeDst Place)
+
+
+// permission e_Timestamp
+pred e_Timestamp(ghost tami_p Place, ghost tami_rid Term)
+
+ghost
+requires e_Timestamp(tami_p, tami_rid)
+pure func get_e_Timestamp_r1(tami_p Place, tami_rid Term) (r1 Term)
+
+ghost
+requires e_Timestamp(tami_p, tami_rid)
+pure func get_e_Timestamp_placeDst(tami_p Place, tami_rid Term) (placeDst Place)
+
+
+// permission e_MAC
+pred e_MAC(ghost tami_p Place, ghost tami_rid Term)
+
+ghost
+requires e_MAC(tami_p, tami_rid)
+pure func get_e_MAC_r1(tami_p Place, tami_rid Term) (r1 Term)
+
+ghost
+requires e_MAC(tami_p, tami_rid)
+pure func get_e_MAC_placeDst(tami_p Place, tami_rid Term) (placeDst Place)
+
+
+// permission e_InFact
+pred e_InFact(ghost tami_p Place, ghost tami_rid Term)
+
+ghost
+requires e_InFact(tami_p, tami_rid)
+pure func get_e_InFact_r1(tami_p Place, tami_rid Term) (r1 Term)
+
+ghost
+requires e_InFact(tami_p, tami_rid)
+pure func get_e_InFact_placeDst(tami_p Place, tami_rid Term) (placeDst Place)
+
+
+// permission e_Message
+pred e_Message(ghost tami_p Place, ghost tami_rid Term)
+
+ghost
+requires e_Message(tami_p, tami_rid)
+pure func get_e_Message_r1(tami_p Place, tami_rid Term) (r1 Term)
+
+ghost
+requires e_Message(tami_p, tami_rid)
+pure func get_e_Message_placeDst(tami_p Place, tami_rid Term) (placeDst Place)
+
+
+// permission e_Counter
+pred e_Counter(ghost tami_p Place, ghost tami_rid Term)
+
+ghost
+requires e_Counter(tami_p, tami_rid)
+pure func get_e_Counter_r1(tami_p Place, tami_rid Term) (r1 Term)
+
+ghost
+requires e_Counter(tami_p, tami_rid)
+pure func get_e_Counter_placeDst(tami_p Place, tami_rid Term) (placeDst Place)
+
+
+// permission e_Setup_Init
+pred e_Setup_Init(ghost tami_p Place, ghost tami_rid Term)
+
+ghost
+requires e_Setup_Init(tami_p, tami_rid)
+pure func get_e_Setup_Init_r1(tami_p Place, tami_rid Term) (r1 Term)
+
+ghost
+requires e_Setup_Init(tami_p, tami_rid)
+pure func get_e_Setup_Init_r2(tami_p Place, tami_rid Term) (r2 Term)
+
+ghost
+requires e_Setup_Init(tami_p, tami_rid)
+pure func get_e_Setup_Init_placeDst(tami_p Place, tami_rid Term) (placeDst Place)
+
+
+// permission e_Setup_Resp
+pred e_Setup_Resp(ghost tami_p Place, ghost tami_rid Term)
+
+ghost
+requires e_Setup_Resp(tami_p, tami_rid)
+pure func get_e_Setup_Resp_r1(tami_p Place, tami_rid Term) (r1 Term)
+
+ghost
+requires e_Setup_Resp(tami_p, tami_rid)
+pure func get_e_Setup_Resp_r2(tami_p Place, tami_rid Term) (r2 Term)
+
+ghost
+requires e_Setup_Resp(tami_p, tami_rid)
+pure func get_e_Setup_Resp_placeDst(tami_p Place, tami_rid Term) (placeDst Place)
+

@@ -1,0 +1,155 @@
+package term;
+
+import fresh.*;
+import pub.*;
+
+
+
+/*@
+
+   inductive Term = Term(list<boolean>);
+    
+
+    fixpoint Term freshTerm(Fresh f);
+    fixpoint Term pubTerm(Pub p);
+    
+
+
+    // Function declarations
+    fixpoint Term ex1(Term t1);
+    fixpoint Term ex2(Term t1);
+    fixpoint Term ex3(Term t1);
+    fixpoint Term ex4(Term t1);
+    fixpoint Term ex5(Term t1);
+    fixpoint Term exp(Term t1, Term t2);
+    fixpoint Term extract(Term t1);
+    fixpoint Term format(Term t1, Term t2, Term t3, Term t4, Term t5);
+    fixpoint Term fst(Term t1);
+    fixpoint Term inv(Term t1);
+    fixpoint Term one();
+    fixpoint Term paired(Term t1, Term t2);
+    fixpoint Term pk(Term t1);
+    fixpoint Term sign(Term t1, Term t2);
+    fixpoint Term snd(Term t1);
+    fixpoint Term ok();
+    fixpoint Term verify(Term t1, Term t2);
+    fixpoint Term Mult(Term x, Term y);
+    
+
+  // associativity and commutativity for function Mult
+        lemma_auto void Mult_A(Term x, Term y, Term z);
+            requires true;
+            ensures true && Mult(x, Mult(y, z)) == Mult(Mult(x, y), z);
+        lemma_auto void Mult_C(Term x, Term y);
+            requires true;
+            ensures true && Mult(x, y) == Mult(y, x);
+    
+
+  lemma_auto void termFuncLemma1(Term x1, Term x2, Term x3, Term x4, Term x5);
+            requires true;
+            ensures true && ex1(format(x1, x2, x3, x4, x5)) == x1;
+        lemma_auto void termFuncLemma2(Term x1, Term x2, Term x3, Term x4, Term x5);
+            requires true;
+            ensures true && ex2(format(x1, x2, x3, x4, x5)) == x2;
+        lemma_auto void termFuncLemma3(Term x1, Term x2, Term x3, Term x4, Term x5);
+            requires true;
+            ensures true && ex3(format(x1, x2, x3, x4, x5)) == x3;
+        lemma_auto void termFuncLemma4(Term x1, Term x2, Term x3, Term x4, Term x5);
+            requires true;
+            ensures true && ex4(format(x1, x2, x3, x4, x5)) == x4;
+        lemma_auto void termFuncLemma5(Term x1, Term x2, Term x3, Term x4, Term x5);
+            requires true;
+            ensures true && ex5(format(x1, x2, x3, x4, x5)) == x5;
+        lemma_auto void termFuncLemma6(Term x_1);
+            requires true;
+            ensures true && exp(x_1, one()) == x_1;
+        lemma_auto void termFuncLemma7(Term x_1, Term x_2, Term x_3);
+            requires true;
+            ensures true && exp(exp(x_1, x_2), x_3) == exp(x_1, Mult(x_2, x_3));
+        lemma_auto void termFuncLemma8(Term k, Term m);
+            requires true;
+            ensures true && extract(sign(m, k)) == m;
+        lemma_auto void termFuncLemma9(Term x_1, Term x_2);
+            requires true;
+            ensures true && fst(paired(x_1, x_2)) == x_1;
+        lemma_auto void termFuncLemma10(Term x_1);
+            requires true;
+            ensures true && inv(inv(x_1)) == x_1;
+        lemma_auto void termFuncLemma11();
+            requires true;
+            ensures true && inv(one()) == one();
+        lemma_auto void termFuncLemma12(Term x_1, Term x_2);
+            requires true;
+            ensures true && inv(Mult(x_2, inv(x_1))) == Mult(x_1, inv(x_2));
+        lemma_auto void termFuncLemma13(Term x_1, Term x_2);
+            requires true;
+            ensures true && snd(paired(x_1, x_2)) == x_2;
+        lemma_auto void termFuncLemma14(Term k, Term m);
+            requires true;
+            ensures true && verify(sign(m, k), pk(k)) == ok();
+        lemma_auto void termFuncLemma15(Term x_1, Term x_2);
+            requires true;
+            ensures true && Mult(x_1, Mult(x_2, inv(x_1))) == x_2;
+        lemma_auto void termFuncLemma16(Term x_1);
+            requires true;
+            ensures true && Mult(x_1, inv(x_1)) == one();
+        lemma_auto void termFuncLemma17(Term x_1);
+            requires true;
+            ensures true && Mult(x_1, one()) == x_1;
+        lemma_auto void termFuncLemma18(Term x_1, Term x_2, Term x_3);
+            requires true;
+            ensures true && Mult(x_2, Mult(x_3, inv(Mult(x_1, x_2)))) == Mult(x_3, inv(x_1));
+        lemma_auto void termFuncLemma19(Term x_1, Term x_2);
+            requires true;
+            ensures true && Mult(x_2, inv(Mult(x_1, x_2))) == inv(x_1);
+        lemma_auto void termFuncLemma20(Term x_1, Term x_2, Term x_3);
+            requires true;
+            ensures true && Mult(x_3, Mult(inv(x_1), inv(x_2))) == Mult(x_3, inv(Mult(x_1, x_2)));
+        lemma_auto void termFuncLemma21(Term x_1, Term x_2);
+            requires true;
+            ensures true && Mult(inv(x_1), inv(x_2)) == inv(Mult(x_1, x_2));
+
+
+
+
+// ADDED for code verification:
+
+fixpoint list<byte> gamma(Term t);
+
+fixpoint list<byte> bytes_int(int i);
+fixpoint list<byte> bytes_const_g_pub();
+fixpoint list<byte> bytes_const_0_pub();
+fixpoint list<byte> bytes_const_1_pub();
+fixpoint list<byte> bytes_exp(list<byte> b1, list<byte> b2);
+fixpoint list<byte> bytes_sign(list<byte> b1, list<byte> b2);
+fixpoint list<byte> bytes_format(list<byte> b1, list<byte> b2, list<byte> b3, list<byte> b4, list<byte> b5);
+
+lemma_auto void gammaLemma2();
+    requires true;
+    ensures  gamma(pubTerm(const_g_pub())) == bytes_const_g_pub();
+
+lemma_auto void gammaLemma3();
+    requires true;
+    ensures  gamma(pubTerm(const_0_pub())) == bytes_const_0_pub();
+
+lemma_auto void gammaLemma4();
+    requires true;
+    ensures  gamma(pubTerm(const_1_pub())) == bytes_const_1_pub();
+
+lemma_auto void gammaLemma5(Term t1, Term t2);
+    requires true;
+    ensures  gamma(exp(t1, t2)) == bytes_exp(gamma(t1), gamma(t2));
+
+lemma_auto void gammaLemma6(Term t1, Term t2);
+    requires true;
+    ensures  gamma(sign(t1, t2)) == bytes_sign(gamma(t1), gamma(t2));
+
+lemma_auto void gammaLemma7(Term t1, Term t2, Term t3, Term t4, Term t5);
+    requires true;
+    ensures  gamma(format(t1, t2, t3, t4, t5)) == bytes_format(gamma(t1), gamma(t2), gamma(t3), gamma(t4), gamma(t5));
+
+lemma void patternRequirement(Term t1, Term A, Term B, Term y, Term X, Term skA);
+    requires gamma(t1) == gamma(sign(format(pubTerm(const_1_pub()), A, B, exp(pubTerm(const_g_pub()), y), X), skA));
+    ensures  t1 == sign(format(pubTerm(const_1_pub()), A, B, exp(pubTerm(const_g_pub()), y), X), skA);
+
+@*/

@@ -1,0 +1,12 @@
+package place
+
+
+
+
+
+// place encoding ---------------
+type Place domain {
+    func place(p int) Place
+}
+pred token(t Place)
+

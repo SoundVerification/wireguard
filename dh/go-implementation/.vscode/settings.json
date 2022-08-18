@@ -1,0 +1,9 @@
+{
+    "gobraSettings.moduleName": "dh-gobra",
+    "gobraSettings.includeDirs": [
+        "verification",
+        "."
+    ],
+    "gobraSettings.autoVerify": false,
+    "gobraSettings.buildVersion": "Stable"
+}

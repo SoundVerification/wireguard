@@ -1,0 +1,83 @@
+package iospec
+
+
+
+import . "dh-gobra/verification/claim"
+import . "dh-gobra/verification/fact"
+import . "dh-gobra/verification/term"
+import . "dh-gobra/verification/place"
+import . "dh-gobra/verification/pub"
+import . "dh-gobra/verification/fresh"
+
+
+// permission e_FrFact
+pred e_FrFact(ghost tami_p Place, ghost tami_rid Term)
+
+ghost
+requires e_FrFact(tami_p, tami_rid)
+pure func get_e_FrFact_r1(tami_p Place, tami_rid Term) (r1 Term)
+
+ghost
+requires e_FrFact(tami_p, tami_rid)
+pure func get_e_FrFact_placeDst(tami_p Place, tami_rid Term) (placeDst Place)
+
+
+// permission e_InFact
+pred e_InFact(ghost tami_p Place, ghost tami_rid Term)
+
+ghost
+requires e_InFact(tami_p, tami_rid)
+pure func get_e_InFact_r1(tami_p Place, tami_rid Term) (r1 Term)
+
+ghost
+requires e_InFact(tami_p, tami_rid)
+pure func get_e_InFact_placeDst(tami_p Place, tami_rid Term) (placeDst Place)
+
+
+// permission e_Setup_Alice
+pred e_Setup_Alice(ghost tami_p Place, ghost tami_rid Term)
+
+ghost
+requires e_Setup_Alice(tami_p, tami_rid)
+pure func get_e_Setup_Alice_r1(tami_p Place, tami_rid Term) (r1 Term)
+
+ghost
+requires e_Setup_Alice(tami_p, tami_rid)
+pure func get_e_Setup_Alice_r2(tami_p Place, tami_rid Term) (r2 Term)
+
+ghost
+requires e_Setup_Alice(tami_p, tami_rid)
+pure func get_e_Setup_Alice_r3(tami_p Place, tami_rid Term) (r3 Term)
+
+ghost
+requires e_Setup_Alice(tami_p, tami_rid)
+pure func get_e_Setup_Alice_r4(tami_p Place, tami_rid Term) (r4 Term)
+
+ghost
+requires e_Setup_Alice(tami_p, tami_rid)
+pure func get_e_Setup_Alice_placeDst(tami_p Place, tami_rid Term) (placeDst Place)
+
+
+// permission e_Setup_Bob
+pred e_Setup_Bob(ghost tami_p Place, ghost tami_rid Term)
+
+ghost
+requires e_Setup_Bob(tami_p, tami_rid)
+pure func get_e_Setup_Bob_r1(tami_p Place, tami_rid Term) (r1 Term)
+
+ghost
+requires e_Setup_Bob(tami_p, tami_rid)
+pure func get_e_Setup_Bob_r2(tami_p Place, tami_rid Term) (r2 Term)
+
+ghost
+requires e_Setup_Bob(tami_p, tami_rid)
+pure func get_e_Setup_Bob_r3(tami_p Place, tami_rid Term) (r3 Term)
+
+ghost
+requires e_Setup_Bob(tami_p, tami_rid)
+pure func get_e_Setup_Bob_r4(tami_p Place, tami_rid Term) (r4 Term)
+
+ghost
+requires e_Setup_Bob(tami_p, tami_rid)
+pure func get_e_Setup_Bob_placeDst(tami_p Place, tami_rid Term) (placeDst Place)
+

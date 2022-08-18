@@ -1,0 +1,76 @@
+package iospec
+
+
+
+import . "wireguard-gobra/wireguard/verification/claim"
+import . "wireguard-gobra/wireguard/verification/fact"
+import . "wireguard-gobra/wireguard/verification/term"
+import . "wireguard-gobra/wireguard/verification/place"
+import . "wireguard-gobra/wireguard/verification/pub"
+import . "wireguard-gobra/wireguard/verification/fresh"
+
+
+// permission e_Handshake_St_Init_1
+pred e_Handshake_St_Init_1(ghost tami_p Place, ghost sidI Term, ghost a Term, ghost b Term, ghost prologue Term, ghost info Term, ghost kI Term, ghost pkR Term, ghost psk Term, ghost ekI Term, ghost timestamp Term, ghost mac1I Term, ghost mac2I Term, ghost tami_lp mset[Fact], ghost tami_ap mset[Claim], ghost tami_rp mset[Fact])
+
+ghost
+requires e_Handshake_St_Init_1(tami_p, sidI, a, b, prologue, info, kI, pkR, psk, ekI, timestamp, mac1I, mac2I, tami_lp, tami_ap, tami_rp)
+pure func get_e_Handshake_St_Init_1_placeDst(tami_p Place, sidI Term, a Term, b Term, prologue Term, info Term, kI Term, pkR Term, psk Term, ekI Term, timestamp Term, mac1I Term, mac2I Term, tami_lp mset[Fact], tami_ap mset[Claim], tami_rp mset[Fact]) (placeDst Place)
+
+ghost
+requires token(tami_p) && e_Handshake_St_Init_1(tami_p, sidI, a, b, prologue, info, kI, pkR, psk, ekI, timestamp, mac1I, mac2I, tami_lp, tami_ap, tami_rp)
+ensures token(tami_pp) && tami_pp == old(get_e_Handshake_St_Init_1_placeDst(tami_p, sidI, a, b, prologue, info, kI, pkR, psk, ekI, timestamp, mac1I, mac2I, tami_lp, tami_ap, tami_rp))
+func internBIO_e_Handshake_St_Init_1(tami_p Place, sidI Term, a Term, b Term, prologue Term, info Term, kI Term, pkR Term, psk Term, ekI Term, timestamp Term, mac1I Term, mac2I Term, tami_lp mset[Fact], tami_ap mset[Claim], tami_rp mset[Fact]) (tami_pp Place)
+
+
+// permission e_Handshake_St_Init_2
+pred e_Handshake_St_Init_2(ghost tami_p Place, ghost sidI Term, ghost a Term, ghost b Term, ghost prologue Term, ghost info Term, ghost kI Term, ghost pkR Term, ghost ekI Term, ghost psk Term, ghost c3 Term, ghost h4 Term, ghost sidR Term, ghost epkR Term, ghost mac1R Term, ghost mac2R Term, ghost tami_lp mset[Fact], ghost tami_ap mset[Claim], ghost tami_rp mset[Fact])
+
+ghost
+requires e_Handshake_St_Init_2(tami_p, sidI, a, b, prologue, info, kI, pkR, ekI, psk, c3, h4, sidR, epkR, mac1R, mac2R, tami_lp, tami_ap, tami_rp)
+pure func get_e_Handshake_St_Init_2_placeDst(tami_p Place, sidI Term, a Term, b Term, prologue Term, info Term, kI Term, pkR Term, ekI Term, psk Term, c3 Term, h4 Term, sidR Term, epkR Term, mac1R Term, mac2R Term, tami_lp mset[Fact], tami_ap mset[Claim], tami_rp mset[Fact]) (placeDst Place)
+
+ghost
+requires token(tami_p) && e_Handshake_St_Init_2(tami_p, sidI, a, b, prologue, info, kI, pkR, ekI, psk, c3, h4, sidR, epkR, mac1R, mac2R, tami_lp, tami_ap, tami_rp)
+ensures token(tami_pp) && tami_pp == old(get_e_Handshake_St_Init_2_placeDst(tami_p, sidI, a, b, prologue, info, kI, pkR, ekI, psk, c3, h4, sidR, epkR, mac1R, mac2R, tami_lp, tami_ap, tami_rp))
+func internBIO_e_Handshake_St_Init_2(tami_p Place, sidI Term, a Term, b Term, prologue Term, info Term, kI Term, pkR Term, ekI Term, psk Term, c3 Term, h4 Term, sidR Term, epkR Term, mac1R Term, mac2R Term, tami_lp mset[Fact], tami_ap mset[Claim], tami_rp mset[Fact]) (tami_pp Place)
+
+
+// permission e_Send_First_Init
+pred e_Send_First_Init(ghost tami_p Place, ghost sidI Term, ghost a Term, ghost b Term, ghost prologue Term, ghost info Term, ghost sidR Term, ghost kIR Term, ghost kRI Term, ghost p Term, ghost tami_lp mset[Fact], ghost tami_ap mset[Claim], ghost tami_rp mset[Fact])
+
+ghost
+requires e_Send_First_Init(tami_p, sidI, a, b, prologue, info, sidR, kIR, kRI, p, tami_lp, tami_ap, tami_rp)
+pure func get_e_Send_First_Init_placeDst(tami_p Place, sidI Term, a Term, b Term, prologue Term, info Term, sidR Term, kIR Term, kRI Term, p Term, tami_lp mset[Fact], tami_ap mset[Claim], tami_rp mset[Fact]) (placeDst Place)
+
+ghost
+requires token(tami_p) && e_Send_First_Init(tami_p, sidI, a, b, prologue, info, sidR, kIR, kRI, p, tami_lp, tami_ap, tami_rp)
+ensures token(tami_pp) && tami_pp == old(get_e_Send_First_Init_placeDst(tami_p, sidI, a, b, prologue, info, sidR, kIR, kRI, p, tami_lp, tami_ap, tami_rp))
+func internBIO_e_Send_First_Init(tami_p Place, sidI Term, a Term, b Term, prologue Term, info Term, sidR Term, kIR Term, kRI Term, p Term, tami_lp mset[Fact], tami_ap mset[Claim], tami_rp mset[Fact]) (tami_pp Place)
+
+
+// permission e_Send_Init_Loop
+pred e_Send_Init_Loop(ghost tami_p Place, ghost sidI Term, ghost a Term, ghost b Term, ghost prologue Term, ghost info Term, ghost sidR Term, ghost kIR Term, ghost kRI Term, ghost nIR Term, ghost p Term, ghost tami_lp mset[Fact], ghost tami_ap mset[Claim], ghost tami_rp mset[Fact])
+
+ghost
+requires e_Send_Init_Loop(tami_p, sidI, a, b, prologue, info, sidR, kIR, kRI, nIR, p, tami_lp, tami_ap, tami_rp)
+pure func get_e_Send_Init_Loop_placeDst(tami_p Place, sidI Term, a Term, b Term, prologue Term, info Term, sidR Term, kIR Term, kRI Term, nIR Term, p Term, tami_lp mset[Fact], tami_ap mset[Claim], tami_rp mset[Fact]) (placeDst Place)
+
+ghost
+requires token(tami_p) && e_Send_Init_Loop(tami_p, sidI, a, b, prologue, info, sidR, kIR, kRI, nIR, p, tami_lp, tami_ap, tami_rp)
+ensures token(tami_pp) && tami_pp == old(get_e_Send_Init_Loop_placeDst(tami_p, sidI, a, b, prologue, info, sidR, kIR, kRI, nIR, p, tami_lp, tami_ap, tami_rp))
+func internBIO_e_Send_Init_Loop(tami_p Place, sidI Term, a Term, b Term, prologue Term, info Term, sidR Term, kIR Term, kRI Term, nIR Term, p Term, tami_lp mset[Fact], tami_ap mset[Claim], tami_rp mset[Fact]) (tami_pp Place)
+
+
+// permission e_Receive_Init_Loop
+pred e_Receive_Init_Loop(ghost tami_p Place, ghost sidI Term, ghost a Term, ghost b Term, ghost prologue Term, ghost info Term, ghost sidR Term, ghost kIR Term, ghost kRI Term, ghost x Term, ghost nRI Term, ghost p Term, ghost tami_lp mset[Fact], ghost tami_ap mset[Claim], ghost tami_rp mset[Fact])
+
+ghost
+requires e_Receive_Init_Loop(tami_p, sidI, a, b, prologue, info, sidR, kIR, kRI, x, nRI, p, tami_lp, tami_ap, tami_rp)
+pure func get_e_Receive_Init_Loop_placeDst(tami_p Place, sidI Term, a Term, b Term, prologue Term, info Term, sidR Term, kIR Term, kRI Term, x Term, nRI Term, p Term, tami_lp mset[Fact], tami_ap mset[Claim], tami_rp mset[Fact]) (placeDst Place)
+
+ghost
+requires token(tami_p) && e_Receive_Init_Loop(tami_p, sidI, a, b, prologue, info, sidR, kIR, kRI, x, nRI, p, tami_lp, tami_ap, tami_rp)
+ensures token(tami_pp) && tami_pp == old(get_e_Receive_Init_Loop_placeDst(tami_p, sidI, a, b, prologue, info, sidR, kIR, kRI, x, nRI, p, tami_lp, tami_ap, tami_rp))
+func internBIO_e_Receive_Init_Loop(tami_p Place, sidI Term, a Term, b Term, prologue Term, info Term, sidR Term, kIR Term, kRI Term, x Term, nRI Term, p Term, tami_lp mset[Fact], tami_ap mset[Claim], tami_rp mset[Fact]) (tami_pp Place)
+

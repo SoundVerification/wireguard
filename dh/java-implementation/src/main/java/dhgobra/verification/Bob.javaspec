@@ -1,0 +1,258 @@
+package iospec;
+
+import place.*;
+import fresh.*;
+import pub.*;
+import term.*;
+import fact.*;
+import claim.*;
+import permissions_in.*;
+import permissions_out.*;
+import permissions_Bob.*;
+
+
+
+/*@
+
+// handwritten utility function
+fixpoint Bob_quantified_vals addLAR(Bob_quantified_vals q) {
+  switch (q) {
+      case quant_phiR_Bob_0(ridB, B, A, skB, skA, y, X, tami_lp, tami_ap, tami_rp):
+        return quant_phiR_Bob_0(ridB, B, A, skB, skA, y, X, msetList(cons(Setup_Bob(ridB, B, A, skB, skA),cons(FrFact_Bob(ridB, y),cons(InFact_Bob(ridB, X),nil)))), msetList(cons(OUT_BOB(format(pubTerm(const_0_pub()), B, A, X, exp(pubTerm(const_g_pub()), y))),cons(Running(pubTerm(const_I_pub()), pubTerm(const_R_pub()), paired(A, paired(B, exp(X, y)))),nil))), msetList(cons(St_Bob_1(ridB, B, A, skB, skA, y, X),cons(OutFact_Bob(ridB, sign(format(pubTerm(const_0_pub()), B, A, X, exp(pubTerm(const_g_pub()), y)), skB)),nil))));
+      case quant_phiR_Bob_1(ridB, B, A, skB, skA, y, X, tami_lp, tami_ap, tami_rp):
+        return quant_phiR_Bob_1(ridB, B, A, skB, skA, y, X, msetList(cons(St_Bob_1(ridB, B, A, skB, skA, y, X),cons(InFact_Bob(ridB, sign(format(pubTerm(const_1_pub()), A, B, exp(pubTerm(const_g_pub()), y), X), skA)),nil))), msetList(cons(Commit(pubTerm(const_R_pub()), pubTerm(const_I_pub()), paired(A, paired(B, exp(X, y)))),cons(Secret(A, B, exp(X, y)),nil))), msetList(cons(St_Bob_2(ridB, B, A, skB, skA, y, X),nil)));
+      case quant_phiRG_Bob_2(new_x): 
+        return quant_phiRG_Bob_2(new_x);
+      case quant_phiRF_Bob_3: 
+        return quant_phiRF_Bob_3;
+      case quant_phiRF_Bob_4: 
+        return quant_phiRF_Bob_4;
+      case quant_phiRF_Bob_5: 
+         return quant_phiRF_Bob_5;
+  }
+}
+
+   inductive Bob_quantified_vals =
+            quant_phiR_Bob_0(Term, Term, Term, Term, Term, Term, Term, mset<Fact>, mset<Claim>, mset<Fact>) // ridB, B, A, skB, skA, y, X, tami_lp, tami_ap, tami_rp
+        |   quant_phiR_Bob_1(Term, Term, Term, Term, Term, Term, Term, mset<Fact>, mset<Claim>, mset<Fact>) // ridB, B, A, skB, skA, y, X, tami_lp, tami_ap, tami_rp
+        |   quant_phiRG_Bob_2(Term) // new_x
+        |   quant_phiRF_Bob_3 // 
+        |   quant_phiRF_Bob_4 // 
+        |   quant_phiRF_Bob_5 // 
+    ;
+    predicate P_Bob(Place tami_p, Term tami_rid, mset<Fact> tami_s) =
+        bigstar(phiR_Bob_0(tami_p, tami_rid, tami_s), nil) &*&
+        bigstar(phiR_Bob_1(tami_p, tami_rid, tami_s), nil) &*&
+        bigstar(phiRG_Bob_2(tami_p, tami_rid, tami_s), nil) &*&
+        bigstar(phiRF_Bob_3(tami_p, tami_rid, tami_s), nil) &*&
+        bigstar(phiRF_Bob_4(tami_p, tami_rid, tami_s), nil) &*&
+        bigstar(phiRF_Bob_5(tami_p, tami_rid, tami_s), nil)
+    ;
+    predicate_ctor phiR_Bob_0(Place tami_p, Term tami_rid, mset<Fact> tami_s)(Bob_quantified_vals q) =
+        switch (q) {
+            case quant_phiR_Bob_0(ridB, B, A, skB, skA, y, X, tami_lp, tami_ap, tami_rp): 
+                return
+                M(tami_lp, tami_s) &&
+                tami_lp ==
+                msetList(
+                    cons(Setup_Bob(ridB, B, A, skB, skA),
+                    cons(FrFact_Bob(ridB, y),
+                    cons(InFact_Bob(ridB, X),
+                    nil)))
+                ) &&
+                tami_ap ==
+                msetList(
+                    cons(OUT_BOB(format(pubTerm(const_0_pub()), B, A, X, exp(pubTerm(const_g_pub()), y))),
+                    cons(Running(pubTerm(const_I_pub()), pubTerm(const_R_pub()), paired(A, paired(B, exp(X, y)))),
+                    nil))
+                ) &&
+                tami_rp ==
+                msetList(
+                    cons(St_Bob_1(ridB, B, A, skB, skA, y, X),
+                    cons(OutFact_Bob(ridB, sign(format(pubTerm(const_0_pub()), B, A, X, exp(pubTerm(const_g_pub()), y)), skB)),
+                    nil))
+                )
+                ?
+                (e_Bob_recvAndSend(tami_p, ridB, B, A, skB, skA, y, X, tami_lp, tami_ap, tami_rp, ?tami_pp) &*&
+                 P_Bob(
+                     tami_pp, 
+                     tami_rid, 
+                     U(tami_lp, tami_rp, tami_s)
+                 ))
+                :
+                true;
+            case quant_phiR_Bob_1(ridB, B, A, skB, skA, y, X, tami_lp, tami_ap, tami_rp): 
+                return true;
+            case quant_phiRG_Bob_2(new_x): 
+                return true;
+            case quant_phiRF_Bob_3: 
+                return true;
+            case quant_phiRF_Bob_4: 
+                return true;
+            case quant_phiRF_Bob_5: 
+                return true;
+        }
+    ;
+    predicate_ctor phiR_Bob_1(Place tami_p, Term tami_rid, mset<Fact> tami_s)(Bob_quantified_vals q) =
+        switch (q) {
+            case quant_phiR_Bob_1(ridB, B, A, skB, skA, y, X, tami_lp, tami_ap, tami_rp): 
+                return
+                M(tami_lp, tami_s) &&
+                tami_lp ==
+                msetList(
+                    cons(St_Bob_1(ridB, B, A, skB, skA, y, X),
+                    cons(InFact_Bob(ridB, sign(format(pubTerm(const_1_pub()), A, B, exp(pubTerm(const_g_pub()), y), X), skA)),
+                    nil))
+                ) &&
+                tami_ap ==
+                msetList(
+                    cons(Commit(pubTerm(const_R_pub()), pubTerm(const_I_pub()), paired(A, paired(B, exp(X, y)))),
+                    cons(Secret(A, B, exp(X, y)),
+                    nil))
+                ) &&
+                tami_rp ==
+                msetList(
+                    cons(St_Bob_2(ridB, B, A, skB, skA, y, X),
+                    nil)
+                )
+                ?
+                (e_Bob_recv(tami_p, ridB, B, A, skB, skA, y, X, tami_lp, tami_ap, tami_rp, ?tami_pp) &*&
+                 P_Bob(
+                     tami_pp, 
+                     tami_rid, 
+                     U(tami_lp, tami_rp, tami_s)
+                 ))
+                :
+                true;
+            case quant_phiR_Bob_0(ridB, B, A, skB, skA, y, X, tami_lp, tami_ap, tami_rp): 
+                return true;
+            case quant_phiRG_Bob_2(new_x): 
+                return true;
+            case quant_phiRF_Bob_3: 
+                return true;
+            case quant_phiRF_Bob_4: 
+                return true;
+            case quant_phiRF_Bob_5: 
+                return true;
+        }
+    ;
+    predicate_ctor phiRG_Bob_2(Place tami_p, Term tami_rid, mset<Fact> tami_s)(Bob_quantified_vals q) =
+        switch (q) {
+            case quant_phiRG_Bob_2(new_x): 
+                return
+                msetIn(
+                    OutFact_Bob(tami_rid, new_x), 
+                    tami_s
+                )
+                ?
+                (e_OutFact(tami_p, tami_rid, new_x, ?tami_pp) &*&
+                 P_Bob(
+                     tami_pp, 
+                     tami_rid, 
+                     msetMinus(
+                         tami_s, 
+                         msetList(
+                             cons(OutFact_Bob(tami_rid, new_x),
+                             nil)
+                         )
+                     )
+                 ))
+                :
+                true;
+            case quant_phiR_Bob_0(ridB, B, A, skB, skA, y, X, tami_lp, tami_ap, tami_rp): 
+                return true;
+            case quant_phiR_Bob_1(ridB, B, A, skB, skA, y, X, tami_lp, tami_ap, tami_rp): 
+                return true;
+            case quant_phiRF_Bob_3: 
+                return true;
+            case quant_phiRF_Bob_4: 
+                return true;
+            case quant_phiRF_Bob_5: 
+                return true;
+        }
+    ;
+    predicate_ctor phiRF_Bob_3(Place tami_p, Term tami_rid, mset<Fact> tami_s)(Bob_quantified_vals q) =
+        switch (q) {
+            case quant_phiRF_Bob_3: 
+                return
+                e_FrFact(tami_p, tami_rid, ?new_x, ?tami_pp) &*&
+                P_Bob(
+                    tami_pp, 
+                    tami_rid, 
+                    msetUnion(
+                        tami_s, 
+                        msetList(
+                            cons(FrFact_Bob(tami_rid, new_x),
+                            nil)
+                        )
+                    )
+                );
+            case quant_phiR_Bob_0(ridB, B, A, skB, skA, y, X, tami_lp, tami_ap, tami_rp): 
+                return true;
+            case quant_phiR_Bob_1(ridB, B, A, skB, skA, y, X, tami_lp, tami_ap, tami_rp): 
+                return true;
+            case quant_phiRG_Bob_2(new_x): 
+                return true;
+            case quant_phiRF_Bob_4: 
+                return true;
+            case quant_phiRF_Bob_5: 
+                return true;
+        }
+    ;
+    predicate_ctor phiRF_Bob_4(Place tami_p, Term tami_rid, mset<Fact> tami_s)(Bob_quantified_vals q) =
+        switch (q) {
+            case quant_phiRF_Bob_4: 
+                return
+                e_InFact(tami_p, tami_rid, ?new_x, ?tami_pp) &*&
+                P_Bob(
+                    tami_pp, 
+                    tami_rid, 
+                    msetUnion(
+                        tami_s, 
+                        msetList(
+                            cons(InFact_Bob(tami_rid, new_x),
+                            nil)
+                        )
+                    )
+                );
+            case quant_phiR_Bob_0(ridB, B, A, skB, skA, y, X, tami_lp, tami_ap, tami_rp): 
+                return true;
+            case quant_phiR_Bob_1(ridB, B, A, skB, skA, y, X, tami_lp, tami_ap, tami_rp): 
+                return true;
+            case quant_phiRG_Bob_2(new_x): 
+                return true;
+            case quant_phiRF_Bob_3: 
+                return true;
+            case quant_phiRF_Bob_5: 
+                return true;
+        }
+    ;
+    predicate_ctor phiRF_Bob_5(Place tami_p, Term tami_rid, mset<Fact> tami_s)(Bob_quantified_vals q) =
+        switch (q) {
+            case quant_phiRF_Bob_5: 
+                return
+                e_Setup_Bob(tami_p, tami_rid, ?B, ?A, ?skB, ?skA, ?tami_pp) &*&
+                P_Bob(
+                    tami_pp, 
+                    tami_rid, 
+                    msetUnion(
+                        tami_s, 
+                        msetList(
+                            cons(Setup_Bob(tami_rid, B, A, skB, skA),
+                            nil)
+                        )
+                    )
+                );
+            case quant_phiR_Bob_0(ridB, B, A, skB, skA, y, X, tami_lp, tami_ap, tami_rp): 
+                return true;
+            case quant_phiR_Bob_1(ridB, B, A, skB, skA, y, X, tami_lp, tami_ap, tami_rp): 
+                return true;
+            case quant_phiRG_Bob_2(new_x): 
+                return true;
+            case quant_phiRF_Bob_3: 
+                return true;
+            case quant_phiRF_Bob_4: 
+                return true;
+        }
+    ;
+@*/

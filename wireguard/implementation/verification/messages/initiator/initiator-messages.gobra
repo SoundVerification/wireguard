@@ -1,0 +1,325 @@
+package messageInitiator
+
+import by "wireguard-gobra/wireguard/verification/bytes"
+import tm "wireguard-gobra/wireguard/verification/util"
+
+// messages defined on Bytes
+ghost
+pure func Bytes_pkI(kI by.Bytes) (res by.Bytes) {
+	return by.expB(by.generatorB(), kI)
+}
+
+ghost
+pure func Bytes_epkI(ekI by.Bytes) (res by.Bytes) {
+	return by.expB(by.generatorB(), ekI)
+}
+
+ghost
+pure func Bytes_c0() (res by.Bytes) {
+	return by.hashB_(by.infoBytesB())
+}
+
+ghost
+pure func Bytes_h0() (res by.Bytes) {
+	return by.hashB(Bytes_c0(), by.prologueBytesB())
+}
+
+ghost
+pure func Bytes_h1(pkR by.Bytes) (res by.Bytes) {
+	return by.hashB(Bytes_h0(), pkR)
+}
+
+ghost
+pure func Bytes_c1(ekI by.Bytes) (res by.Bytes) {
+	return by.kdf1B(Bytes_c0(), Bytes_epkI(ekI))
+}
+
+ghost
+pure func Bytes_h2(pkR, ekI by.Bytes) (res by.Bytes) {
+	return by.hashB(Bytes_h1(pkR),Bytes_epkI(ekI))
+}
+
+ghost
+pure func Bytes_c2(pkR, ekI by.Bytes) (res by.Bytes) {
+	return by.kdf1B(Bytes_c1(ekI), by.expB(pkR, ekI))
+}
+
+ghost
+pure func Bytes_k1(pkR, ekI by.Bytes) (res by.Bytes) {
+	return by.kdf2B(Bytes_c1(ekI), by.expB(pkR, ekI))
+}
+
+ghost
+pure func Bytes_c_pkI(kI, pkR, ekI by.Bytes) (res by.Bytes) {
+	return by.aeadB(Bytes_k1(pkR, ekI), by.zeroStringB(12), Bytes_pkI(kI), Bytes_h2(pkR, ekI))
+}
+
+ghost
+pure func Bytes_h3(kI, pkR, ekI by.Bytes) (res by.Bytes) {
+	return by.hashB(Bytes_h2(pkR, ekI), Bytes_c_pkI(kI, pkR, ekI))
+}
+
+ghost
+pure func Bytes_c3(kI, pkR, ekI by.Bytes) (res by.Bytes) {
+	return by.kdf1B(Bytes_c2(pkR, ekI), by.expB(pkR, kI))
+}
+
+ghost
+pure func Bytes_k2(kI, pkR, ekI by.Bytes) (res by.Bytes) {
+	return by.kdf2B(Bytes_c2(pkR, ekI), by.expB(pkR, kI))
+}
+
+ghost
+pure func Bytes_c_ts(kI, pkR, ekI, ts by.Bytes) (res by.Bytes) {
+	return by.aeadB(Bytes_k2(kI, pkR, ekI), by.zeroStringB(12), ts, Bytes_h3(kI, pkR, ekI))
+}
+
+ghost
+pure func Bytes_h4(kI, pkR, ekI, ts by.Bytes) (res by.Bytes) {
+	return by.hashB(Bytes_h3(kI, pkR, ekI), Bytes_c_ts(kI, pkR, ekI, ts))
+}
+
+ghost
+pure func Bytes_M1(sidI, kI, pkR, ekI, ts, mac1, mac2 by.Bytes) (res by.Bytes) {
+	return by.tuple7B(by.integer32B(1),sidI,Bytes_epkI(ekI),Bytes_c_pkI(kI,pkR, ekI),Bytes_c_ts(kI,pkR,ekI,ts),mac1,mac2)
+}
+
+
+
+ghost
+pure func Bytes_c4(c3, epkR by.Bytes) (res by.Bytes) {
+	return by.kdf1B(c3, epkR)
+}
+
+ghost
+pure func Bytes_h5(h4, epkR by.Bytes) (res by.Bytes) {
+	return by.hashB(h4, epkR)
+}
+
+ghost
+pure func Bytes_c5(ekI, c3, epkR by.Bytes) (res by.Bytes) {
+	return by.kdf1B(Bytes_c4(c3, epkR), by.expB(epkR, ekI))
+}
+
+ghost
+pure func Bytes_c6(kI, ekI, c3, epkR by.Bytes) (res by.Bytes) {
+	return by.kdf1B(Bytes_c5(ekI, c3, epkR), by.expB(epkR, kI))
+}
+
+ghost
+pure func Bytes_c7(kI, psk, ekI, c3, epkR by.Bytes) (res by.Bytes) {
+	return by.kdf1B(Bytes_c6(kI, ekI, c3, epkR), psk)
+}
+
+ghost
+pure func Bytes_pi(kI, psk, ekI, c3, epkR by.Bytes) (res by.Bytes) {
+	return by.kdf2B(Bytes_c6(kI, ekI, c3, epkR), psk)
+}
+
+ghost
+pure func Bytes_k3(kI, psk, ekI, c3, epkR by.Bytes) (res by.Bytes) {
+	return by.kdf3B(Bytes_c6(kI, ekI, c3, epkR), psk)
+}
+
+ghost
+pure func Bytes_h6(kI, psk, ekI, c3, h4, epkR by.Bytes) (res by.Bytes) {
+	return by.hashB(Bytes_h5(h4, epkR), Bytes_pi(kI, psk, ekI, c3, epkR))
+}
+
+ghost
+pure func Bytes_c_empty(kI, psk, ekI, c3, h4, epkR by.Bytes) (res by.Bytes) {
+	return by.aeadB(Bytes_k3(kI, psk, ekI, c3, epkR), by.zeroStringB(12), by.zeroStringB(0), Bytes_h6(kI, psk, ekI, c3, h4, epkR))
+}
+
+ghost
+pure func Bytes_M2(sidI, sidR, kI, psk, ekI, c3, h4, epkR, mac1, mac2 by.Bytes) (res by.Bytes) {
+	return by.tuple7B(by.integer32B(2), sidR, sidI, epkR, Bytes_c_empty(kI, psk, ekI, c3, h4, epkR), mac1, mac2)
+}
+
+ghost
+pure func Bytes_k_IR(kI, psk, ekI, c3, epkR by.Bytes) (res by.Bytes) {
+	return by.kdf1B_(Bytes_c7(kI, psk, ekI, c3, epkR))
+}
+
+ghost
+pure func Bytes_k_RI(kI, psk, ekI, c3, epkR by.Bytes) (res by.Bytes) {
+	return by.kdf2B_(Bytes_c7(kI, psk, ekI, c3, epkR))
+}
+
+
+// messages defined on Term
+ghost
+pure func Term_pkI(kI tm.Term) (res tm.Term) {
+	return tm.exp(tm.generator(), kI)
+}
+
+ghost
+pure func Term_epkI(ekI tm.Term) (res tm.Term) {
+	return tm.exp(tm.generator(), ekI)
+}
+
+ghost
+pure func Term_c0() (res tm.Term) {
+	return tm.hash_(tm.infoTerm())
+}
+
+ghost
+pure func Term_h0() (res tm.Term) {
+	return tm.hash(Term_c0(), tm.prologueTerm())
+}
+
+ghost
+pure func Term_h1(pkR tm.Term) (res tm.Term) {
+	return tm.hash(Term_h0(), pkR)
+}
+
+ghost
+pure func Term_c1(ekI tm.Term) (res tm.Term) {
+	return tm.kdf1(Term_c0(), Term_epkI(ekI))
+}
+
+ghost
+pure func Term_h2(pkR, ekI tm.Term) (res tm.Term) {
+	return tm.hash(Term_h1(pkR),Term_epkI(ekI))
+}
+
+ghost
+pure func Term_c2(pkR, ekI tm.Term) (res tm.Term) {
+	return tm.kdf1(Term_c1(ekI), tm.exp(pkR, ekI))
+}
+
+ghost
+pure func Term_k1(pkR, ekI tm.Term) (res tm.Term) {
+	return tm.kdf2(Term_c1(ekI), tm.exp(pkR, ekI))
+}
+
+ghost
+pure func Term_c_pkI(kI, pkR, ekI tm.Term) (res tm.Term) {
+	return tm.aead(Term_k1(pkR, ekI), tm.zeroString(12), Term_pkI(kI), Term_h2(pkR, ekI))
+}
+
+ghost
+pure func Term_h3(kI, pkR, ekI tm.Term) (res tm.Term) {
+	return tm.hash(Term_h2(pkR, ekI), Term_c_pkI(kI, pkR, ekI))
+}
+
+ghost
+pure func Term_c3(kI, pkR, ekI tm.Term) (res tm.Term) {
+	return tm.kdf1(Term_c2(pkR, ekI), tm.exp(pkR, kI))
+}
+
+ghost
+pure func Term_k2(kI, pkR, ekI tm.Term) (res tm.Term) {
+	return tm.kdf2(Term_c2(pkR, ekI), tm.exp(pkR, kI))
+}
+
+ghost
+pure func Term_c_ts(kI, pkR, ekI, ts tm.Term) (res tm.Term) {
+	return tm.aead(Term_k2(kI, pkR, ekI), tm.zeroString(12), ts, Term_h3(kI, pkR, ekI))
+}
+
+ghost
+pure func Term_h4(kI, pkR, ekI, ts tm.Term) (res tm.Term) {
+	return tm.hash(Term_h3(kI, pkR, ekI), Term_c_ts(kI, pkR, ekI, ts))
+}
+
+ghost
+pure func Term_M1(sidI, kI, pkR, ekI, ts, mac1, mac2 tm.Term) (res tm.Term) {
+	return tm.tuple7(tm.integer32(1),sidI,Term_epkI(ekI),Term_c_pkI(kI,pkR, ekI),Term_c_ts(kI,pkR,ekI,ts),mac1,mac2)
+}
+
+
+ghost
+pure func Term_c4(c3, epkR tm.Term) (res tm.Term) {
+	return tm.kdf1(c3, epkR)
+}
+
+ghost
+pure func Term_h5(h4, epkR tm.Term) (res tm.Term) {
+	return tm.hash(h4, epkR)
+}
+
+ghost
+pure func Term_c5(ekI, c3, epkR tm.Term) (res tm.Term) {
+	return tm.kdf1(Term_c4(c3, epkR), tm.exp(epkR, ekI))
+}
+
+ghost
+pure func Term_c5_lin(ekI, c3, epkR1, epkR2 tm.Term) (res tm.Term) {
+	return tm.kdf1(Term_c4(c3, epkR1), tm.exp(epkR2, ekI))
+}
+
+ghost
+pure func Term_c6(kI, ekI, c3, epkR tm.Term) (res tm.Term) {
+	return tm.kdf1(Term_c5(ekI, c3, epkR), tm.exp(epkR, kI))
+}
+
+ghost
+pure func Term_c6_lin(kI, ekI, c3, epkR1, epkR2, epkR3 tm.Term) (res tm.Term) {
+	return tm.kdf1(Term_c5_lin(ekI, c3, epkR1, epkR2), tm.exp(epkR3, kI))
+}
+
+ghost
+pure func Term_c7(kI, psk, ekI, c3, epkR tm.Term) (res tm.Term) { // no linear
+	return tm.kdf1(Term_c6(kI, ekI, c3, epkR), psk)
+}
+
+ghost
+pure func Term_pi(kI, psk, ekI, c3, epkR tm.Term) (res tm.Term) {
+	return tm.kdf2(Term_c6(kI, ekI, c3, epkR), psk)
+}
+
+ghost
+pure func Term_pi_lin(kI, psk, ekI, c3, epkR1, epkR2, epkR3 tm.Term) (res tm.Term) {
+	return tm.kdf2(Term_c6_lin(kI, ekI, c3, epkR1, epkR2, epkR3), psk)
+}
+
+ghost
+pure func Term_k3(kI, psk, ekI, c3, epkR tm.Term) (res tm.Term) {
+	return tm.kdf3(Term_c6(kI, ekI, c3, epkR), psk)
+}
+
+ghost
+pure func Term_k3_lin(kI, psk, ekI, c3, epkR1, epkR2, epkR3 tm.Term) (res tm.Term) {
+	return tm.kdf3(Term_c6_lin(kI, ekI, c3, epkR1, epkR2, epkR3), psk)
+}
+
+ghost
+pure func Term_h6(kI, psk, ekI, c3, h4, epkR tm.Term) (res tm.Term) {
+	return tm.hash(Term_h5(h4, epkR), Term_pi(kI, psk, ekI, c3, epkR))
+}
+
+ghost
+pure func Term_h6_lin(kI, psk, ekI, c3, h4, epkR1, epkR2, epkR3, epkR4 tm.Term) (res tm.Term) {
+	return tm.hash(Term_h5(h4, epkR1), Term_pi_lin(kI, psk, ekI, c3, epkR2, epkR3, epkR4))
+}
+
+ghost
+pure func Term_c_empty(kI, psk, ekI, c3, h4, epkR tm.Term) (res tm.Term) {
+	return tm.aead(Term_k3(kI, psk, ekI, c3, epkR), tm.zeroString(12), tm.zeroString(0), Term_h6(kI, psk, ekI, c3, h4, epkR))
+}
+
+ghost
+pure func Term_c_empty_lin(kI1, kI2, psk1, psk2, ekI1, ekI2, c31, c32, h4, epkR1, epkR2, epkR3, epkR4, epkR5, epkR6, epkR7 tm.Term) (res tm.Term) {
+	return tm.aead(Term_k3_lin(kI1, psk1, ekI1, c31, epkR1, epkR2, epkR3), tm.zeroString(12), tm.zeroString(0), Term_h6_lin(kI2, psk2, ekI2, c32, h4, epkR4, epkR5, epkR6, epkR7))
+}
+
+ghost
+pure func Term_M2(sidI, sidR, kI, psk, ekI, c3, h4, epkR, mac1, mac2 tm.Term) (res tm.Term) {
+	return tm.tuple7(tm.integer32(2), sidR, sidI, epkR, Term_c_empty(kI, psk, ekI, c3, h4, epkR), mac1, mac2)
+}
+
+ghost
+pure func Term_M2_lin(sidI, sidR, kI1, kI2, psk1, psk2, ekI1, ekI2, c31, c32, h4, epkR1, epkR2, epkR3, epkR4, epkR5, epkR6, epkR7, epkR8, mac1, mac2 tm.Term) (res tm.Term) {
+	return tm.tuple7(tm.integer32(2), sidR, sidI, epkR1, Term_c_empty_lin(kI1, kI2, psk1, psk2, ekI1, ekI2, c31, c32, h4, epkR2, epkR3, epkR4, epkR5, epkR6, epkR7, epkR8), mac1, mac2)
+}
+
+ghost
+pure func Term_k_IR(kI, psk, ekI, c3, epkR tm.Term) (res tm.Term) {
+	return tm.kdf1_(Term_c7(kI, psk, ekI, c3, epkR))
+}
+
+ghost
+pure func Term_k_RI(kI, psk, ekI, c3, epkR tm.Term) (res tm.Term) {
+	return tm.kdf2_(Term_c7(kI, psk, ekI, c3, epkR))
+}

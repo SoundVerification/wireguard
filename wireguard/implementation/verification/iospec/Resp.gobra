@@ -1,0 +1,169 @@
+package iospec
+
+
+
+import . "wireguard-gobra/wireguard/verification/claim"
+import . "wireguard-gobra/wireguard/verification/fact"
+import . "wireguard-gobra/wireguard/verification/term"
+import . "wireguard-gobra/wireguard/verification/place"
+import . "wireguard-gobra/wireguard/verification/pub"
+import . "wireguard-gobra/wireguard/verification/fresh"
+
+
+pred P_Resp(tami_p Place, tami_rid Term, ghost tami_s mset[Fact]) {
+    phiR_Resp_0(tami_p, tami_rid, tami_s) &&
+    phiR_Resp_1(tami_p, tami_rid, tami_s) &&
+    phiR_Resp_2(tami_p, tami_rid, tami_s) &&
+    phiR_Resp_3(tami_p, tami_rid, tami_s) &&
+    phiR_Resp_4(tami_p, tami_rid, tami_s) &&
+    phiRG_Resp_5(tami_p, tami_rid, tami_s) &&
+    phiRF_Resp_6(tami_p, tami_rid, tami_s) &&
+    phiRF_Resp_7(tami_p, tami_rid, tami_s) &&
+    phiRF_Resp_8(tami_p, tami_rid, tami_s) &&
+    phiRF_Resp_9(tami_p, tami_rid, tami_s) &&
+    phiRF_Resp_10(tami_p, tami_rid, tami_s) &&
+    phiRF_Resp_11(tami_p, tami_rid, tami_s) &&
+    phiRF_Resp_12(tami_p, tami_rid, tami_s) &&
+    phiRF_Resp_13(tami_p, tami_rid, tami_s) &&
+    phiRF_Resp_14(tami_p, tami_rid, tami_s)
+}
+pred phiR_Resp_0(tami_p Place, tami_rid Term, ghost tami_s mset[Fact]) {
+    forall sidR Term, a Term, b Term, prologue Term, info Term, kR Term, pkI Term, psk Term, sidI Term, epkI Term, timestamp Term, mac1I Term, mac2I Term, tami_lp mset[Fact], tami_ap mset[Claim], tami_rp mset[Fact] :: 
+        { e_Handshake_St_Resp_1(tami_p, sidR, a, b, prologue, info, kR, pkI, psk, sidI, epkI, timestamp, mac1I, mac2I, tami_lp, tami_ap, tami_rp) } (
+            (M(tami_lp, tami_s) &&
+             tami_lp == mset[Fact] {
+                            Setup_Resp(sidR, a, b, prologue, info),
+                            LtK_Resp(sidR, b, kR),
+                            LtpK_Resp(sidR, a, pkI),
+                            PsK_Resp(sidR, a, b, psk),
+                            InFact_Resp(sidR, format1(pubTerm(const_1_pub()), sidI, epkI, aead(kdf2(kdf1(h_(info), epkI), exp(epkI, kR)), pubTerm(const_0_pub()), pkI, h(h(h(h_(info), prologue), exp(pubTerm(const_g_pub()), kR)), epkI)), aead(kdf2(kdf1(kdf1(h_(info), epkI), exp(epkI, kR)), exp(pkI, kR)), pubTerm(const_0_pub()), timestamp, h(h(h(h(h_(info), prologue), exp(pubTerm(const_g_pub()), kR)), epkI), aead(kdf2(kdf1(h_(info), epkI), exp(epkI, kR)), pubTerm(const_0_pub()), pkI, h(h(h(h_(info), prologue), exp(pubTerm(const_g_pub()), kR)), epkI)))), mac1I, mac2I))} &&
+             tami_ap == mset[Claim] {
+                            InFormat1(format1(pubTerm(const_1_pub()), sidI, epkI, aead(kdf2(kdf1(h_(info), epkI), exp(epkI, kR)), pubTerm(const_0_pub()), pkI, h(h(h(h_(info), prologue), exp(pubTerm(const_g_pub()), kR)), epkI)), aead(kdf2(kdf1(kdf1(h_(info), epkI), exp(epkI, kR)), exp(pkI, kR)), pubTerm(const_0_pub()), timestamp, h(h(h(h(h_(info), prologue), exp(pubTerm(const_g_pub()), kR)), epkI), aead(kdf2(kdf1(h_(info), epkI), exp(epkI, kR)), pubTerm(const_0_pub()), pkI, h(h(h(h_(info), prologue), exp(pubTerm(const_g_pub()), kR)), epkI)))), mac1I, mac2I))} &&
+             tami_rp == mset[Fact] {
+                            St_Resp_1(sidR, a, b, prologue, info, pkI, kR, epkI, psk, kdf1(kdf1(kdf1(h_(info), epkI), exp(epkI, kR)), exp(pkI, kR)), h(h(h(h(h(h_(info), prologue), exp(pubTerm(const_g_pub()), kR)), epkI), aead(kdf2(kdf1(h_(info), epkI), exp(epkI, kR)), pubTerm(const_0_pub()), pkI, h(h(h(h_(info), prologue), exp(pubTerm(const_g_pub()), kR)), epkI))), aead(kdf2(kdf1(kdf1(h_(info), epkI), exp(epkI, kR)), exp(pkI, kR)), pubTerm(const_0_pub()), timestamp, h(h(h(h(h_(info), prologue), exp(pubTerm(const_g_pub()), kR)), epkI), aead(kdf2(kdf1(h_(info), epkI), exp(epkI, kR)), pubTerm(const_0_pub()), pkI, h(h(h(h_(info), prologue), exp(pubTerm(const_g_pub()), kR)), epkI))))), sidI)}) ==>
+            (e_Handshake_St_Resp_1(tami_p, sidR, a, b, prologue, info, kR, pkI, psk, sidI, epkI, timestamp, mac1I, mac2I, tami_lp, tami_ap, tami_rp) && 
+             P_Resp(get_e_Handshake_St_Resp_1_placeDst(tami_p, sidR, a, b, prologue, info, kR, pkI, psk, sidI, epkI, timestamp, mac1I, mac2I, tami_lp, tami_ap, tami_rp), tami_rid, U(tami_lp, tami_rp, tami_s))))
+}
+pred phiR_Resp_1(tami_p Place, tami_rid Term, ghost tami_s mset[Fact]) {
+    forall sidR Term, a Term, b Term, prologue Term, info Term, pkI Term, kR Term, epkI Term, psk Term, c3 Term, h4 Term, sidI Term, ekR Term, mac1R Term, mac2R Term, tami_lp mset[Fact], tami_ap mset[Claim], tami_rp mset[Fact] :: 
+        { e_Handshake_St_Resp_2(tami_p, sidR, a, b, prologue, info, pkI, kR, epkI, psk, c3, h4, sidI, ekR, mac1R, mac2R, tami_lp, tami_ap, tami_rp) } (
+            (M(tami_lp, tami_s) &&
+             tami_lp == mset[Fact] {
+                            St_Resp_1(sidR, a, b, prologue, info, pkI, kR, epkI, psk, c3, h4, sidI),
+                            FrFact_Resp(sidR, ekR),
+                            MAC_Resp(sidR, mac1R),
+                            MAC_Resp(sidR, mac2R)} &&
+             tami_ap == mset[Claim] {
+                            Running(pubTerm(const_Init_pub()), pubTerm(const_Resp_pub()), pair(a, pair(b, pair(kdf1_(kdf1(kdf1(kdf1(kdf1(c3, exp(pubTerm(const_g_pub()), ekR)), exp(epkI, ekR)), exp(pkI, ekR)), psk)), kdf2_(kdf1(kdf1(kdf1(kdf1(c3, exp(pubTerm(const_g_pub()), ekR)), exp(epkI, ekR)), exp(pkI, ekR)), psk)))))),
+                            SendSIDR(sidR),
+                            OutFormat2(format2(pubTerm(const_2_pub()), sidR, sidI, exp(pubTerm(const_g_pub()), ekR), aead(kdf3(kdf1(kdf1(kdf1(c3, exp(pubTerm(const_g_pub()), ekR)), exp(epkI, ekR)), exp(pkI, ekR)), psk), pubTerm(const_0_pub()), pubTerm(const_e_pub()), h(h(h4, exp(pubTerm(const_g_pub()), ekR)), kdf2(kdf1(kdf1(kdf1(c3, exp(pubTerm(const_g_pub()), ekR)), exp(epkI, ekR)), exp(pkI, ekR)), psk))), mac1R, mac2R))} &&
+             tami_rp == mset[Fact] {
+                            St_Resp_2(sidR, a, b, prologue, info, sidI, kdf1_(kdf1(kdf1(kdf1(kdf1(c3, exp(pubTerm(const_g_pub()), ekR)), exp(epkI, ekR)), exp(pkI, ekR)), psk)), kdf2_(kdf1(kdf1(kdf1(kdf1(c3, exp(pubTerm(const_g_pub()), ekR)), exp(epkI, ekR)), exp(pkI, ekR)), psk))),
+                            OutFact_Resp(sidR, format2(pubTerm(const_2_pub()), sidR, sidI, exp(pubTerm(const_g_pub()), ekR), aead(kdf3(kdf1(kdf1(kdf1(c3, exp(pubTerm(const_g_pub()), ekR)), exp(epkI, ekR)), exp(pkI, ekR)), psk), pubTerm(const_0_pub()), pubTerm(const_e_pub()), h(h(h4, exp(pubTerm(const_g_pub()), ekR)), kdf2(kdf1(kdf1(kdf1(c3, exp(pubTerm(const_g_pub()), ekR)), exp(epkI, ekR)), exp(pkI, ekR)), psk))), mac1R, mac2R))}) ==>
+            (e_Handshake_St_Resp_2(tami_p, sidR, a, b, prologue, info, pkI, kR, epkI, psk, c3, h4, sidI, ekR, mac1R, mac2R, tami_lp, tami_ap, tami_rp) && 
+             P_Resp(get_e_Handshake_St_Resp_2_placeDst(tami_p, sidR, a, b, prologue, info, pkI, kR, epkI, psk, c3, h4, sidI, ekR, mac1R, mac2R, tami_lp, tami_ap, tami_rp), tami_rid, U(tami_lp, tami_rp, tami_s))))
+}
+pred phiR_Resp_2(tami_p Place, tami_rid Term, ghost tami_s mset[Fact]) {
+    forall sidR Term, a Term, b Term, prologue Term, info Term, sidI Term, kIR Term, kRI Term, x Term, n Term, p Term, tami_lp mset[Fact], tami_ap mset[Claim], tami_rp mset[Fact] :: 
+        { e_Receive_First_Resp(tami_p, sidR, a, b, prologue, info, sidI, kIR, kRI, x, n, p, tami_lp, tami_ap, tami_rp) } (
+            (M(tami_lp, tami_s) &&
+             tami_lp == mset[Fact] {
+                            St_Resp_2(sidR, a, b, prologue, info, sidI, kIR, kRI),
+                            InFact_Resp(sidR, format4(pubTerm(const_4_pub()), x, n, aead(kIR, n, p, pubTerm(const_e_pub()))))} &&
+             tami_ap == mset[Claim] {
+                            ReceivedFirstResp(sidR, sidI, a, b, kIR, kRI, p),
+                            Commit(pubTerm(const_Resp_pub()), pubTerm(const_Init_pub()), pair(a, pair(b, pair(kIR, kRI)))),
+                            Secret(a, b, pair(kIR, kRI)),
+                            InFormat4(format4(pubTerm(const_4_pub()), x, n, aead(kIR, n, p, pubTerm(const_e_pub()))))} &&
+             tami_rp == mset[Fact] {
+                            St_Resp_3(sidR, a, b, prologue, info, sidI, kIR, kRI)}) ==>
+            (e_Receive_First_Resp(tami_p, sidR, a, b, prologue, info, sidI, kIR, kRI, x, n, p, tami_lp, tami_ap, tami_rp) && 
+             P_Resp(get_e_Receive_First_Resp_placeDst(tami_p, sidR, a, b, prologue, info, sidI, kIR, kRI, x, n, p, tami_lp, tami_ap, tami_rp), tami_rid, U(tami_lp, tami_rp, tami_s))))
+}
+pred phiR_Resp_3(tami_p Place, tami_rid Term, ghost tami_s mset[Fact]) {
+    forall sidR Term, a Term, b Term, prologue Term, info Term, sidI Term, kIR Term, kRI Term, nRI Term, p Term, tami_lp mset[Fact], tami_ap mset[Claim], tami_rp mset[Fact] :: 
+        { e_Send_Resp_Loop(tami_p, sidR, a, b, prologue, info, sidI, kIR, kRI, nRI, p, tami_lp, tami_ap, tami_rp) } (
+            (M(tami_lp, tami_s) &&
+             tami_lp == mset[Fact] {
+                            St_Resp_3(sidR, a, b, prologue, info, sidI, kIR, kRI),
+                            Counter_Resp(sidR, nRI),
+                            Message_Resp(sidR, p)} &&
+             tami_ap == mset[Claim] {
+                            SentRespLoop(sidR, sidI, a, b, kIR, kRI),
+                            AlreadyKnownSIDI(sidI),
+                            OutFormat4(format4(pubTerm(const_4_pub()), sidI, nRI, aead(kRI, nRI, p, pubTerm(const_e_pub()))))} &&
+             tami_rp == mset[Fact] {
+                            St_Resp_3(sidR, a, b, prologue, info, sidI, kIR, kRI),
+                            OutFact_Resp(sidR, format4(pubTerm(const_4_pub()), sidI, nRI, aead(kRI, nRI, p, pubTerm(const_e_pub()))))}) ==>
+            (e_Send_Resp_Loop(tami_p, sidR, a, b, prologue, info, sidI, kIR, kRI, nRI, p, tami_lp, tami_ap, tami_rp) && 
+             P_Resp(get_e_Send_Resp_Loop_placeDst(tami_p, sidR, a, b, prologue, info, sidI, kIR, kRI, nRI, p, tami_lp, tami_ap, tami_rp), tami_rid, U(tami_lp, tami_rp, tami_s))))
+}
+pred phiR_Resp_4(tami_p Place, tami_rid Term, ghost tami_s mset[Fact]) {
+    forall sidR Term, a Term, b Term, prologue Term, info Term, sidI Term, kIR Term, kRI Term, x Term, nIR Term, p Term, tami_lp mset[Fact], tami_ap mset[Claim], tami_rp mset[Fact] :: 
+        { e_Receive_Resp_Loop(tami_p, sidR, a, b, prologue, info, sidI, kIR, kRI, x, nIR, p, tami_lp, tami_ap, tami_rp) } (
+            (M(tami_lp, tami_s) &&
+             tami_lp == mset[Fact] {
+                            St_Resp_3(sidR, a, b, prologue, info, sidI, kIR, kRI),
+                            InFact_Resp(sidR, format4(pubTerm(const_4_pub()), x, nIR, aead(kIR, nIR, p, pubTerm(const_e_pub()))))} &&
+             tami_ap == mset[Claim] {
+                            ReceivedRespLoop(sidR, sidI, a, b, kIR, kRI),
+                            AlreadyKnownSIDI(sidI),
+                            InFormat4(format4(pubTerm(const_4_pub()), x, nIR, aead(kIR, nIR, p, pubTerm(const_e_pub()))))} &&
+             tami_rp == mset[Fact] {
+                            St_Resp_3(sidR, a, b, prologue, info, sidI, kIR, kRI)}) ==>
+            (e_Receive_Resp_Loop(tami_p, sidR, a, b, prologue, info, sidI, kIR, kRI, x, nIR, p, tami_lp, tami_ap, tami_rp) && 
+             P_Resp(get_e_Receive_Resp_Loop_placeDst(tami_p, sidR, a, b, prologue, info, sidI, kIR, kRI, x, nIR, p, tami_lp, tami_ap, tami_rp), tami_rid, U(tami_lp, tami_rp, tami_s))))
+}
+pred phiRG_Resp_5(tami_p Place, tami_rid Term, ghost tami_s mset[Fact]) {
+    forall new_x Term :: 
+        { e_OutFact(tami_p, tami_rid, new_x) }{ OutFact_Resp(tami_rid, new_x) } (
+            ((OutFact_Resp(tami_rid, new_x) # tami_s) > 0) ==>
+            (e_OutFact(tami_p, tami_rid, new_x) && 
+             P_Resp(get_e_OutFact_placeDst(tami_p, tami_rid, new_x), tami_rid, tami_s setminus mset[Fact] {
+                                                                                                   OutFact_Resp(tami_rid, new_x)})))
+}
+pred phiRF_Resp_6(tami_p Place, tami_rid Term, ghost tami_s mset[Fact]) {
+    e_LtK(tami_p, tami_rid) && 
+    P_Resp(get_e_LtK_placeDst(tami_p, tami_rid), tami_rid, tami_s union mset[Fact] {
+                                                                            LtK_Resp(tami_rid, get_e_LtK_r1(tami_p, tami_rid), get_e_LtK_r2(tami_p, tami_rid))})
+}
+pred phiRF_Resp_7(tami_p Place, tami_rid Term, ghost tami_s mset[Fact]) {
+    e_LtpK(tami_p, tami_rid) && 
+    P_Resp(get_e_LtpK_placeDst(tami_p, tami_rid), tami_rid, tami_s union mset[Fact] {
+                                                                             LtpK_Resp(tami_rid, get_e_LtpK_r1(tami_p, tami_rid), get_e_LtpK_r2(tami_p, tami_rid))})
+}
+pred phiRF_Resp_8(tami_p Place, tami_rid Term, ghost tami_s mset[Fact]) {
+    e_PsK(tami_p, tami_rid) && 
+    P_Resp(get_e_PsK_placeDst(tami_p, tami_rid), tami_rid, tami_s union mset[Fact] {
+                                                                            PsK_Resp(tami_rid, get_e_PsK_r1(tami_p, tami_rid), get_e_PsK_r2(tami_p, tami_rid), get_e_PsK_r3(tami_p, tami_rid))})
+}
+pred phiRF_Resp_9(tami_p Place, tami_rid Term, ghost tami_s mset[Fact]) {
+    e_InFact(tami_p, tami_rid) && 
+    P_Resp(get_e_InFact_placeDst(tami_p, tami_rid), tami_rid, tami_s union mset[Fact] {
+                                                                               InFact_Resp(tami_rid, get_e_InFact_r1(tami_p, tami_rid))})
+}
+pred phiRF_Resp_10(tami_p Place, tami_rid Term, ghost tami_s mset[Fact]) {
+    e_FrFact(tami_p, tami_rid) && 
+    P_Resp(get_e_FrFact_placeDst(tami_p, tami_rid), tami_rid, tami_s union mset[Fact] {
+                                                                               FrFact_Resp(tami_rid, get_e_FrFact_r1(tami_p, tami_rid))})
+}
+pred phiRF_Resp_11(tami_p Place, tami_rid Term, ghost tami_s mset[Fact]) {
+    e_MAC(tami_p, tami_rid) && 
+    P_Resp(get_e_MAC_placeDst(tami_p, tami_rid), tami_rid, tami_s union mset[Fact] {
+                                                                            MAC_Resp(tami_rid, get_e_MAC_r1(tami_p, tami_rid))})
+}
+pred phiRF_Resp_12(tami_p Place, tami_rid Term, ghost tami_s mset[Fact]) {
+    e_Counter(tami_p, tami_rid) && 
+    P_Resp(get_e_Counter_placeDst(tami_p, tami_rid), tami_rid, tami_s union mset[Fact] {
+                                                                                Counter_Resp(tami_rid, get_e_Counter_r1(tami_p, tami_rid))})
+}
+pred phiRF_Resp_13(tami_p Place, tami_rid Term, ghost tami_s mset[Fact]) {
+    e_Message(tami_p, tami_rid) && 
+    P_Resp(get_e_Message_placeDst(tami_p, tami_rid), tami_rid, tami_s union mset[Fact] {
+                                                                                Message_Resp(tami_rid, get_e_Message_r1(tami_p, tami_rid))})
+}
+pred phiRF_Resp_14(tami_p Place, tami_rid Term, ghost tami_s mset[Fact]) {
+    e_Setup_Resp(tami_p, tami_rid) && 
+    P_Resp(get_e_Setup_Resp_placeDst(tami_p, tami_rid), tami_rid, tami_s union mset[Fact] {
+                                                                                   Setup_Resp(tami_rid, get_e_Setup_Resp_r1(tami_p, tami_rid), get_e_Setup_Resp_r2(tami_p, tami_rid), pubTerm(const_p_pub()), pubTerm(const_i_pub()))})
+}

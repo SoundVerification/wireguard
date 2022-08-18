@@ -1,0 +1,15 @@
+package pattern
+
+import by "dh-gobra/verification/bytes"
+import ft "dh-gobra/verification/fact"
+import pl "dh-gobra/verification/place"
+import io "dh-gobra/verification/iospec"
+import tm "dh-gobra/verification/util"
+
+ghost
+requires pl.token(p) && io.P_Alice(p, rid, s)
+requires mset[ft.Fact]{ ft.St_Alice_1(rid, idA, idB, skA, skB, x) } subset s
+requires by.gamma(t) == by.gamma(tm.sign(tm.tuple5(tm.integer32(0), idB, idA, tm.exp(tm.generator(), x), someY), skB))
+ensures  pl.token(p) && io.P_Alice(p, rid, s)
+ensures  t == tm.sign(tm.tuple5(tm.integer32(0), idB, idA, tm.exp(tm.generator(), x), Y), skB)
+func patternRequirement2(rid, idA, idB, skA, skB, x, someY, t tm.Term, p pl.Place, s mset[ft.Fact]) (Y tm.Term)

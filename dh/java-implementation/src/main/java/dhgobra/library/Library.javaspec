@@ -1,0 +1,91 @@
+package dhgobra.library;
+//@ import place.*;
+//@ import iospec.*;
+//@ import term.*;
+
+
+
+public final class Library {
+    public final int DHHalfKeyLength = 256;
+    
+    //@ predicate data(); 
+
+    //@ predicate keyPair(list<byte> sk, list<byte> pk);
+
+    public boolean send(byte[] data);
+    //@ requires data() &*& [_]array_slice(data, 0, data.length, _) &*& token(?p) &*& e_OutFact(p, ?rid, ?m, ?pp);
+    //@ ensures  data() &*& result == false ? true : token(pp);
+
+    public byte[] recv();
+    //@ requires data() &*& token(?p) &*& e_InFact(p, ?rid, ?new_x, ?pp);
+    /*@ ensures  
+            data() &*& 
+            result == null ? true : (
+                [_]array_slice(result, 0, result.length, ?resultS) &*& gamma(new_x) == resultS &*&
+                token(pp)
+            );
+    @*/
+
+    public Config GetConfig();
+    //@ requires data() &*& token(?p) &*&  e_Setup_Bob(p, ?rid, ?B, ?A, ?skB, ?skA, ?pp);
+    /*@ ensures  
+            data() &*& [_]keyPair(?skAS, ?pkAS) &*&
+            result.idA |-> ?idAV &*& gamma(A) == bytes_int(idAV) &*& 
+            result.idB |-> ?idBV &*& gamma(B) == bytes_int(idBV) &*& 
+            result.skB |-> ?skBV &*& [_]array_slice(skBV, 0, skBV.length, ?skBS) &*& gamma(skB) == skBS &*&
+            result.pkA |-> ?pkAV &*& [_]array_slice(pkAV, 0, pkAV.length, pkAS) &*& gamma(skA) == skAS &*& 
+            token(pp);
+    @*/
+
+    public byte[] createNonce();
+    //@ requires data() &*& token(?p) &*& e_FrFact(p, ?rid, ?new_x, ?pp);
+    /*@ ensures  
+            data() &*& 
+            result == null ? true : (
+                [_]array_slice(result, 0, result.length, ?resultS) &*& gamma(new_x) == resultS &*&
+                token(pp)
+            );
+    @*/
+
+    // arg is big-endian
+    public byte[] dhExp(byte[] exp); 
+    //@ requires data() &*& [_]array_slice(exp, 0, exp.length, ?expS);
+    //@ ensures  data() &*& result == null ? true : [_]array_slice(result, 0, result.length, bytes_exp(bytes_const_g_pub(), expS));
+
+    // args are big-endian
+    public byte[] dhSharedSecret(byte[] dhSecret, byte[] dhHalfKey);
+    //@ requires data() &*& [_]array_slice(dhSecret, 0, dhSecret.length, _) &*& [_]array_slice(dhHalfKey, 0, dhHalfKey.length, _);
+    //@ ensures  data() &*& result == null ? true : [_]array_slice(result, 0, result.length, _);
+
+    public byte[] sign(byte[] data, byte[] sk);
+    //@ requires data() &*& [_]array_slice(data, 0, data.length, ?dataS) &*& [_]array_slice(sk, 0, sk.length, ?skS);
+    //@ ensures  data() &*& result == null ? true : [_]array_slice(result, 0, result.length, bytes_sign(dataS, skS));
+
+    public byte[] open(byte[] signedData, byte[] pk); 
+    //@ requires data() &*& [_]keyPair(?skS, ?pkS) &*& [_]array_slice(signedData, 0, signedData.length, ?signedDataS) &*& [_]array_slice(pk, 0, pk.length, pkS);
+    //@ ensures  data() &*& result == null ? true : ([_]array_slice(result, 0, result.length, ?resultS) &*& signedDataS == bytes_sign(resultS, skS));
+
+    public Msg1 unmarshalMsg1(byte[] data);
+    //@ requires data() &*& [_]array_slice(data, 0, data.length, ?dataS);
+    //@ ensures  data() &*& result == null ? true : [_]result.data(dataS);
+
+    public byte[] marshalMsg2(Msg2 msg2);
+    //@ requires data() &*& [_]msg2.data(?idA, ?idB, ?X, ?Y);
+    //@ ensures  data() &*& result == null ? true : [_]array_slice(result, 0, result.length, bytes_format(bytes_const_0_pub(), bytes_int(idB), bytes_int(idA), X, Y));
+
+    public Msg3 unmarshalMsg3(byte[] data); 
+    //@ requires data() &*& [_]array_slice(data, 0, data.length, ?dataS);
+    //@ ensures  data() &*& result == null ? true : ([_]result.data(?idA, ?idB, ?X, ?Y) &*& dataS == bytes_format(bytes_const_1_pub(), bytes_int(idA), bytes_int(idB), Y, X));
+
+    public void notMatchX();
+    //@ requires data();
+    //@ ensures  data();
+
+    public void notMatchY();
+    //@ requires data();
+    //@ ensures  data();
+
+    public void success(byte[] sharedSecret);
+    //@ requires data() &*& [_]array_slice(sharedSecret, 0, sharedSecret.length, _);
+    //@ ensures  data();
+}

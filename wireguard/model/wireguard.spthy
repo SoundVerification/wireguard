@@ -1,0 +1,393 @@
+theory WireGuard
+begin
+
+
+builtins: diffie-hellman
+
+
+/* hashes and kdfs */
+functions: kdf1/2, kdf2/2, kdf3/2, kdf1_/1, kdf2_/1, h_/1, h/2
+
+/* aead */
+functions: aead/4, decrypt/3, extract/1, verify/4, true/0
+equations: decrypt(k, n, aead(k, n, p, a)) = p
+equations: verify(k, n, a, aead(k, n, p, a)) = true
+equations: extract(aead(k, n, p, a)) = a
+
+
+/* formats = transparent constructors used for the messages */
+functions: format1/7, ex11/1, ex12/1, ex13/1, ex14/1, ex15/1, ex16/1, ex17/1
+equations:
+  ex11(format1(x1,x2,x3,x4,x5,x6,x7)) = x1,
+  ex12(format1(x1,x2,x3,x4,x5,x6,x7)) = x2,
+  ex13(format1(x1,x2,x3,x4,x5,x6,x7)) = x3,
+  ex14(format1(x1,x2,x3,x4,x5,x6,x7)) = x4,
+  ex15(format1(x1,x2,x3,x4,x5,x6,x7)) = x5,
+  ex16(format1(x1,x2,x3,x4,x5,x6,x7)) = x6,
+  ex17(format1(x1,x2,x3,x4,x5,x6,x7)) = x7
+
+functions: format2/7, ex21/1, ex22/1, ex23/1, ex24/1, ex25/1, ex26/1, ex27/1
+equations:
+  ex21(format2(x1,x2,x3,x4,x5,x6,x7)) = x1,
+  ex22(format2(x1,x2,x3,x4,x5,x6,x7)) = x2,
+  ex23(format2(x1,x2,x3,x4,x5,x6,x7)) = x3,
+  ex24(format2(x1,x2,x3,x4,x5,x6,x7)) = x4,
+  ex25(format2(x1,x2,x3,x4,x5,x6,x7)) = x5,
+  ex26(format2(x1,x2,x3,x4,x5,x6,x7)) = x6,
+  ex27(format2(x1,x2,x3,x4,x5,x6,x7)) = x7
+
+
+functions: format4/4, ex41/1, ex42/1, ex43/1, ex44/1
+equations:
+  ex41(format4(x1,x2,x3,x4)) = x1,
+  ex42(format4(x1,x2,x3,x4)) = x2,
+  ex43(format4(x1,x2,x3,x4)) = x3,
+  ex44(format4(x1,x2,x3,x4)) = x4
+
+
+
+/* -------------------- */
+/*   Environment rules  */
+/* -------------------- */
+
+rule LtKGen:
+   [ Fr(~k) ] --> [ !LtK($A, ~k), !LtpK($A, 'g'^~k), Out(<$A,'g'^~k>) ]
+
+rule PsKGen:
+   [ ] --> [ !PsK($A, $B, '00') ]
+
+//rule PsKGenFr:
+//   [ Fr(~k) ] --> [ !PsK($A, $B, ~k) ]
+
+rule MessageGen:
+   [ In(p) ] --> [ Message(p) ] 
+
+//rule MessageGenFr:
+//   [ Fr(~p) ] --> [ Message(~p) ] 
+
+rule TimestampGen:
+   [ In(t) ] --> [ Timestamp(t) ]
+   
+rule MACGen:
+   [ Fr(~m) ] --> [ MAC(~m) ]
+
+rule CounterGen:
+   [ ] --> [ Counter($x) ]
+   
+rule InitGen:
+   [ Fr(~sidI) ] --> [ Setup_Init(~sidI, $A, $B, 'p', 'i') ]
+
+rule RespGen:
+   [ Fr(~sidR) ] --> [ Setup_Resp(~sidR, $A, $B, 'p', 'i') ]
+
+rule Corrupt:
+   [ !LtK($A,k) ] --[ Corrupted($A) ]-> [ Out(k) ]
+
+
+
+/* ----------------------------- */
+/*   Protocol rules: Initiator   */
+/* ----------------------------- */
+
+rule Handshake_St_Init_1:
+  let
+    pkI = 'g'^~kI   // long-term private key
+    epkI = 'g'^~ekI // ephemeral public key
+    c0 = h_(info)
+    h0 = h(c0, prologue)
+    h1 = h(h0, pkR)
+    c1 = kdf1(c0, epkI)
+    h2 = h(h1, epkI)
+    c2 = kdf1(c1, pkR^~ekI)
+    k1 = kdf2(c1, pkR^~ekI)
+    cpkI = aead(k1, '0', pkI, h2)
+    h3 = h(h2, cpkI)
+    c3 = kdf1(c2, pkR^~kI)
+    k2 = kdf2(c2, pkR^~kI)
+    cts = aead(k2, '0', timestamp, h3)
+    h4 = h(h3, cts)
+    mI = format1('1', ~sidI, epkI, cpkI, cts, mac1I, mac2I)
+  in 
+  [ Setup_Init(~sidI, a, b, prologue, info),  // program parameters, sid = session id,
+                                              //   a, b = identities, prologue = protocol data
+    !LtK(a, ~kI),                             // long-term private key of a
+    !LtpK(b, pkR),                            // long-term public key of b
+    !PsK(a, b, psk),                          // pre-shared key between a and b
+    Fr(~ekI),                                 // ephemeral private key
+    Timestamp(timestamp),                     // timestamps and macs to use in the first message;
+    MAC(mac1I),                               //  their values are not useful here so we just
+    MAC(mac2I)                                //  receive some value from the environment
+  ]
+  --[ SendSIDI(~sidI), OutFormat1(mI) ]->
+  [ St_Init_1(~sidI, a, b, prologue, info, ~kI, pkR, ~ekI, psk, c3, h4),
+    Out(mI)
+  ]
+
+
+rule Handshake_St_Init_2:
+  let
+    pkI = 'g'^~kI   // long-term private key
+    epkI = 'g'^~ekI // ephemeral public key
+    // recompute the expected response
+    c4 = kdf1(c3,epkR)
+    h5 = h(h4,epkR)
+    c5 = kdf1(c4, epkR^~ekI)
+    c6 = kdf1(c5, epkR^~kI)
+    c7 = kdf1(c6, psk)
+    pi = kdf2(c6, psk)
+    k3 = kdf3(c6, psk)
+    h6 = h(h5, pi)
+    cempty = aead(k3, '0', 'e', h6)
+    mR = format2('2', sidR, ~sidI, epkR, cempty, mac1R, mac2R)
+    // and the keys
+    kIR = kdf1_(c7)
+    kRI = kdf2_(c7)
+  in 
+  [
+    St_Init_1(~sidI, a, b, prologue, info, ~kI, pkR, ~ekI, psk, c3, h4),
+    In(mR)           // B's response
+  ]
+  --[ Commit('Init', 'Resp', <a, b, kIR, kRI>), Secret(a, b, <kIR, kRI>), InFormat2(mR) ]->
+  [
+    St_Init_2(~sidI, a, b, prologue, info, sidR, kIR, kRI)
+  ]
+
+
+rule Send_First_Init:
+  [
+    St_Init_2(~sidI, a, b, prologue, info, sidR, kIR, kRI),
+    Message(p) //arbitrary message to send
+  ]
+  --[ SentFirstInit(~sidI, sidR, a, b, kIR, kRI, p), Running('Resp', 'Init', <a, b, kIR, kRI>), OutFormat4(format4('4', sidR, '0', aead(kIR, '0', p, 'e'))) ]->
+  [
+    St_Init_3(~sidI, a, b, prologue, info, sidR, kIR, kRI),
+    Out(format4('4', sidR, '0', aead(kIR, '0', p, 'e')))
+  ]
+
+
+rule Send_Init_Loop:
+//  let nIR = succ(pnIR) in
+  [ 
+    St_Init_3(~sidI, a, b, prologue, info, sidR, kIR, kRI),
+    Counter(nIR),
+    Message(p) // arbitrary message to send
+  ]
+  --[ SentInitLoop(~sidI, sidR, a, b, kIR, kRI), AlreadyKnownSIDR(sidR), OutFormat4(format4('4', sidR, nIR, aead(kIR, nIR, p, 'e'))) ]->
+  [
+    St_Init_3(~sidI, a, b, prologue, info, sidR, kIR, kRI),
+    Out(format4('4', sidR, nIR, aead(kIR, nIR, p, 'e')))
+  ]
+
+
+rule Receive_Init_Loop:
+  [
+    St_Init_3(~sidI, a, b, prologue, info, sidR, kIR, kRI),
+    In(format4('4', x, nRI, aead(kRI, nRI, p, 'e')))
+  ]
+  --[ ReceivedInitLoop(~sidI, sidR, a, b, kIR, kRI), AlreadyKnownSIDR(sidR), InFormat4(format4('4', x, nRI, aead(kRI, nRI, p, 'e'))) ]->
+  [
+    St_Init_3(~sidI, a, b, prologue, info, sidR, kIR, kRI)
+  ]
+
+
+
+
+/* ----------------------------- */
+/*   Protocol rules: Responder   */
+/* ----------------------------- */
+
+rule Handshake_St_Resp_1:
+  let
+    pkR = 'g'^~kR // long-term private key
+    // first, recompute the expected message from A
+    c0 = h_(info)
+    h0 = h(c0, prologue)
+    h1 = h(h0, pkR)
+    c1 = kdf1(c0, epkI)
+    h2 = h(h1, epkI)
+    c2 = kdf1(c1, epkI^~kR)
+    k1 = kdf2(c1, epkI^~kR)
+    cpkI = aead(k1, '0', pkI, h2)
+    h3 = h(h2, cpkI)
+    c3 = kdf1(c2, pkI^~kR)
+    k2 = kdf2(c2, pkI^~kR)
+    cts = aead(k2, '0', timestamp, h3)
+    h4 = h(h3, cts)
+    mI = format1('1', sidI, epkI, cpkI, cts, mac1I, mac2I)
+  in
+  [ Setup_Resp(~sidR, a, b, prologue, info),  // program parameters, sid = session id,
+                                              //   a, b = identities, prologue = protocol data
+    !LtK(b, ~kR),                             // long-term private key of b
+    !LtpK(a, pkI),                            // long-term public key of a
+    !PsK(a, b, psk),                          // pre-shared key between a and b
+    In(mI)
+  ]
+  --[InFormat1(mI)]->
+  [
+    St_Resp_1(~sidR, a, b, prologue, info, pkI, ~kR, epkI, psk, c3, h4, sidI)
+  ]
+
+
+rule Handshake_St_Resp_2:
+  let
+    pkR = 'g'^~kR   // long-term private key
+    epkR = 'g'^~ekR // ephemeral public key
+    c4 = kdf1(c3,epkR)
+    h5 = h(h4,epkR)
+    c5 = kdf1(c4, epkI^~ekR)
+    c6 = kdf1(c5, pkI^~ekR)
+    c7 = kdf1(c6, psk)
+    pi = kdf2(c6, psk)
+    k3 = kdf3(c6, psk)
+    h6 = h(h5, pi)
+    cempty = aead(k3, '0', 'e', h6)
+    mR = format2('2', ~sidR, sidI, epkR, cempty, mac1R, mac2R)
+    // and the keys
+    kIR = kdf1_(c7)
+    kRI = kdf2_(c7)
+  in 
+  [ St_Resp_1(~sidR, a, b, prologue, info, pkI, ~kR, epkI, psk, c3, h4, sidI),
+    Fr(~ekR),                           // ephemeral private key
+    MAC(mac1R),                         // macs to use in the first message;
+    MAC(mac2R)                          //  their values are not useful here so we just
+                                        //  receive some value from the environment
+  ]
+  --[ Running('Init', 'Resp', <a, b, kIR, kRI>), SendSIDR(~sidR), OutFormat2(mR) ]->
+  [ St_Resp_2(~sidR, a, b, prologue, info, sidI, kIR, kRI),
+    Out(mR)
+  ]
+
+
+rule Receive_First_Resp:
+  [
+    St_Resp_2(~sidR, a, b, prologue, info, sidI, kIR, kRI),
+    In(format4('4', x, n, aead(kIR, n, p, 'e')))
+  ]
+  --[ ReceivedFirstResp(~sidR, sidI, a, b, kIR, kRI, p), Commit('Resp', 'Init', <a, b, kIR, kRI>), Secret(a, b, <kIR, kRI>), InFormat4(format4('4', x, n, aead(kIR, n, p, 'e'))) ]->
+  [
+    St_Resp_3(~sidR, a, b, prologue, info, sidI, kIR, kRI)
+  ]
+
+
+rule Send_Resp_Loop:
+  [
+    St_Resp_3(~sidR, a, b, prologue, info, sidI, kIR, kRI),
+    Counter(nRI),
+    Message(p) // arbitrary message to send
+  ]
+  --[ SentRespLoop(~sidR, sidI, a, b, kIR, kRI), AlreadyKnownSIDI(sidI), OutFormat4(format4('4', sidI, nRI, aead(kRI, nRI, p, 'e'))) ]->
+  [
+    St_Resp_3(~sidR, a, b, prologue, info, sidI, kIR, kRI),
+    Out(format4('4', sidI, nRI, aead(kRI, nRI, p, 'e')))
+  ]
+
+
+rule Receive_Resp_Loop:
+  [
+    St_Resp_3(~sidR, a, b, prologue, info, sidI, kIR, kRI),
+    In(format4('4', x, nIR, aead(kIR, nIR, p, 'e')))
+  ]
+  --[ ReceivedRespLoop(~sidR, sidI, a, b, kIR, kRI), AlreadyKnownSIDI(sidI), InFormat4(format4('4', x, nIR, aead(kIR, nIR, p, 'e'))) ]->
+  [
+    St_Resp_3(~sidR, a, b, prologue, info, sidI, kIR, kRI)
+  ]
+
+
+
+/* ------------------------- */
+/*   Lemmas and properties   */
+/* ------------------------- */
+
+/* Source lemma for formats and SIDs */
+lemma sources [sources]:
+  "(All x1 x2 x3 x4 x5 x6 x7 #i.
+   InFormat1(format1(x1, x2, x3, x4, x5, x6, x7))@i ==>
+     (Ex #j. OutFormat1(format1(x1, x2, x3, x4, x5, x6, x7))@j) |
+     ( (Ex #k. KU(x1)@k & k < i)
+     & (Ex #k. KU(x2)@k & k < i)
+     & (Ex #k. KU(x3)@k & k < i)
+     & (Ex #k. KU(x4)@k & k < i)
+     & (Ex #k. KU(x5)@k & k < i)
+     & (Ex #k. KU(x6)@k & k < i)
+     & (Ex #k. KU(x7)@k & k < i)))
+ &
+  (All x1 x2 x3 x4 x5 x6 x7 #i.
+   InFormat2(format2(x1, x2, x3, x4, x5, x6, x7))@i ==>
+     (Ex #j. OutFormat2(format2(x1, x2, x3, x4, x5, x6, x7))@j) |
+     ( (Ex #k. KU(x1)@k & k < i)
+     & (Ex #k. KU(x2)@k & k < i)
+     & (Ex #k. KU(x3)@k & k < i)
+     & (Ex #k. KU(x4)@k & k < i)
+     & (Ex #k. KU(x5)@k & k < i)
+     & (Ex #k. KU(x6)@k & k < i)
+     & (Ex #k. KU(x7)@k & k < i)))
+ &
+  (All x1 x2 x3 x4 #i. InFormat4(format4(x1, x2, x3, x4))@i ==> (Ex #j. OutFormat4(format4(x1, x2, x3, x4))@j) |
+  ( (Ex #k. KU(x1)@k & k < i)
+  & (Ex #k. KU(x2)@k & k < i)
+  & (Ex #k. KU(x3)@k & k < i)
+  & (Ex #k. KU(x4)@k & k < i)))
+ &
+  (All sidR #i. AlreadyKnownSIDR(sidR)@i ==> (Ex #j. SendSIDR(sidR)@j) | (Ex #k. KU(sidR)@k & k < i))
+  &
+  (All sidI #i. AlreadyKnownSIDI(sidI)@i ==> (Ex #j. SendSIDI(sidI)@j) | (Ex #k. KU(sidI)@k & k < i))"
+
+
+
+/* Auxiliary lemmas to escape the loop in the transport phase */
+lemma loop_induction_resp [use_induction, reuse]:
+  "(All #i sidI sidR a b kIR kRI.
+    (SentRespLoop(sidR,sidI,a,b,kIR,kRI)@i ==> (Ex #j pp. ReceivedFirstResp(sidR,sidI,a,b,kIR,kRI,pp)@j & j < i))) &
+   (All #i sidI sidR a b kIR kRI.
+    (ReceivedRespLoop(sidR,sidI,a,b,kIR,kRI)@i ==> (Ex #j pp. ReceivedFirstResp(sidR,sidI,a,b,kIR,kRI,pp)@j & j < i)))"
+
+
+lemma loop_induction_init [use_induction, reuse]:
+  "(All #i sidI sidR a b kIR kRI.
+     (SentInitLoop(sidI,sidR,a,b,kIR, kRI)@i ==> (Ex #j pp. SentFirstInit(sidI,sidR,a,b,kIR,kRI,pp)@j & j < i))) &
+   (All #i sidI sidR a b kIR kRI.
+     (ReceivedInitLoop(sidI,sidR,a,b,kIR,kRI)@i ==> (Ex #j pp. SentFirstInit(sidI,sidR,a,b,kIR,kRI,pp)@j & j < i)))"
+
+
+
+/* Executability check: possible to start the transport phase */
+lemma first_message_exec:
+  exists-trace
+  "Ex #i #j sidI sidR a b k kk p.
+    SentFirstInit(sidI, sidR, a, b, k, kk, p)@i &
+    ReceivedFirstResp(sidR, sidI, a, b, k, kk, p)@j &
+    i < j &
+    (not (Ex #l. Corrupted(a)@l)) &
+    (not (Ex #l. Corrupted(b)@l))"
+
+
+/* Authentication: mutual agreement on the keys */
+lemma auth_resp:
+  "All #i a b k kk.
+    Commit('Resp', 'Init', <a,b,k,kk>)@i
+    ==>
+    ((Ex #j. Running('Resp', 'Init', <a,b,k,kk>)@j & j < i)
+   | (Ex #j. Corrupted(a)@j)
+   | (Ex #j. Corrupted(b)@j))"
+
+
+lemma auth_init:
+  "All #i a b k kk.
+    Commit('Init', 'Resp', <a,b,k,kk>)@i
+    ==>
+    ((Ex #j. Running('Init', 'Resp', <a,b,k,kk>)@j & j < i)
+   | (Ex #j. Corrupted(a)@j)
+   | (Ex #j. Corrupted(b)@j))"
+
+
+/* Forward secrecy of the keys */
+lemma forward_secrecy:
+  "All #i a b m.
+    Secret(a, b, m)@i
+    ==>
+    ((not (Ex #j. K(m)@j))
+   | (Ex #j. Corrupted(a)@j & j < i)
+   | (Ex #j. Corrupted(b)@j & j < i))"
+   
+
+end

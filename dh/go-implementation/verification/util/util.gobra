@@ -1,0 +1,101 @@
+package util
+
+import tm "dh-gobra/verification/term"
+import pub "dh-gobra/verification/pub"
+import fresh "dh-gobra/verification/fresh"
+
+type Term = tm.Term
+
+type TermUtil domain {
+
+    // constructors
+    func tuple3(tm.Term, tm.Term, tm.Term) tm.Term
+    axiom { 
+        forall x1, x2, x3 tm.Term :: {tuple3(x1, x2, x3)} tuple3(x1, x2, x3) == tm.pair(x1,tm.pair(x2,x3))
+    }
+    func tuple5(tm.Term, tm.Term, tm.Term, tm.Term, tm.Term) tm.Term
+    axiom { 
+        forall x1, x2, x3, x4, x5 tm.Term :: {tuple5(x1, x2, x3, x4, x5)} tuple5(x1, x2, x3, x4, x5) == tm.format(x1, x2, x3, x4, x5)
+    }
+
+    func ok() tm.Term
+    axiom { 
+        ok() == tm.ok() 
+    }
+
+    func const1() tm.Term
+    axiom { 
+        const1() == tm.one() 
+    }
+
+    func exp(tm.Term, tm.Term) tm.Term
+    axiom { 
+        forall x1, x2 tm.Term :: {exp(x1, x2)} exp(x1, x2) == tm.exp(x1, x2) 
+    }
+
+    func mult(tm.Term, tm.Term) tm.Term
+    axiom { 
+        forall x1, x2 tm.Term :: {mult(x1, x2)} mult(x1, x2) == tm.Mult(x1, x2) 
+    }
+
+    func integer32(uint32) tm.Term
+    axiom { 
+        integer32(0) == tm.pubTerm(pub.const_0_pub()) 
+    }
+    axiom { 
+        integer32(1) == tm.pubTerm(pub.const_1_pub()) 
+    }
+    axiom { 
+        forall i uint32 :: { integer32(i) } (i != 0 && i != 1) ==> integer32(i) == tm.freshTerm(fresh.fr_integer32(i))
+    }
+
+    func idI() tm.Term
+    axiom {
+        idI() == tm.pubTerm(pub.const_I_pub())
+    }
+
+    func idR() tm.Term
+    axiom {
+        idR() == tm.pubTerm(pub.const_R_pub())
+    }
+
+    func generator() tm.Term
+    axiom { 
+        generator() == tm.pubTerm(pub.const_g_pub()) 
+    }
+
+    func pk(tm.Term) tm.Term
+    axiom {
+        forall x tm.Term :: pk(x) == tm.pk(x)
+    }
+
+    func sign(tm.Term, tm.Term) tm.Term
+    axiom {
+        forall x1, x2 tm.Term :: sign(x1, x2) == tm.sign(x1, x2)
+    }
+
+
+    // deconstructors
+
+    func verify(tm.Term, tm.Term) tm.Term
+    axiom { 
+        forall x1, x2 tm.Term :: verify(x1, x2) == tm.verify(x1, x2) 
+    }
+
+    func inv(tm.Term) tm.Term
+    axiom { 
+        forall x tm.Term :: {inv(x)} inv(x) == tm.inv(x) 
+    }
+ 
+    // // TODO spezialize
+    func getFirst(tm.Term) tm.Term
+    func getSecond(tm.Term) tm.Term
+    func getThird(tm.Term) tm.Term
+    func getForth(tm.Term) tm.Term // spelling
+    func getFifth(tm.Term) tm.Term
+
+    // tuple5 deconstructors
+    axiom {
+        forall t1, t2, t3, t4, t5 Term :: { tuple5(t1, t2, t3, t4, t5) } getFirst(tuple5(t1, t2, t3, t4, t5)) == t1 && getSecond(tuple5(t1, t2, t3, t4, t5)) == t2 && getThird(tuple5(t1, t2, t3, t4, t5)) == t3 && getForth(tuple5(t1, t2, t3, t4, t5)) == t4 && getFifth(tuple5(t1, t2, t3, t4, t5)) == t5
+    }
+}

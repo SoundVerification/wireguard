@@ -1,0 +1,44 @@
+apply plugin: 'java'
+apply plugin: 'application'
+
+mainClassName = 'dhgobra.main.Main'
+
+// specify backwards compatibility with 11
+sourceCompatibility = 15
+targetCompatibility = 15
+
+defaultTasks 'run'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation group: 'commons-cli', name: 'commons-cli', version: '1.5.0'
+    // implementation group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.70'
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': mainClassName
+    }
+    // name of the generated JAR output:
+    baseName 'dh-gobra'
+    // to create a fat JAR:
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    /*
+    // filter signature files because JAR signatures are invalid after
+    // creating a fat-JAR:
+    from (configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }) {
+        exclude 'META-INF/*.RSA', 'META-INF/*.SF', 'META-INF/*.DSA'
+    }
+    */
+}
+
+// set destination for JAR output:
+tasks.withType(Jar) {
+    destinationDir = file("$rootDir")
+    // duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}

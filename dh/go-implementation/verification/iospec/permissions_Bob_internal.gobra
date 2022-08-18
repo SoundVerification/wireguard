@@ -1,0 +1,37 @@
+package iospec
+
+
+
+import . "dh-gobra/verification/claim"
+import . "dh-gobra/verification/fact"
+import . "dh-gobra/verification/term"
+import . "dh-gobra/verification/place"
+import . "dh-gobra/verification/pub"
+import . "dh-gobra/verification/fresh"
+
+
+// permission e_Bob_recvAndSend
+pred e_Bob_recvAndSend(ghost tami_p Place, ghost ridB Term, ghost B Term, ghost A Term, ghost skB Term, ghost skA Term, ghost y Term, ghost X Term, ghost tami_lp mset[Fact], ghost tami_ap mset[Claim], ghost tami_rp mset[Fact])
+
+ghost
+requires e_Bob_recvAndSend(tami_p, ridB, B, A, skB, skA, y, X, tami_lp, tami_ap, tami_rp)
+pure func get_e_Bob_recvAndSend_placeDst(tami_p Place, ridB Term, B Term, A Term, skB Term, skA Term, y Term, X Term, tami_lp mset[Fact], tami_ap mset[Claim], tami_rp mset[Fact]) (placeDst Place)
+
+ghost
+requires token(tami_p) && e_Bob_recvAndSend(tami_p, ridB, B, A, skB, skA, y, X, tami_lp, tami_ap, tami_rp)
+ensures token(tami_pp) && tami_pp == old(get_e_Bob_recvAndSend_placeDst(tami_p, ridB, B, A, skB, skA, y, X, tami_lp, tami_ap, tami_rp))
+func internBIO_e_Bob_recvAndSend(tami_p Place, ridB Term, B Term, A Term, skB Term, skA Term, y Term, X Term, tami_lp mset[Fact], tami_ap mset[Claim], tami_rp mset[Fact]) (tami_pp Place)
+
+
+// permission e_Bob_recv
+pred e_Bob_recv(ghost tami_p Place, ghost ridB Term, ghost B Term, ghost A Term, ghost skB Term, ghost skA Term, ghost y Term, ghost X Term, ghost tami_lp mset[Fact], ghost tami_ap mset[Claim], ghost tami_rp mset[Fact])
+
+ghost
+requires e_Bob_recv(tami_p, ridB, B, A, skB, skA, y, X, tami_lp, tami_ap, tami_rp)
+pure func get_e_Bob_recv_placeDst(tami_p Place, ridB Term, B Term, A Term, skB Term, skA Term, y Term, X Term, tami_lp mset[Fact], tami_ap mset[Claim], tami_rp mset[Fact]) (placeDst Place)
+
+ghost
+requires token(tami_p) && e_Bob_recv(tami_p, ridB, B, A, skB, skA, y, X, tami_lp, tami_ap, tami_rp)
+ensures token(tami_pp) && tami_pp == old(get_e_Bob_recv_placeDst(tami_p, ridB, B, A, skB, skA, y, X, tami_lp, tami_ap, tami_rp))
+func internBIO_e_Bob_recv(tami_p Place, ridB Term, B Term, A Term, skB Term, skA Term, y Term, X Term, tami_lp mset[Fact], tami_ap mset[Claim], tami_rp mset[Fact]) (tami_pp Place)
+

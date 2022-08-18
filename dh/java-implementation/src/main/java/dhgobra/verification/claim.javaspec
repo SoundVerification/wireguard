@@ -1,0 +1,17 @@
+package claim;
+
+import fresh.*;
+import pub.*;
+import term.*;
+
+
+
+/*@
+
+   inductive Claim =
+            IN_ALICE(Term t1, Term t2)
+        |   Secret(Term t1, Term t2, Term t3)
+        |   Running(Term t1, Term t2, Term t3)
+        |   Commit(Term t1, Term t2, Term t3)
+        |   OUT_BOB(Term t1);
+@*/

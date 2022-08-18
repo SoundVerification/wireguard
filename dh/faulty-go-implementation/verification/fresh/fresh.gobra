@@ -1,0 +1,15 @@
+package fresh
+
+
+
+
+
+// fresh encoding ---------------
+type Fresh domain {
+    // TODO!: Add base constructors as uninterpreted functions
+    // Example:
+    func fr_msg(string) Fresh
+    func fr_integer64(uint64) Fresh
+    func fr_integer32(uint32) Fresh
+}
+

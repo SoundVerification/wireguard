@@ -1,0 +1,15 @@
+package dhgobra.library;
+
+public final class Msg1 {
+    public final byte[] X;
+
+    //@ predicate data(list<byte> xV) = X |-> ?x &*& [_]array_slice(x, 0, x.length, xV);
+
+    public Msg1(byte[] X) 
+    //@ requires [_]array_slice(X, 0, X.length, ?xV);
+    //@ ensures  data(xV);
+    {
+        this.X = X;
+        //@ close data(xV);
+    }
+}

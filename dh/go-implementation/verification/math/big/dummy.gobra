@@ -1,0 +1,5 @@
+package big
+
+type Int struct {
+    nonEmptyStruct int
+}

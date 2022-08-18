@@ -1,0 +1,21 @@
+package dhgobra.library;
+
+public final class Msg3 {
+    public final int idA; // values are in the range of uint32
+    public final int idB; // values are in the range of uint32
+    public final byte[] X;
+    public final byte[] Y;
+    
+    //@ predicate data(int idAV, int idBV, list<byte> xV, list<byte> yV) = X |-> ?x &*& [_]array_slice(x, 0, x.length, xV) &*& Y |-> ?y &*& [_]array_slice(y, 0, y.length, yV) &*& idA |-> idAV &*& idB |-> idBV;
+
+    public Msg3(int idA, int idB, byte[] X, byte[] Y) 
+    	//@ requires [_]array_slice(X, 0, X.length, ?xV) &*& [_]array_slice(Y, 0, Y.length, ?yV);
+    	//@ ensures  data(idA, idB, xV, yV);
+    {
+        this.idA = idA;
+        this.idB = idB;
+        this.X = X;
+        this.Y = Y;
+        //@ close data(idA, idB, xV, yV);
+    }
+}

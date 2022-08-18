@@ -1,0 +1,86 @@
+package bytes
+
+import . "dh-gobra/verification/util"
+
+type Bytes domain {
+
+    // constructors
+    func tuple5B(Bytes, Bytes, Bytes, Bytes, Bytes) Bytes
+    func signB(Bytes, Bytes) Bytes
+    func okB() Bytes
+    func integer32B(uint32) Bytes
+    func generatorB() Bytes
+    func expB(Bytes, Bytes) Bytes
+    func multB(Bytes, Bytes) Bytes
+    func pkB(Bytes) Bytes
+
+    // deconstructors
+    func getFirstB(Bytes) Bytes
+    func getSecondB(Bytes) Bytes
+    func getThirdB(Bytes) Bytes
+    func getForthB(Bytes) Bytes
+    func getFifthB(Bytes) Bytes
+    func verifyB(Bytes, Bytes) Bytes
+    func getMsgB(Bytes) Bytes
+
+    // // (x^y)^z == x^(y*z)
+    // axiom {
+    //     forall x, y, z Bytes :: { expB(expB(x, y), z) } { expB(x, multB(y, z)) } expB(expB(x, y), z) == expB(x, multB(y, z))
+    // }
+
+    // // x^1 == x
+    // axiom {
+    //     forall x Bytes :: { expB(x, const1B()) } expB(x, const1B()) == x
+    // }
+
+    // // multB is commutative
+    // axiom {
+    //     forall x, y Bytes :: { multB(x, y) } multB(x, y) == multB(y, x)
+    // }
+
+    // // multB is associative
+    // axiom {
+    //     forall x, y, z Bytes :: { multB(multB(x, y), z) } { multB(x, multB(y, z)) } multB(multB(x, y), z) == multB(x, multB(y, z))
+    // }
+
+    // // x*1 == x
+    // axiom {
+    //     forall x Bytes :: { multB(x, const1B()) } multB(x, const1B()) == x
+    // }
+
+    // // x * invB(x) == 1
+    // axiom {
+    //     forall x Bytes :: { multB(x, invB(x)) } multB(x, invB(x)) == const1B()
+    // }
+
+    // tuple5B deconstructors
+    axiom {
+        forall t1, t2, t3, t4, t5 Bytes :: { tuple5B(t1, t2, t3, t4, t5) } getFirstB(tuple5B(t1, t2, t3, t4, t5)) == t1 && getSecondB(tuple5B(t1, t2, t3, t4, t5)) == t2 && getThirdB(tuple5B(t1, t2, t3, t4, t5)) == t3 && getForthB(tuple5B(t1, t2, t3, t4, t5)) == t4 && getFifthB(tuple5B(t1, t2, t3, t4, t5)) == t5
+    }
+
+    // signB deconstructors
+    axiom {
+        forall msg, sk Bytes :: { verifyB(signB(msg, sk), pkB(sk)) } { getMsgB(signB(msg, sk)) } verifyB(signB(msg, sk), pkB(sk)) == okB() && getMsgB(signB(msg, sk)) == msg
+    }
+}
+
+type Gamma domain {
+  func gamma(Term) Bytes
+
+  func oneTerm(Bytes) Term
+
+  axiom { // totality
+    forall b Bytes :: {oneTerm(b)} gamma(oneTerm(b)) == b
+  }
+
+  axiom { // homomorphism
+    (forall t1, t2, t3, t4, t5 Term :: {gamma(tuple5(t1,t2,t3,t4,t5))} gamma(tuple5(t1,t2,t3,t4,t5)) == tuple5B(gamma(t1), gamma(t2), gamma(t3), gamma(t4), gamma(t5))) &&
+    (forall msg, sk Term :: {gamma(sign(msg, sk))} gamma(sign(msg, sk)) == signB(gamma(msg), gamma(sk))) &&
+    (gamma(ok()) == okB()) &&
+    (forall i uint32 :: {gamma(integer32(i))} gamma(integer32(i)) == integer32B(i)) &&
+    (gamma(generator()) == generatorB()) &&
+    (forall l, r Term :: {gamma(exp(l,r))} gamma(exp(l,r)) == expB(gamma(l), gamma(r))) &&
+    (forall l, r Term :: {gamma(mult(l,r))} gamma(mult(l,r)) == multB(gamma(l), gamma(r))) &&
+    (forall sk Term :: {gamma(pk(sk))} gamma(pk(sk)) == pkB(gamma(sk)))
+  }
+}

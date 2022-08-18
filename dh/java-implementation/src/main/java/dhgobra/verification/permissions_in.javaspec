@@ -1,0 +1,24 @@
+package iospec;
+
+import place.*;
+import fresh.*;
+import pub.*;
+import term.*;
+
+
+
+/*@
+
+   predicate e_FrFact(Place tami_p, Term tami_rid, Term new_x, Place tami_pp);
+
+
+    predicate e_InFact(Place tami_p, Term tami_rid, Term new_x, Place tami_pp);
+
+
+    predicate e_Setup_Alice(Place tami_p, Term tami_rid, Term A, Term B, Term skA, Term skB, Place tami_pp);
+
+
+    predicate e_Setup_Bob(Place tami_p, Term tami_rid, Term B, Term A, Term skB, Term skA, Place tami_pp);
+
+
+@*/

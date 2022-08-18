@@ -1,0 +1,37 @@
+package iospec
+
+
+
+import . "dh-gobra/verification/claim"
+import . "dh-gobra/verification/fact"
+import . "dh-gobra/verification/term"
+import . "dh-gobra/verification/place"
+import . "dh-gobra/verification/pub"
+import . "dh-gobra/verification/fresh"
+
+
+// permission e_Alice_send
+pred e_Alice_send(ghost tami_p Place, ghost ridA Term, ghost A Term, ghost B Term, ghost skA Term, ghost skB Term, ghost x Term, ghost tami_lp mset[Fact], ghost tami_ap mset[Claim], ghost tami_rp mset[Fact])
+
+ghost
+requires e_Alice_send(tami_p, ridA, A, B, skA, skB, x, tami_lp, tami_ap, tami_rp)
+pure func get_e_Alice_send_placeDst(tami_p Place, ridA Term, A Term, B Term, skA Term, skB Term, x Term, tami_lp mset[Fact], tami_ap mset[Claim], tami_rp mset[Fact]) (placeDst Place)
+
+ghost
+requires token(tami_p) && e_Alice_send(tami_p, ridA, A, B, skA, skB, x, tami_lp, tami_ap, tami_rp)
+ensures token(tami_pp) && tami_pp == old(get_e_Alice_send_placeDst(tami_p, ridA, A, B, skA, skB, x, tami_lp, tami_ap, tami_rp))
+func internBIO_e_Alice_send(tami_p Place, ridA Term, A Term, B Term, skA Term, skB Term, x Term, tami_lp mset[Fact], tami_ap mset[Claim], tami_rp mset[Fact]) (tami_pp Place)
+
+
+// permission e_Alice_recvAndSend
+pred e_Alice_recvAndSend(ghost tami_p Place, ghost ridA Term, ghost A Term, ghost B Term, ghost skA Term, ghost skB Term, ghost x Term, ghost Y Term, ghost tami_lp mset[Fact], ghost tami_ap mset[Claim], ghost tami_rp mset[Fact])
+
+ghost
+requires e_Alice_recvAndSend(tami_p, ridA, A, B, skA, skB, x, Y, tami_lp, tami_ap, tami_rp)
+pure func get_e_Alice_recvAndSend_placeDst(tami_p Place, ridA Term, A Term, B Term, skA Term, skB Term, x Term, Y Term, tami_lp mset[Fact], tami_ap mset[Claim], tami_rp mset[Fact]) (placeDst Place)
+
+ghost
+requires token(tami_p) && e_Alice_recvAndSend(tami_p, ridA, A, B, skA, skB, x, Y, tami_lp, tami_ap, tami_rp)
+ensures token(tami_pp) && tami_pp == old(get_e_Alice_recvAndSend_placeDst(tami_p, ridA, A, B, skA, skB, x, Y, tami_lp, tami_ap, tami_rp))
+func internBIO_e_Alice_recvAndSend(tami_p Place, ridA Term, A Term, B Term, skA Term, skB Term, x Term, Y Term, tami_lp mset[Fact], tami_ap mset[Claim], tami_rp mset[Fact]) (tami_pp Place)
+

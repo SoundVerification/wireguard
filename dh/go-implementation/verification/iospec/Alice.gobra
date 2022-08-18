@@ -1,0 +1,76 @@
+package iospec
+
+
+
+import . "dh-gobra/verification/claim"
+import . "dh-gobra/verification/fact"
+import . "dh-gobra/verification/term"
+import . "dh-gobra/verification/place"
+import . "dh-gobra/verification/pub"
+import . "dh-gobra/verification/fresh"
+
+
+pred P_Alice(tami_p Place, tami_rid Term, ghost tami_s mset[Fact]) {
+    phiR_Alice_0(tami_p, tami_rid, tami_s) &&
+    phiR_Alice_1(tami_p, tami_rid, tami_s) &&
+    phiRG_Alice_2(tami_p, tami_rid, tami_s) &&
+    phiRF_Alice_3(tami_p, tami_rid, tami_s) &&
+    phiRF_Alice_4(tami_p, tami_rid, tami_s) &&
+    phiRF_Alice_5(tami_p, tami_rid, tami_s)
+}
+pred phiR_Alice_0(tami_p Place, tami_rid Term, ghost tami_s mset[Fact]) {
+    forall ridA Term, A Term, B Term, skA Term, skB Term, x Term, tami_lp mset[Fact], tami_ap mset[Claim], tami_rp mset[Fact] :: 
+        { e_Alice_send(tami_p, ridA, A, B, skA, skB, x, tami_lp, tami_ap, tami_rp) } (
+            (M(tami_lp, tami_s) &&
+             tami_lp == mset[Fact] {
+                            Setup_Alice(ridA, A, B, skA, skB),
+                            FrFact_Alice(ridA, x)} &&
+             tami_ap == mset[Claim] {
+                        } &&
+             tami_rp == mset[Fact] {
+                            St_Alice_1(ridA, A, B, skA, skB, x),
+                            OutFact_Alice(ridA, exp(pubTerm(const_g_pub()), x))}) ==>
+            (e_Alice_send(tami_p, ridA, A, B, skA, skB, x, tami_lp, tami_ap, tami_rp) && 
+             P_Alice(get_e_Alice_send_placeDst(tami_p, ridA, A, B, skA, skB, x, tami_lp, tami_ap, tami_rp), tami_rid, U(tami_lp, tami_rp, tami_s))))
+}
+pred phiR_Alice_1(tami_p Place, tami_rid Term, ghost tami_s mset[Fact]) {
+    forall ridA Term, A Term, B Term, skA Term, skB Term, x Term, Y Term, tami_lp mset[Fact], tami_ap mset[Claim], tami_rp mset[Fact] :: 
+        { e_Alice_recvAndSend(tami_p, ridA, A, B, skA, skB, x, Y, tami_lp, tami_ap, tami_rp) } (
+            (M(tami_lp, tami_s) &&
+             tami_lp == mset[Fact] {
+                            St_Alice_1(ridA, A, B, skA, skB, x),
+                            InFact_Alice(ridA, sign(format(pubTerm(const_0_pub()), B, A, exp(pubTerm(const_g_pub()), x), Y), skB))} &&
+             tami_ap == mset[Claim] {
+                            IN_ALICE(Y, format(pubTerm(const_0_pub()), B, A, exp(pubTerm(const_g_pub()), x), Y)),
+                            Secret(A, B, exp(Y, x)),
+                            Running(pubTerm(const_R_pub()), pubTerm(const_I_pub()), pair(A, pair(B, exp(Y, x)))),
+                            Commit(pubTerm(const_I_pub()), pubTerm(const_R_pub()), pair(A, pair(B, exp(Y, x))))} &&
+             tami_rp == mset[Fact] {
+                            St_Alice_2(ridA, A, B, skA, skB, x, Y),
+                            OutFact_Alice(ridA, sign(format(pubTerm(const_1_pub()), A, B, Y, exp(pubTerm(const_g_pub()), x)), skA))}) ==>
+            (e_Alice_recvAndSend(tami_p, ridA, A, B, skA, skB, x, Y, tami_lp, tami_ap, tami_rp) && 
+             P_Alice(get_e_Alice_recvAndSend_placeDst(tami_p, ridA, A, B, skA, skB, x, Y, tami_lp, tami_ap, tami_rp), tami_rid, U(tami_lp, tami_rp, tami_s))))
+}
+pred phiRG_Alice_2(tami_p Place, tami_rid Term, ghost tami_s mset[Fact]) {
+    forall new_x Term :: 
+        { e_OutFact(tami_p, tami_rid, new_x) }{ OutFact_Alice(tami_rid, new_x) } (
+            ((OutFact_Alice(tami_rid, new_x) # tami_s) > 0) ==>
+            (e_OutFact(tami_p, tami_rid, new_x) && 
+             P_Alice(get_e_OutFact_placeDst(tami_p, tami_rid, new_x), tami_rid, tami_s setminus mset[Fact] {
+                                                                                                    OutFact_Alice(tami_rid, new_x)})))
+}
+pred phiRF_Alice_3(tami_p Place, tami_rid Term, ghost tami_s mset[Fact]) {
+    e_FrFact(tami_p, tami_rid) && 
+    P_Alice(get_e_FrFact_placeDst(tami_p, tami_rid), tami_rid, tami_s union mset[Fact] {
+                                                                                FrFact_Alice(tami_rid, get_e_FrFact_r1(tami_p, tami_rid))})
+}
+pred phiRF_Alice_4(tami_p Place, tami_rid Term, ghost tami_s mset[Fact]) {
+    e_InFact(tami_p, tami_rid) && 
+    P_Alice(get_e_InFact_placeDst(tami_p, tami_rid), tami_rid, tami_s union mset[Fact] {
+                                                                                InFact_Alice(tami_rid, get_e_InFact_r1(tami_p, tami_rid))})
+}
+pred phiRF_Alice_5(tami_p Place, tami_rid Term, ghost tami_s mset[Fact]) {
+    e_Setup_Alice(tami_p, tami_rid) && 
+    P_Alice(get_e_Setup_Alice_placeDst(tami_p, tami_rid), tami_rid, tami_s union mset[Fact] {
+                                                                                     Setup_Alice(tami_rid, get_e_Setup_Alice_r1(tami_p, tami_rid), get_e_Setup_Alice_r2(tami_p, tami_rid), get_e_Setup_Alice_r3(tami_p, tami_rid), get_e_Setup_Alice_r4(tami_p, tami_rid))})
+}

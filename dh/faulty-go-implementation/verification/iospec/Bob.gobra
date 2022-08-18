@@ -1,0 +1,75 @@
+package iospec
+
+
+
+import . "dh-gobra/verification/claim"
+import . "dh-gobra/verification/fact"
+import . "dh-gobra/verification/term"
+import . "dh-gobra/verification/place"
+import . "dh-gobra/verification/pub"
+import . "dh-gobra/verification/fresh"
+
+
+pred P_Bob(tami_p Place, tami_rid Term, ghost tami_s mset[Fact]) {
+    phiR_Bob_0(tami_p, tami_rid, tami_s) &&
+    phiR_Bob_1(tami_p, tami_rid, tami_s) &&
+    phiRG_Bob_2(tami_p, tami_rid, tami_s) &&
+    phiRF_Bob_3(tami_p, tami_rid, tami_s) &&
+    phiRF_Bob_4(tami_p, tami_rid, tami_s) &&
+    phiRF_Bob_5(tami_p, tami_rid, tami_s)
+}
+pred phiR_Bob_0(tami_p Place, tami_rid Term, ghost tami_s mset[Fact]) {
+    forall ridB Term, B Term, A Term, skB Term, skA Term, y Term, X Term, tami_lp mset[Fact], tami_ap mset[Claim], tami_rp mset[Fact] :: 
+        { e_Bob_recvAndSend(tami_p, ridB, B, A, skB, skA, y, X, tami_lp, tami_ap, tami_rp) } (
+            (M(tami_lp, tami_s) &&
+             tami_lp == mset[Fact] {
+                            Setup_Bob(ridB, B, A, skB, skA),
+                            FrFact_Bob(ridB, y),
+                            InFact_Bob(ridB, X)} &&
+             tami_ap == mset[Claim] {
+                            OUT_BOB(format(pubTerm(const_0_pub()), B, A, X, exp(pubTerm(const_g_pub()), y))),
+                            Running(pubTerm(const_I_pub()), pubTerm(const_R_pub()), pair(A, pair(B, exp(X, y))))} &&
+             tami_rp == mset[Fact] {
+                            St_Bob_1(ridB, B, A, skB, skA, y, X),
+                            OutFact_Bob(ridB, sign(format(pubTerm(const_0_pub()), B, A, X, exp(pubTerm(const_g_pub()), y)), skB))}) ==>
+            (e_Bob_recvAndSend(tami_p, ridB, B, A, skB, skA, y, X, tami_lp, tami_ap, tami_rp) && 
+             P_Bob(get_e_Bob_recvAndSend_placeDst(tami_p, ridB, B, A, skB, skA, y, X, tami_lp, tami_ap, tami_rp), tami_rid, U(tami_lp, tami_rp, tami_s))))
+}
+pred phiR_Bob_1(tami_p Place, tami_rid Term, ghost tami_s mset[Fact]) {
+    forall ridB Term, B Term, A Term, skB Term, skA Term, y Term, X Term, tami_lp mset[Fact], tami_ap mset[Claim], tami_rp mset[Fact] :: 
+        { e_Bob_recv(tami_p, ridB, B, A, skB, skA, y, X, tami_lp, tami_ap, tami_rp) } (
+            (M(tami_lp, tami_s) &&
+             tami_lp == mset[Fact] {
+                            St_Bob_1(ridB, B, A, skB, skA, y, X),
+                            InFact_Bob(ridB, sign(format(pubTerm(const_1_pub()), A, B, exp(pubTerm(const_g_pub()), y), X), skA))} &&
+             tami_ap == mset[Claim] {
+                            Commit(pubTerm(const_R_pub()), pubTerm(const_I_pub()), pair(A, pair(B, exp(X, y)))),
+                            Secret(A, B, exp(X, y))} &&
+             tami_rp == mset[Fact] {
+                            St_Bob_2(ridB, B, A, skB, skA, y, X)}) ==>
+            (e_Bob_recv(tami_p, ridB, B, A, skB, skA, y, X, tami_lp, tami_ap, tami_rp) && 
+             P_Bob(get_e_Bob_recv_placeDst(tami_p, ridB, B, A, skB, skA, y, X, tami_lp, tami_ap, tami_rp), tami_rid, U(tami_lp, tami_rp, tami_s))))
+}
+pred phiRG_Bob_2(tami_p Place, tami_rid Term, ghost tami_s mset[Fact]) {
+    forall new_x Term :: 
+        { e_OutFact(tami_p, tami_rid, new_x) }{ OutFact_Bob(tami_rid, new_x) } (
+            ((OutFact_Bob(tami_rid, new_x) # tami_s) > 0) ==>
+            (e_OutFact(tami_p, tami_rid, new_x) && 
+             P_Bob(get_e_OutFact_placeDst(tami_p, tami_rid, new_x), tami_rid, tami_s setminus mset[Fact] {
+                                                                                                  OutFact_Bob(tami_rid, new_x)})))
+}
+pred phiRF_Bob_3(tami_p Place, tami_rid Term, ghost tami_s mset[Fact]) {
+    e_FrFact(tami_p, tami_rid) && 
+    P_Bob(get_e_FrFact_placeDst(tami_p, tami_rid), tami_rid, tami_s union mset[Fact] {
+                                                                              FrFact_Bob(tami_rid, get_e_FrFact_r1(tami_p, tami_rid))})
+}
+pred phiRF_Bob_4(tami_p Place, tami_rid Term, ghost tami_s mset[Fact]) {
+    e_InFact(tami_p, tami_rid) && 
+    P_Bob(get_e_InFact_placeDst(tami_p, tami_rid), tami_rid, tami_s union mset[Fact] {
+                                                                              InFact_Bob(tami_rid, get_e_InFact_r1(tami_p, tami_rid))})
+}
+pred phiRF_Bob_5(tami_p Place, tami_rid Term, ghost tami_s mset[Fact]) {
+    e_Setup_Bob(tami_p, tami_rid) && 
+    P_Bob(get_e_Setup_Bob_placeDst(tami_p, tami_rid), tami_rid, tami_s union mset[Fact] {
+                                                                                 Setup_Bob(tami_rid, get_e_Setup_Bob_r1(tami_p, tami_rid), get_e_Setup_Bob_r2(tami_p, tami_rid), get_e_Setup_Bob_r3(tami_p, tami_rid), get_e_Setup_Bob_r4(tami_p, tami_rid))})
+}

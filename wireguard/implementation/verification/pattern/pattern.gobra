@@ -1,0 +1,140 @@
+package patternInitiator
+
+import by "wireguard-gobra/wireguard/verification/bytes"
+import ft "wireguard-gobra/wireguard/verification/fact"
+import io "wireguard-gobra/wireguard/verification/iospec"
+import mi "wireguard-gobra/wireguard/verification/messages/initiator"
+import mr "wireguard-gobra/wireguard/verification/messages/responder"
+import pl "wireguard-gobra/wireguard/verification/place"
+import tm "wireguard-gobra/wireguard/verification/util"
+
+
+
+ghost
+requires pl.token(p) && io.P_Init(p, rid, s)
+requires mset[ft.Fact]{ ft.St_Init_1(rid, tm.getFirst(pp), tm.getSecond(pp), tm.getThird(pp), tm.getForth(pp), kI, ltpk, ekI, psk, c3, h4) } subset s
+requires by.gamma(t) == by.gamma(mi.Term_M2_lin(rid, sidR, kI, kI, psk, psk, ekI, ekI, c3, c3, h4, epkR, epkR, epkR, epkR, epkR, epkR, epkR, epkR, mac1, mac2))
+ensures  pl.token(p) && io.P_Init(p, rid, s)
+ensures  t == mi.Term_M2_lin(rid, x1, kI, kI, psk, psk, ekI, ekI, c3, c3, h4, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11)
+ensures patternRequirement1EPKRWitness(x2)
+func patternRequirement1(rid, pp, kI, ltpk, psk, ekI, c3, h4, sidR, epkR, mac1, mac2, t tm.Term, p pl.Place, s mset[ft.Fact]) (x1,x2,x3,x4,x5,x6,x7,x8,x9,x10,x11 tm.Term)
+
+// used to contrain the scond pattern requirement instance
+pred patternRequirement1EPKRWitness(t tm.Term)
+
+ghost
+requires patternRequirement1EPKRWitness(epkR)
+requires pl.token(p) && io.P_Init(p, rid, s)
+requires mset[ft.Fact]{ ft.St_Init_1(rid, tm.getFirst(pp), tm.getSecond(pp), tm.getThird(pp), tm.getForth(pp), kI, ltpk, ekI, psk, c3, h4) } subset s
+requires by.gamma(t) == by.gamma(mi.Term_M2_lin(rid, sidR, kI, kI, psk, psk, ekI, ekI, c3, c3, h4, epkR, epkR, epkR, epkR, epkR, epkR, epkR, epkR, mac1, mac2))
+ensures  pl.token(p) && io.P_Init(p, rid, s)
+ensures  t == mi.Term_M2_lin(rid, x1, kI, kI, psk, psk, ekI, ekI, c3, c3, h4, o, epkR, epkR, epkR, epkR, epkR, epkR, epkR, x2, x3)
+func patternRequirement1_2(rid, pp, kI, ltpk, psk, ekI, c3, h4, sidR, epkR, mac1, mac2, t tm.Term, p pl.Place, s mset[ft.Fact]) (x1,x2,x3, o tm.Term)
+
+
+
+// epki is a variable
+ghost
+requires pl.token(p) && io.P_Resp(p, rid, s)
+requires mset[ft.Fact]{ ft.Setup_Resp(rid, tm.getFirst(pp), tm.getSecond(pp), tm.getThird(pp), tm.getForth(pp)) } subset s
+requires by.gamma(t) == by.gamma(mr.Term_M1_lin(sidI, kR, kR, kR, kR, kR, kR, kR, pkI, pkI, pkI, epkI, epkI, epkI, epkI, epkI, epkI, epkI, epkI, epkI, epkI, ts, mac1, mac2))
+ensures  pl.token(p) && io.P_Resp(p, rid, s)
+ensures  t == mr.Term_M1_lin(x1, kR, kR, kR, kR, kR, kR, kR, pkI, pkI, pkI, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13, x14)
+ensures patternRequirement3EPKIWitness(x2)
+func patternRequirement3(rid, pp, kR, pkI, sidI, epkI, ts, mac1, mac2, t tm.Term, p pl.Place, s mset[ft.Fact]) (x1,x2,x3,x4,x5,x6,x7,x8,x9,x10,x11,x12,x13,x14 tm.Term)
+
+// used to contrain the scond pattern requirement instance
+pred patternRequirement3EPKIWitness(t tm.Term)
+
+// epki is not a variable
+ghost
+requires patternRequirement3EPKIWitness(epkI) // makes epkI contrained
+requires pl.token(p) && io.P_Resp(p, rid, s)
+requires mset[ft.Fact]{ ft.Setup_Resp(rid, tm.getFirst(pp), tm.getSecond(pp), tm.getThird(pp), tm.getForth(pp)) } subset s
+requires by.gamma(t) == by.gamma(mr.Term_M1_lin(sidI, kR, kR, kR, kR, kR, kR, kR, pkI, pkI, pkI, epkI, epkI, epkI, epkI, epkI, epkI, epkI, epkI, epkI, epkI, ts, mac1, mac2))
+ensures  pl.token(p) && io.P_Resp(p, rid, s)
+ensures  t == mr.Term_M1_lin(x1, kR, kR, kR, kR, kR, kR, kR, pkI, pkI, pkI, o, epkI, epkI, epkI, epkI, epkI, epkI, epkI, epkI, epkI, x2, x3, x4)
+func patternRequirement3_2(rid, pp, kR, pkI, sidI, epkI, ts, mac1, mac2, t tm.Term, p pl.Place, s mset[ft.Fact]) (x1,x2,x3,x4, o tm.Term)
+
+ghost
+requires pl.token(p)
+requires isInitiator ==> io.P_Init(p, rid, s)
+requires isInitiator ==> mset[ft.Fact]{ ft.St_Init_3(rid, tm.getFirst(pp), tm.getSecond(pp), tm.getThird(pp), tm.getForth(pp), ridOther, ownKey, foreignKey) } subset s
+requires !isInitiator ==> io.P_Resp(p, rid, s)
+requires !isInitiator ==>
+    mset[ft.Fact]{ ft.St_Resp_2(rid, tm.getFirst(pp), tm.getSecond(pp), tm.getThird(pp), tm.getForth(pp), ridOther, foreignKey, ownKey) } subset s ||
+    mset[ft.Fact]{ ft.St_Resp_3(rid, tm.getFirst(pp), tm.getSecond(pp), tm.getThird(pp), tm.getForth(pp), ridOther, foreignKey, ownKey) } subset s
+requires by.gamma(t) == by.gamma(tm.tuple4(tm.integer32(4), rid, n, tm.aead(foreignKey,n,msg,tm.zeroString(0))))
+ensures  pl.token(p)
+ensures  isInitiator ==> io.P_Init(p, rid, s)
+ensures  !isInitiator ==> io.P_Resp(p, rid, s)
+ensures  t == tm.tuple4(tm.integer32(4), rid, x1, tm.aead(foreignKey,x2,x3,tm.zeroString(0)))
+ensures  patternRequirement4NonceWitness(x1)
+func patternRequirement4(rid, pp, ridOther, ownKey, foreignKey, n, msg, t tm.Term, p pl.Place, s mset[ft.Fact], isInitiator bool) (x1, x2, x3 tm.Term)
+
+// used to contrain the scond pattern requirement instance
+pred patternRequirement4NonceWitness(t tm.Term)
+
+ghost
+requires patternRequirement4NonceWitness(n)
+requires pl.token(p)
+requires isInitiator ==> io.P_Init(p, rid, s)
+requires isInitiator ==> mset[ft.Fact]{ ft.St_Init_3(rid, tm.getFirst(pp), tm.getSecond(pp), tm.getThird(pp), tm.getForth(pp), ridOther, ownKey, foreignKey) } subset s
+requires !isInitiator ==> io.P_Resp(p, rid, s)
+requires !isInitiator ==>
+    mset[ft.Fact]{ ft.St_Resp_2(rid, tm.getFirst(pp), tm.getSecond(pp), tm.getThird(pp), tm.getForth(pp), ridOther, foreignKey, ownKey) } subset s ||
+    mset[ft.Fact]{ ft.St_Resp_3(rid, tm.getFirst(pp), tm.getSecond(pp), tm.getThird(pp), tm.getForth(pp), ridOther, foreignKey, ownKey) } subset s
+requires by.gamma(t) == by.gamma(tm.tuple4(tm.integer32(4), rid, n, tm.aead(foreignKey,n,msg,tm.zeroString(0))))
+ensures  pl.token(p)
+ensures  isInitiator ==> io.P_Init(p, rid, s)
+ensures  !isInitiator ==> io.P_Resp(p, rid, s)
+ensures  t == tm.tuple4(tm.integer32(4), rid, o, tm.aead(foreignKey,n,x1,tm.zeroString(0)))
+func patternRequirement4_2(rid, pp, ridOther, ownKey, foreignKey, n, msg, t tm.Term, p pl.Place, s mset[ft.Fact], isInitiator bool) (x1, o tm.Term)
+
+ghost
+requires pl.token(p) && io.P_Init(p, rid, s)
+requires mset[ft.Fact]{ ft.St_Init_1(rid, tm.getFirst(pp), tm.getSecond(pp), tm.getThird(pp), tm.getForth(pp), kI, ltpk, ekI, psk, c3, h4) } subset s
+requires by.gamma(t) == by.gamma(mi.Term_M2(rid, sidR, kI, psk, ekI, c3, h4, epkR, mac1, mac2))
+ensures  pl.token(p) && io.P_Init(p, rid, s)
+ensures  t == mi.Term_M2(rid, x1, kI, psk, ekI, c3, h4, x2, x3, x4)
+func patternProperty1(rid, pp, kI, ltpk, psk, ekI, c3, h4, sidR, epkR, mac1, mac2, t tm.Term, p pl.Place, s mset[ft.Fact]) (x1,x2,x3,x4 tm.Term) {
+
+    // the non-linear pattern is decomposed into two linear patterns
+    _,y2,_,_,_,_,_,_,_,_,_ := patternRequirement1(rid, pp, kI, ltpk, psk, ekI, c3, h4, sidR, epkR, mac1, mac2, t, p, s)
+    z1,z2,z3,_ := patternRequirement1_2(rid, pp, kI, ltpk, psk, ekI, c3, h4, sidR, y2, mac1, mac2, t, p, s)
+    return z1,y2,z2,z3
+}
+
+ghost
+requires pl.token(p) && io.P_Resp(p, rid, s)
+requires mset[ft.Fact]{ ft.Setup_Resp(rid, tm.getFirst(pp), tm.getSecond(pp), tm.getThird(pp), tm.getForth(pp)) } subset s
+requires by.gamma(t) == by.gamma(mr.Term_M1(sidI, kR, pkI, epkI, ts, mac1, mac2))
+ensures  pl.token(p) && io.P_Resp(p, rid, s)
+ensures  t == mr.Term_M1(x1, kR, pkI, x2, x3, x4, x5)
+func patternProperty3(rid, pp, kR, pkI, sidI, epkI, ts, mac1, mac2, t tm.Term, p pl.Place, s mset[ft.Fact]) (x1,x2,x3,x4,x5 tm.Term) {
+    // the non-linear pattern is decomposed into two linear patterns
+    _,y2,_,_,_,_,_,_,_,_,_,_,_,_ := patternRequirement3(rid, pp, kR, pkI, sidI, epkI, ts, mac1, mac2, t, p, s)
+    z1,z2,z3,z4,_ := patternRequirement3_2(rid, pp, kR, pkI, sidI, y2, ts, mac1, mac2, t, p, s)
+    return z1,y2,z2,z3,z4
+}
+
+ghost
+requires pl.token(p)
+requires isInitiator ==> io.P_Init(p, rid, s)
+requires isInitiator ==> mset[ft.Fact]{ ft.St_Init_3(rid, tm.getFirst(pp), tm.getSecond(pp), tm.getThird(pp), tm.getForth(pp), ridOther, ownKey, foreignKey) } subset s
+requires !isInitiator ==> io.P_Resp(p, rid, s)
+requires !isInitiator ==>
+    mset[ft.Fact]{ ft.St_Resp_2(rid, tm.getFirst(pp), tm.getSecond(pp), tm.getThird(pp), tm.getForth(pp), ridOther, foreignKey, ownKey) } subset s ||
+    mset[ft.Fact]{ ft.St_Resp_3(rid, tm.getFirst(pp), tm.getSecond(pp), tm.getThird(pp), tm.getForth(pp), ridOther, foreignKey, ownKey) } subset s
+requires by.gamma(t) == by.gamma(tm.tuple4(tm.integer32(4), rid, n, tm.aead(foreignKey,n,msg,tm.zeroString(0))))
+ensures  pl.token(p)
+ensures  isInitiator ==> io.P_Init(p, rid, s)
+ensures  !isInitiator ==> io.P_Resp(p, rid, s)
+ensures  t == tm.tuple4(tm.integer32(4), rid, x1, tm.aead(foreignKey,x1,x2,tm.zeroString(0)))
+func patternProperty4(rid, pp, ridOther, ownKey, foreignKey, n, msg, t tm.Term, p pl.Place, s mset[ft.Fact], isInitiator bool) (x1, x2 tm.Term) {
+
+    // the non-linear pattern is decomposed into two linear patterns
+    y1, _, _ := patternRequirement4(rid, pp, ridOther, ownKey, foreignKey, n, msg, t, p, s, isInitiator)
+    z1, _ := patternRequirement4_2(rid, pp, ridOther, ownKey, foreignKey, y1, msg, t, p, s, isInitiator)
+    return y1, z1
+}

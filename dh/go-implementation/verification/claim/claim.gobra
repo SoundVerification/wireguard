@@ -1,0 +1,55 @@
+package claim
+
+
+
+import . "dh-gobra/verification/term"
+
+
+type Claim domain {
+    func IN_ALICE(t1 Term, t2 Term) Claim
+    func getIN_ALICE(f Claim) seq[Term]
+    axiom  {
+        forall t1 Term, t2 Term :: 
+            { IN_ALICE(t1, t2) } (
+                getIN_ALICE(IN_ALICE(t1, t2)) ==
+                seq[Term]{t1, t2})
+    }
+
+    func Secret(t1 Term, t2 Term, t3 Term) Claim
+    func getSecret(f Claim) seq[Term]
+    axiom  {
+        forall t1 Term, t2 Term, t3 Term :: 
+            { Secret(t1, t2, t3) } (
+                getSecret(Secret(t1, t2, t3)) ==
+                seq[Term]{t1, t2, t3})
+    }
+
+    func Running(t1 Term, t2 Term, t3 Term) Claim
+    func getRunning(f Claim) seq[Term]
+    axiom  {
+        forall t1 Term, t2 Term, t3 Term :: 
+            { Running(t1, t2, t3) } (
+                getRunning(Running(t1, t2, t3)) ==
+                seq[Term]{t1, t2, t3})
+    }
+
+    func Commit(t1 Term, t2 Term, t3 Term) Claim
+    func getCommit(f Claim) seq[Term]
+    axiom  {
+        forall t1 Term, t2 Term, t3 Term :: 
+            { Commit(t1, t2, t3) } (
+                getCommit(Commit(t1, t2, t3)) ==
+                seq[Term]{t1, t2, t3})
+    }
+
+    func OUT_BOB(t1 Term) Claim
+    func getOUT_BOB(f Claim) Term
+    axiom  {
+        forall t1 Term :: 
+            { OUT_BOB(t1) } (
+                getOUT_BOB(OUT_BOB(t1)) ==
+                t1)
+    }
+
+
+}

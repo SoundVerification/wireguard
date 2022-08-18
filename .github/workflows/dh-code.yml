@@ -1,0 +1,36 @@
+name: DH Code Verification
+
+on:
+  push:
+
+jobs:
+  build-verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    container:
+      image: ghcr.io/viperproject/gobra@sha256:1513175b6b66dcdb73042fbcb0bc3fa511c716cbf65ec318e25171283975b955
+    env:
+      VERIFAST_VERSION: 18.02
+    steps:
+      - name: Install prerequisites
+        run: apt-get update && apt-get install -y git curl tar libgomp1
+
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - name: Verify DH initiator in Go using Gobra
+        run: |
+          mkdir -p .gobra
+          java -Xss128m -jar /gobra/gobra.jar \
+            --module "dh-gobra" \
+            --include verification --include . \
+            --directory initiator
+        working-directory: dh/go-implementation
+
+      - name: Verify DH responder in Java using VeriFast
+        run: |
+          curl -q -s -S -L --create-dirs -o VeriFast.zip https://github.com/verifast/verifast/releases/download/${{ env.VERIFAST_VERSION }}/verifast-${{ env.VERIFAST_VERSION }}-linux.tar.gz
+          tar xzf VeriFast.zip
+          # this creates a folder called `verifast-${{ env.VERIFAST_VERSION }}`
+          VERIFAST_PATH="$PWD/verifast-${{ env.VERIFAST_VERSION }}/bin/verifast"
+          $VERIFAST_PATH -allow_assume -c dh/java-implementation/src/main/java/dhgobra/responder/Responder.jarsrc

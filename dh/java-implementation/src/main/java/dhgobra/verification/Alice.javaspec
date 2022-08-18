@@ -1,0 +1,240 @@
+package iospec;
+
+import place.*;
+import fresh.*;
+import pub.*;
+import term.*;
+import fact.*;
+import claim.*;
+import permissions_in.*;
+import permissions_out.*;
+import permissions_Alice.*;
+
+
+
+/*@
+
+   inductive Alice_quantified_vals =
+            quant_phiR_Alice_0(Term, Term, Term, Term, Term, Term, mset<Fact>, mset<Claim>, mset<Fact>) // ridA, A, B, skA, skB, x, tami_lp, tami_ap, tami_rp
+        |   quant_phiR_Alice_1(Term, Term, Term, Term, Term, Term, Term, mset<Fact>, mset<Claim>, mset<Fact>) // ridA, A, B, skA, skB, x, Y, tami_lp, tami_ap, tami_rp
+        |   quant_phiRG_Alice_2(Term) // new_x
+        |   quant_phiRF_Alice_3 // 
+        |   quant_phiRF_Alice_4 // 
+        |   quant_phiRF_Alice_5 // 
+    ;
+    predicate P_Alice(Place tami_p, Term tami_rid, mset<Fact> tami_s) =
+        bigstar(phiR_Alice_0(tami_p, tami_rid, tami_s), nil) &*&
+        bigstar(phiR_Alice_1(tami_p, tami_rid, tami_s), nil) &*&
+        bigstar(phiRG_Alice_2(tami_p, tami_rid, tami_s), nil) &*&
+        bigstar(phiRF_Alice_3(tami_p, tami_rid, tami_s), nil) &*&
+        bigstar(phiRF_Alice_4(tami_p, tami_rid, tami_s), nil) &*&
+        bigstar(phiRF_Alice_5(tami_p, tami_rid, tami_s), nil)
+    ;
+    predicate_ctor phiR_Alice_0(Place tami_p, Term tami_rid, mset<Fact> tami_s)(Alice_quantified_vals q) =
+        switch (q) {
+            case quant_phiR_Alice_0(ridA, A, B, skA, skB, x, tami_lp, tami_ap, tami_rp): 
+                return
+                M(tami_lp, tami_s) &&
+                tami_lp ==
+                msetList(
+                    cons(Setup_Alice(ridA, A, B, skA, skB),
+                    cons(FrFact_Alice(ridA, x),
+                    nil))
+                ) &&
+                tami_ap ==
+                msetList(
+                    nil
+                ) &&
+                tami_rp ==
+                msetList(
+                    cons(St_Alice_1(ridA, A, B, skA, skB, x),
+                    cons(OutFact_Alice(ridA, exp(pubTerm(const_g_pub()), x)),
+                    nil))
+                )
+                ?
+                (e_Alice_send(tami_p, ridA, A, B, skA, skB, x, tami_lp, tami_ap, tami_rp, ?tami_pp) &*&
+                 P_Alice(
+                     tami_pp, 
+                     tami_rid, 
+                     U(tami_lp, tami_rp, tami_s)
+                 ))
+                :
+                true;
+            case quant_phiR_Alice_1(ridA, A, B, skA, skB, x, Y, tami_lp, tami_ap, tami_rp): 
+                return true;
+            case quant_phiRG_Alice_2(new_x): 
+                return true;
+            case quant_phiRF_Alice_3: 
+                return true;
+            case quant_phiRF_Alice_4: 
+                return true;
+            case quant_phiRF_Alice_5: 
+                return true;
+        }
+    ;
+    predicate_ctor phiR_Alice_1(Place tami_p, Term tami_rid, mset<Fact> tami_s)(Alice_quantified_vals q) =
+        switch (q) {
+            case quant_phiR_Alice_1(ridA, A, B, skA, skB, x, Y, tami_lp, tami_ap, tami_rp): 
+                return
+                M(tami_lp, tami_s) &&
+                tami_lp ==
+                msetList(
+                    cons(St_Alice_1(ridA, A, B, skA, skB, x),
+                    cons(InFact_Alice(ridA, sign(format(pubTerm(const_0_pub()), B, A, exp(pubTerm(const_g_pub()), x), Y), skB)),
+                    nil))
+                ) &&
+                tami_ap ==
+                msetList(
+                    cons(IN_ALICE(Y, format(pubTerm(const_0_pub()), B, A, exp(pubTerm(const_g_pub()), x), Y)),
+                    cons(Secret(A, B, exp(Y, x)),
+                    cons(Running(pubTerm(const_R_pub()), pubTerm(const_I_pub()), paired(A, paired(B, exp(Y, x)))),
+                    cons(Commit(pubTerm(const_I_pub()), pubTerm(const_R_pub()), paired(A, paired(B, exp(Y, x)))),
+                    nil))))
+                ) &&
+                tami_rp ==
+                msetList(
+                    cons(St_Alice_2(ridA, A, B, skA, skB, x, Y),
+                    cons(OutFact_Alice(ridA, sign(format(pubTerm(const_1_pub()), A, B, Y, exp(pubTerm(const_g_pub()), x)), skA)),
+                    nil))
+                )
+                ?
+                (e_Alice_recvAndSend(tami_p, ridA, A, B, skA, skB, x, Y, tami_lp, tami_ap, tami_rp, ?tami_pp) &*&
+                 P_Alice(
+                     tami_pp, 
+                     tami_rid, 
+                     U(tami_lp, tami_rp, tami_s)
+                 ))
+                :
+                true;
+            case quant_phiR_Alice_0(ridA, A, B, skA, skB, x, tami_lp, tami_ap, tami_rp): 
+                return true;
+            case quant_phiRG_Alice_2(new_x): 
+                return true;
+            case quant_phiRF_Alice_3: 
+                return true;
+            case quant_phiRF_Alice_4: 
+                return true;
+            case quant_phiRF_Alice_5: 
+                return true;
+        }
+    ;
+    predicate_ctor phiRG_Alice_2(Place tami_p, Term tami_rid, mset<Fact> tami_s)(Alice_quantified_vals q) =
+        switch (q) {
+            case quant_phiRG_Alice_2(new_x): 
+                return
+                msetIn(
+                    OutFact_Alice(tami_rid, new_x), 
+                    tami_s
+                )
+                ?
+                (e_OutFact(tami_p, tami_rid, new_x, ?tami_pp) &*&
+                 P_Alice(
+                     tami_pp, 
+                     tami_rid, 
+                     msetMinus(
+                         tami_s, 
+                         msetList(
+                             cons(OutFact_Alice(tami_rid, new_x),
+                             nil)
+                         )
+                     )
+                 ))
+                :
+                true;
+            case quant_phiR_Alice_0(ridA, A, B, skA, skB, x, tami_lp, tami_ap, tami_rp): 
+                return true;
+            case quant_phiR_Alice_1(ridA, A, B, skA, skB, x, Y, tami_lp, tami_ap, tami_rp): 
+                return true;
+            case quant_phiRF_Alice_3: 
+                return true;
+            case quant_phiRF_Alice_4: 
+                return true;
+            case quant_phiRF_Alice_5: 
+                return true;
+        }
+    ;
+    predicate_ctor phiRF_Alice_3(Place tami_p, Term tami_rid, mset<Fact> tami_s)(Alice_quantified_vals q) =
+        switch (q) {
+            case quant_phiRF_Alice_3: 
+                return
+                e_FrFact(tami_p, tami_rid, ?new_x, ?tami_pp) &*&
+                P_Alice(
+                    tami_pp, 
+                    tami_rid, 
+                    msetUnion(
+                        tami_s, 
+                        msetList(
+                            cons(FrFact_Alice(tami_rid, new_x),
+                            nil)
+                        )
+                    )
+                );
+            case quant_phiR_Alice_0(ridA, A, B, skA, skB, x, tami_lp, tami_ap, tami_rp): 
+                return true;
+            case quant_phiR_Alice_1(ridA, A, B, skA, skB, x, Y, tami_lp, tami_ap, tami_rp): 
+                return true;
+            case quant_phiRG_Alice_2(new_x): 
+                return true;
+            case quant_phiRF_Alice_4: 
+                return true;
+            case quant_phiRF_Alice_5: 
+                return true;
+        }
+    ;
+    predicate_ctor phiRF_Alice_4(Place tami_p, Term tami_rid, mset<Fact> tami_s)(Alice_quantified_vals q) =
+        switch (q) {
+            case quant_phiRF_Alice_4: 
+                return
+                e_InFact(tami_p, tami_rid, ?new_x, ?tami_pp) &*&
+                P_Alice(
+                    tami_pp, 
+                    tami_rid, 
+                    msetUnion(
+                        tami_s, 
+                        msetList(
+                            cons(InFact_Alice(tami_rid, new_x),
+                            nil)
+                        )
+                    )
+                );
+            case quant_phiR_Alice_0(ridA, A, B, skA, skB, x, tami_lp, tami_ap, tami_rp): 
+                return true;
+            case quant_phiR_Alice_1(ridA, A, B, skA, skB, x, Y, tami_lp, tami_ap, tami_rp): 
+                return true;
+            case quant_phiRG_Alice_2(new_x): 
+                return true;
+            case quant_phiRF_Alice_3: 
+                return true;
+            case quant_phiRF_Alice_5: 
+                return true;
+        }
+    ;
+    predicate_ctor phiRF_Alice_5(Place tami_p, Term tami_rid, mset<Fact> tami_s)(Alice_quantified_vals q) =
+        switch (q) {
+            case quant_phiRF_Alice_5: 
+                return
+                e_Setup_Alice(tami_p, tami_rid, ?A, ?B, ?skA, ?skB, ?tami_pp) &*&
+                P_Alice(
+                    tami_pp, 
+                    tami_rid, 
+                    msetUnion(
+                        tami_s, 
+                        msetList(
+                            cons(Setup_Alice(tami_rid, A, B, skA, skB),
+                            nil)
+                        )
+                    )
+                );
+            case quant_phiR_Alice_0(ridA, A, B, skA, skB, x, tami_lp, tami_ap, tami_rp): 
+                return true;
+            case quant_phiR_Alice_1(ridA, A, B, skA, skB, x, Y, tami_lp, tami_ap, tami_rp): 
+                return true;
+            case quant_phiRG_Alice_2(new_x): 
+                return true;
+            case quant_phiRF_Alice_3: 
+                return true;
+            case quant_phiRF_Alice_4: 
+                return true;
+        }
+    ;
+@*/

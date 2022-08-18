@@ -1,0 +1,32 @@
+package iospec;
+
+import place.*;
+import fresh.*;
+import pub.*;
+import term.*;
+import fact.*;
+import claim.*;
+
+
+
+/*@
+
+   predicate e_Bob_recvAndSend(Place tami_p, Term ridB, Term B, Term A, Term skB, Term skA, Term y, Term X, mset<Fact> tami_lp, mset<Claim> tami_ap, mset<Fact> tami_rp, Place tami_pp);
+
+    lemma void internBIO_e_Bob_recvAndSend(Place tami_p, Term ridB, Term B, Term A, Term skB, Term skA, Term y, Term X, mset<Fact> tami_lp, mset<Claim> tami_ap, mset<Fact> tami_rp)
+        requires token(tami_p) &*& e_Bob_recvAndSend(tami_p, ridB, B, A, skB, skA, y, X, tami_lp, tami_ap, tami_rp, ?tami_pp);
+        ensures token(tami_pp);
+    {   assume(false);
+    }
+
+
+    predicate e_Bob_recv(Place tami_p, Term ridB, Term B, Term A, Term skB, Term skA, Term y, Term X, mset<Fact> tami_lp, mset<Claim> tami_ap, mset<Fact> tami_rp, Place tami_pp);
+
+    lemma void internBIO_e_Bob_recv(Place tami_p, Term ridB, Term B, Term A, Term skB, Term skA, Term y, Term X, mset<Fact> tami_lp, mset<Claim> tami_ap, mset<Fact> tami_rp)
+        requires token(tami_p) &*& e_Bob_recv(tami_p, ridB, B, A, skB, skA, y, X, tami_lp, tami_ap, tami_rp, ?tami_pp);
+        ensures token(tami_pp);
+    {   assume(false);
+    }
+
+
+@*/

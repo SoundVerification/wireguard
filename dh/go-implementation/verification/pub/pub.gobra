@@ -1,0 +1,24 @@
+package pub
+
+
+
+
+
+// pub encoding ---------------
+type Pub domain {
+    func const_g_pub() Pub
+
+    func const_0_pub() Pub
+
+    func const_R_pub() Pub
+
+    func const_I_pub() Pub
+
+    func const_1_pub() Pub
+
+    // TODO!: Add base constructors as uninterpreted functions
+    // Example:
+    // func pub_msg(string) Pub
+    // func pub_integer64(uint64) Pub
+}
+

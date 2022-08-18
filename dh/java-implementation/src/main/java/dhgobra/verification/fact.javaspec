@@ -1,0 +1,160 @@
+package fact;
+
+import fresh.*;
+import pub.*;
+import term.*;
+
+
+
+/*@
+
+   inductive Fact =
+            Setup_Alice(Term t1, Term t2, Term t3, Term t4, Term t5)
+        |   FrFact_Alice(Term t1, Term t2)
+        |   St_Alice_1(Term t1, Term t2, Term t3, Term t4, Term t5, Term t6)
+        |   OutFact_Alice(Term t1, Term t2)
+        |   InFact_Alice(Term t1, Term t2)
+        |   St_Alice_2(Term t1, Term t2, Term t3, Term t4, Term t5, Term t6, Term t7)
+        |   Setup_Bob(Term t1, Term t2, Term t3, Term t4, Term t5)
+        |   FrFact_Bob(Term t1, Term t2)
+        |   InFact_Bob(Term t1, Term t2)
+        |   St_Bob_1(Term t1, Term t2, Term t3, Term t4, Term t5, Term t6, Term t7)
+        |   OutFact_Bob(Term t1, Term t2)
+        |   St_Bob_2(Term t1, Term t2, Term t3, Term t4, Term t5, Term t6, Term t7);
+    
+
+
+    fixpoint boolean persistent(Fact f) {
+        switch (f) {
+            case Setup_Alice(t1, t2, t3, t4, t5): return false;
+            case FrFact_Alice(t1, t2): return false;
+            case St_Alice_1(t1, t2, t3, t4, t5, t6): return false;
+            case OutFact_Alice(t1, t2): return false;
+            case InFact_Alice(t1, t2): return false;
+            case St_Alice_2(t1, t2, t3, t4, t5, t6, t7): return false;
+            case Setup_Bob(t1, t2, t3, t4, t5): return false;
+            case FrFact_Bob(t1, t2): return false;
+            case InFact_Bob(t1, t2): return false;
+            case St_Bob_1(t1, t2, t3, t4, t5, t6, t7): return false;
+            case OutFact_Bob(t1, t2): return false;
+            case St_Bob_2(t1, t2, t3, t4, t5, t6, t7): return false;
+        }
+    }
+    fixpoint boolean nonpersistent(Fact f) {
+        return !persistent(f);
+    }
+@*/
+/*@
+
+   
+
+inductive mset<T> = msetList(list<T>);
+
+
+fixpoint list<T> msetToList<T>(mset<T> m) {
+    switch (m) {
+        case msetList(l): return l;
+    }
+}
+
+lemma_auto void mset_toFromList<T>(mset<T> m);
+    requires true;
+    ensures msetList(msetToList(m)) == m;
+lemma_auto void mset_fromToList<T>(list<T> l);
+    requires true;
+    ensures msetToList(msetList(l)) == l;   
+
+
+fixpoint mset<T> msetAdd<T>(T t, mset<T> m) {
+    return msetList( cons(t, msetToList(m)) );
+}
+
+fixpoint mset<T> msetRemove<T>(T t, mset<T> m) {
+    return msetList( remove(t, msetToList(m)) );
+}
+
+
+fixpoint int count<T>(T t, list<T> l) {
+    switch (l) {
+        case nil: return 0;
+        case cons(x, xs): return t == x ? 1 + count(t, xs) : count(t, xs);
+    
+    }
+}
+fixpoint int msetMultiplicity<T>(T t, mset<T> m) {
+    switch (m) {
+        case msetList(l): return count(t, l);
+    }
+}
+lemma_auto void msetMultiplicity_nonnegative<T>(T t, mset<T> m);
+    requires true;
+    ensures msetMultiplicity(t, m) >= 0;
+    
+    
+
+fixpoint boolean msetIn<T>(T t, mset<T> m) {
+    return mem(t, msetToList(m));
+}
+
+fixpoint mset<T> msetUnion<T>(mset<T> a, mset<T> b) {
+    return msetList(append(msetToList(a), msetToList(b)));
+}
+
+fixpoint list<T> nub<T>(list<T> l) {
+    switch (l) {
+        case nil: return nil;
+        case cons(x, xs): return cons(x, remove_every(x, nub(xs)));
+    }
+}
+lemma_auto void nub_distinct<T>(list<T> l);
+    requires true;
+    ensures distinct(nub(l)) == true;
+
+fixpoint mset<T> msetToSet<T>(mset<T> m) {
+    return msetList(nub(msetToList(m)));
+}
+
+// a - b or a \ b in set notation (remove_all(x, y) does y - x) 
+fixpoint mset<T> msetMinus<T>(mset<T> a, mset<T> b) {
+    return msetList(remove_all(msetToList(b), msetToList(a)));
+}
+lemma void msetPlusMinus<T>(mset<T> a, mset<T> b);
+    requires true;
+    ensures msetMinus(msetUnion(a, b), b) == a;
+
+// a subset of b
+fixpoint boolean msetIncl<T>(mset<T> a, mset<T> b) {
+    return msetMinus(a, b) == msetList(nil);
+}
+
+// keeps elements where f(elem) == true
+fixpoint list<T> filter<T>(list<T> l, fixpoint(T, boolean) f) {
+    switch (l) {
+        case nil: return nil;
+        case cons(x, xs): return f(x) ? cons(x, filter(xs, f)) : filter(xs, f);
+    }
+
+}
+
+
+    
+fixpoint mset<Fact> linearFacts(mset<Fact> l) {
+    return msetList(filter(msetToList(l), nonpersistent));
+}
+
+    
+fixpoint mset<Fact> persistentFacts(mset<Fact> l) {
+    return msetList(nub(filter(msetToList(l), persistent)));
+}
+
+    
+fixpoint boolean M(mset<Fact> l, mset<Fact> s) {
+    return msetIncl(linearFacts(l), s) && msetIncl(persistentFacts(l), s);
+}
+
+    
+fixpoint mset<Fact> U(mset<Fact> l, mset<Fact> r, mset<Fact> s) {
+    return msetUnion(msetMinus(s, linearFacts(l)), r);
+}
+
+@*/

@@ -1,0 +1,15 @@
+package iospec;
+
+import place.*;
+import fresh.*;
+import pub.*;
+import term.*;
+
+
+
+/*@
+
+   predicate e_OutFact(Place tami_p, Term tami_rid, Term new_x, Place tami_pp);
+
+
+@*/

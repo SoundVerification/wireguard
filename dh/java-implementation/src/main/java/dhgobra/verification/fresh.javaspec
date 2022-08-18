@@ -1,0 +1,12 @@
+package fresh;
+
+
+
+
+// TODO: provide constructors for Fresh type e.g.:
+/*@
+
+   inductive Fresh =
+            fr_msg(String)
+        |   fr_int(int);
+@*/

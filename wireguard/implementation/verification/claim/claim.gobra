@@ -1,0 +1,181 @@
+package claim
+
+
+
+import . "wireguard-gobra/wireguard/verification/term"
+
+
+type Claim domain {
+    func SendSIDI(t1 Term) Claim
+    func getSendSIDI(f Claim) Term
+    axiom  {
+        forall t1 Term :: 
+            { SendSIDI(t1) } (
+                getSendSIDI(SendSIDI(t1)) ==
+                t1)
+    }
+
+    func OutFormat1(t1 Term) Claim
+    func getOutFormat1(f Claim) Term
+    axiom  {
+        forall t1 Term :: 
+            { OutFormat1(t1) } (
+                getOutFormat1(OutFormat1(t1)) ==
+                t1)
+    }
+
+    func Commit(t1 Term, t2 Term, t3 Term) Claim
+    func getCommit(f Claim) seq[Term]
+    axiom  {
+        forall t1 Term, t2 Term, t3 Term :: 
+            { Commit(t1, t2, t3) } (
+                getCommit(Commit(t1, t2, t3)) ==
+                seq[Term]{t1, t2, t3})
+    }
+
+    func Secret(t1 Term, t2 Term, t3 Term) Claim
+    func getSecret(f Claim) seq[Term]
+    axiom  {
+        forall t1 Term, t2 Term, t3 Term :: 
+            { Secret(t1, t2, t3) } (
+                getSecret(Secret(t1, t2, t3)) ==
+                seq[Term]{t1, t2, t3})
+    }
+
+    func InFormat2(t1 Term) Claim
+    func getInFormat2(f Claim) Term
+    axiom  {
+        forall t1 Term :: 
+            { InFormat2(t1) } (
+                getInFormat2(InFormat2(t1)) ==
+                t1)
+    }
+
+    func SentFirstInit(t1 Term, t2 Term, t3 Term, t4 Term, t5 Term, t6 Term, t7 Term) Claim
+    func getSentFirstInit(f Claim) seq[Term]
+    axiom  {
+        forall t1 Term, t2 Term, t3 Term, t4 Term, t5 Term, t6 Term, t7 Term :: 
+            { SentFirstInit(t1, t2, t3, t4, t5, t6, t7) } (
+                getSentFirstInit(SentFirstInit(t1, t2, t3, t4, t5, t6, t7)) ==
+                seq[Term]{t1, t2, t3, t4, t5, t6, t7})
+    }
+
+    func Running(t1 Term, t2 Term, t3 Term) Claim
+    func getRunning(f Claim) seq[Term]
+    axiom  {
+        forall t1 Term, t2 Term, t3 Term :: 
+            { Running(t1, t2, t3) } (
+                getRunning(Running(t1, t2, t3)) ==
+                seq[Term]{t1, t2, t3})
+    }
+
+    func OutFormat4(t1 Term) Claim
+    func getOutFormat4(f Claim) Term
+    axiom  {
+        forall t1 Term :: 
+            { OutFormat4(t1) } (
+                getOutFormat4(OutFormat4(t1)) ==
+                t1)
+    }
+
+    func SentInitLoop(t1 Term, t2 Term, t3 Term, t4 Term, t5 Term, t6 Term) Claim
+    func getSentInitLoop(f Claim) seq[Term]
+    axiom  {
+        forall t1 Term, t2 Term, t3 Term, t4 Term, t5 Term, t6 Term :: 
+            { SentInitLoop(t1, t2, t3, t4, t5, t6) } (
+                getSentInitLoop(SentInitLoop(t1, t2, t3, t4, t5, t6)) ==
+                seq[Term]{t1, t2, t3, t4, t5, t6})
+    }
+
+    func AlreadyKnownSIDR(t1 Term) Claim
+    func getAlreadyKnownSIDR(f Claim) Term
+    axiom  {
+        forall t1 Term :: 
+            { AlreadyKnownSIDR(t1) } (
+                getAlreadyKnownSIDR(AlreadyKnownSIDR(t1)) ==
+                t1)
+    }
+
+    func ReceivedInitLoop(t1 Term, t2 Term, t3 Term, t4 Term, t5 Term, t6 Term) Claim
+    func getReceivedInitLoop(f Claim) seq[Term]
+    axiom  {
+        forall t1 Term, t2 Term, t3 Term, t4 Term, t5 Term, t6 Term :: 
+            { ReceivedInitLoop(t1, t2, t3, t4, t5, t6) } (
+                getReceivedInitLoop(ReceivedInitLoop(t1, t2, t3, t4, t5, t6)) ==
+                seq[Term]{t1, t2, t3, t4, t5, t6})
+    }
+
+    func InFormat4(t1 Term) Claim
+    func getInFormat4(f Claim) Term
+    axiom  {
+        forall t1 Term :: 
+            { InFormat4(t1) } (
+                getInFormat4(InFormat4(t1)) ==
+                t1)
+    }
+
+    func InFormat1(t1 Term) Claim
+    func getInFormat1(f Claim) Term
+    axiom  {
+        forall t1 Term :: 
+            { InFormat1(t1) } (
+                getInFormat1(InFormat1(t1)) ==
+                t1)
+    }
+
+    func SendSIDR(t1 Term) Claim
+    func getSendSIDR(f Claim) Term
+    axiom  {
+        forall t1 Term :: 
+            { SendSIDR(t1) } (
+                getSendSIDR(SendSIDR(t1)) ==
+                t1)
+    }
+
+    func OutFormat2(t1 Term) Claim
+    func getOutFormat2(f Claim) Term
+    axiom  {
+        forall t1 Term :: 
+            { OutFormat2(t1) } (
+                getOutFormat2(OutFormat2(t1)) ==
+                t1)
+    }
+
+    func ReceivedFirstResp(t1 Term, t2 Term, t3 Term, t4 Term, t5 Term, t6 Term, t7 Term) Claim
+    func getReceivedFirstResp(f Claim) seq[Term]
+    axiom  {
+        forall t1 Term, t2 Term, t3 Term, t4 Term, t5 Term, t6 Term, t7 Term :: 
+            { ReceivedFirstResp(t1, t2, t3, t4, t5, t6, t7) } (
+                getReceivedFirstResp(ReceivedFirstResp(t1, t2, t3, t4, t5, t6, t7)) ==
+                seq[Term]{t1, t2, t3, t4, t5, t6, t7})
+    }
+
+    func SentRespLoop(t1 Term, t2 Term, t3 Term, t4 Term, t5 Term, t6 Term) Claim
+    func getSentRespLoop(f Claim) seq[Term]
+    axiom  {
+        forall t1 Term, t2 Term, t3 Term, t4 Term, t5 Term, t6 Term :: 
+            { SentRespLoop(t1, t2, t3, t4, t5, t6) } (
+                getSentRespLoop(SentRespLoop(t1, t2, t3, t4, t5, t6)) ==
+                seq[Term]{t1, t2, t3, t4, t5, t6})
+    }
+
+    func AlreadyKnownSIDI(t1 Term) Claim
+    func getAlreadyKnownSIDI(f Claim) Term
+    axiom  {
+        forall t1 Term :: 
+            { AlreadyKnownSIDI(t1) } (
+                getAlreadyKnownSIDI(AlreadyKnownSIDI(t1)) ==
+                t1)
+    }
+
+    func ReceivedRespLoop(t1 Term, t2 Term, t3 Term, t4 Term, t5 Term, t6 Term) Claim
+    func getReceivedRespLoop(f Claim) seq[Term]
+    axiom  {
+        forall t1 Term, t2 Term, t3 Term, t4 Term, t5 Term, t6 Term :: 
+            { ReceivedRespLoop(t1, t2, t3, t4, t5, t6) } (
+                getReceivedRespLoop(ReceivedRespLoop(t1, t2, t3, t4, t5, t6)) ==
+                seq[Term]{t1, t2, t3, t4, t5, t6})
+    }
+
+
+}

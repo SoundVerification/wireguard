@@ -1,0 +1,170 @@
+package fact
+
+
+
+import . "dh-gobra/verification/term"
+import . "dh-gobra/verification/pub"
+import . "dh-gobra/verification/fresh"
+
+
+type Fact domain {
+    // tag 0
+    func Setup_Alice(t1 Term, t2 Term, t3 Term, t4 Term, t5 Term) Fact
+    func getSetup_Alice(f Fact) seq[Term]
+    axiom  {
+        forall t1 Term, t2 Term, t3 Term, t4 Term, t5 Term :: 
+            { Setup_Alice(t1, t2, t3, t4, t5) } (
+                getSetup_Alice(Setup_Alice(t1, t2, t3, t4, t5)) ==
+                seq[Term]{t1, t2, t3, t4, t5} &&
+                                             getTag(Setup_Alice(t1, t2, t3, t4, t5)) == 0)
+    }
+
+    // tag 1
+    func FrFact_Alice(t1 Term, t2 Term) Fact
+    func getFrFact_Alice(f Fact) seq[Term]
+    axiom  {
+        forall t1 Term, t2 Term :: 
+            { FrFact_Alice(t1, t2) } (
+                getFrFact_Alice(FrFact_Alice(t1, t2)) ==
+                seq[Term]{t1, t2} &&
+                                 getTag(FrFact_Alice(t1, t2)) == 1)
+    }
+
+    // tag 2
+    func St_Alice_1(t1 Term, t2 Term, t3 Term, t4 Term, t5 Term, t6 Term) Fact
+    func getSt_Alice_1(f Fact) seq[Term]
+    axiom  {
+        forall t1 Term, t2 Term, t3 Term, t4 Term, t5 Term, t6 Term :: 
+            { St_Alice_1(t1, t2, t3, t4, t5, t6) } (
+                getSt_Alice_1(St_Alice_1(t1, t2, t3, t4, t5, t6)) ==
+                seq[Term]{t1, t2, t3, t4, t5, t6} &&
+                                                 getTag(St_Alice_1(t1, t2, t3, t4, t5, t6)) == 2)
+    }
+
+    // tag 3
+    func OutFact_Alice(t1 Term, t2 Term) Fact
+    func getOutFact_Alice(f Fact) seq[Term]
+    axiom  {
+        forall t1 Term, t2 Term :: 
+            { OutFact_Alice(t1, t2) } (
+                getOutFact_Alice(OutFact_Alice(t1, t2)) ==
+                seq[Term]{t1, t2} &&
+                                 getTag(OutFact_Alice(t1, t2)) == 3)
+    }
+
+    // tag 4
+    func InFact_Alice(t1 Term, t2 Term) Fact
+    func getInFact_Alice(f Fact) seq[Term]
+    axiom  {
+        forall t1 Term, t2 Term :: 
+            { InFact_Alice(t1, t2) } (
+                getInFact_Alice(InFact_Alice(t1, t2)) ==
+                seq[Term]{t1, t2} &&
+                                 getTag(InFact_Alice(t1, t2)) == 4)
+    }
+
+    // tag 5
+    func St_Alice_2(t1 Term, t2 Term, t3 Term, t4 Term, t5 Term, t6 Term, t7 Term) Fact
+    func getSt_Alice_2(f Fact) seq[Term]
+    axiom  {
+        forall t1 Term, t2 Term, t3 Term, t4 Term, t5 Term, t6 Term, t7 Term :: 
+            { St_Alice_2(t1, t2, t3, t4, t5, t6, t7) } (
+                getSt_Alice_2(St_Alice_2(t1, t2, t3, t4, t5, t6, t7)) ==
+                seq[Term]{t1, t2, t3, t4, t5, t6, t7} &&
+                                                     getTag(St_Alice_2(t1, t2, t3, t4, t5, t6, t7)) == 5)
+    }
+
+    // tag 6
+    func Setup_Bob(t1 Term, t2 Term, t3 Term, t4 Term, t5 Term) Fact
+    func getSetup_Bob(f Fact) seq[Term]
+    axiom  {
+        forall t1 Term, t2 Term, t3 Term, t4 Term, t5 Term :: 
+            { Setup_Bob(t1, t2, t3, t4, t5) } (
+                getSetup_Bob(Setup_Bob(t1, t2, t3, t4, t5)) ==
+                seq[Term]{t1, t2, t3, t4, t5} &&
+                                             getTag(Setup_Bob(t1, t2, t3, t4, t5)) == 6)
+    }
+
+    // tag 7
+    func FrFact_Bob(t1 Term, t2 Term) Fact
+    func getFrFact_Bob(f Fact) seq[Term]
+    axiom  {
+        forall t1 Term, t2 Term :: 
+            { FrFact_Bob(t1, t2) } (
+                getFrFact_Bob(FrFact_Bob(t1, t2)) ==
+                seq[Term]{t1, t2} &&
+                                 getTag(FrFact_Bob(t1, t2)) == 7)
+    }
+
+    // tag 8
+    func InFact_Bob(t1 Term, t2 Term) Fact
+    func getInFact_Bob(f Fact) seq[Term]
+    axiom  {
+        forall t1 Term, t2 Term :: 
+            { InFact_Bob(t1, t2) } (
+                getInFact_Bob(InFact_Bob(t1, t2)) ==
+                seq[Term]{t1, t2} &&
+                                 getTag(InFact_Bob(t1, t2)) == 8)
+    }
+
+    // tag 9
+    func St_Bob_1(t1 Term, t2 Term, t3 Term, t4 Term, t5 Term, t6 Term, t7 Term) Fact
+    func getSt_Bob_1(f Fact) seq[Term]
+    axiom  {
+        forall t1 Term, t2 Term, t3 Term, t4 Term, t5 Term, t6 Term, t7 Term :: 
+            { St_Bob_1(t1, t2, t3, t4, t5, t6, t7) } (
+                getSt_Bob_1(St_Bob_1(t1, t2, t3, t4, t5, t6, t7)) ==
+                seq[Term]{t1, t2, t3, t4, t5, t6, t7} &&
+                                                     getTag(St_Bob_1(t1, t2, t3, t4, t5, t6, t7)) == 9)
+    }
+
+    // tag 10
+    func OutFact_Bob(t1 Term, t2 Term) Fact
+    func getOutFact_Bob(f Fact) seq[Term]
+    axiom  {
+        forall t1 Term, t2 Term :: 
+            { OutFact_Bob(t1, t2) } (
+                getOutFact_Bob(OutFact_Bob(t1, t2)) ==
+                seq[Term]{t1, t2} &&
+                                 getTag(OutFact_Bob(t1, t2)) == 10)
+    }
+
+    // tag 11
+    func St_Bob_2(t1 Term, t2 Term, t3 Term, t4 Term, t5 Term, t6 Term, t7 Term) Fact
+    func getSt_Bob_2(f Fact) seq[Term]
+    axiom  {
+        forall t1 Term, t2 Term, t3 Term, t4 Term, t5 Term, t6 Term, t7 Term :: 
+            { St_Bob_2(t1, t2, t3, t4, t5, t6, t7) } (
+                getSt_Bob_2(St_Bob_2(t1, t2, t3, t4, t5, t6, t7)) ==
+                seq[Term]{t1, t2, t3, t4, t5, t6, t7} &&
+                                                     getTag(St_Bob_2(t1, t2, t3, t4, t5, t6, t7)) == 11)
+    }
+
+    // each fact has a unique tag:
+    func getTag(f Fact) int
+
+    func persistent(f Fact) bool
+
+}
+ghost
+// returns a multiset containing just the persistent facts of l all with multiplicity 1
+ensures forall f Fact :: { f # result } (f # result) == (persistent(f) && (f # l) > 0 ? 1 : 0)
+pure func persistentFacts(l mset[Fact]) (result mset[Fact])
+
+ghost
+// returns a multiset containing just the non-persistent facts of l while retaining their multiplicity
+ensures forall f Fact :: { f # result } (f # result) == (persistent(f) ? 0 : (f # l))
+pure func linearFacts(l mset[Fact]) (result mset[Fact])
+
+ghost
+ensures res == (linearFacts(l) subset s && persistentFacts(l) subset s)
+pure func M(l mset[Fact], s mset[Fact]) (res bool) {
+    // non-persistent facts
+    return linearFacts(l) subset s &&
+        // persistent facts
+        persistentFacts(l) subset s
+}
+
+ghost
+ensures result == s setminus linearFacts(l) union r
+pure func U(l mset[Fact], r mset[Fact], s mset[Fact]) (result mset[Fact])

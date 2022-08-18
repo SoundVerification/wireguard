@@ -1,3 +1,0 @@
-package conn
-
-type Endpoint = int // abstract type

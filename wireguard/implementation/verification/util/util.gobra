@@ -1,0 +1,190 @@
+package util
+
+import tm "wireguard-gobra/wireguard/verification/term"
+import pub "wireguard-gobra/wireguard/verification/pub"
+import fresh "wireguard-gobra/wireguard/verification/fresh"
+
+type Term = tm.Term
+
+type TermUtil domain {
+
+    // constructors
+    func tuple2(tm.Term, tm.Term) tm.Term
+    axiom { 
+        forall x1, x2 tm.Term :: {tuple2(x1, x2)} tuple2(x1, x2) == tm.pair(x1,x2)
+    }
+    
+    func tuple4(tm.Term, tm.Term, tm.Term, tm.Term) tm.Term
+    axiom { 
+        forall x1, x2, x3, x4 tm.Term :: {tuple4(x1, x2, x3, x4)} tuple4(x1, x2, x3, x4) == tm.format4(x1,x2,x3,x4)
+    }
+
+    func tuple5(tm.Term, tm.Term, tm.Term, tm.Term, tm.Term) tm.Term
+    axiom { 
+        forall x1, x2, x3, x4, x5 tm.Term :: {tuple5(x1, x2, x3, x4, x5)} tuple5(x1, x2, x3, x4, x5) == tm.pair(x1,tm.pair(x2,tm.pair(x3,tm.pair(x4,x5))))
+    }
+
+    func tuple7(tm.Term, tm.Term, tm.Term, tm.Term, tm.Term, tm.Term, tm.Term) tm.Term
+    axiom { 
+        forall x1, x2, x3, x4, x5, x6, x7 tm.Term :: {tuple7(x1, x2, x3, x4, x5, x6, x7)} (
+            (x1 == tm.pubTerm(pub.const_1_pub()) ==> tuple7(x1, x2, x3, x4, x5, x6, x7) == tm.format1(x1,x2,x3,x4,x5,x6,x7)) &&
+            (x1 == tm.pubTerm(pub.const_2_pub()) ==> tuple7(x1, x2, x3, x4, x5, x6, x7) == tm.format2(x1,x2,x3,x4,x5,x6,x7)))
+    }
+
+    func hash(tm.Term, tm.Term) tm.Term
+    axiom {
+        forall x1, x2 tm.Term :: {hash(x1, x2)} hash(x1, x2) == tm.h(x1, x2) 
+    }
+
+    func hash_(tm.Term) tm.Term
+    axiom { 
+        forall x tm.Term :: {hash_(x)} hash_(x) == tm.h_(x)
+    }
+
+    func kdf1(tm.Term, tm.Term) tm.Term
+    axiom { 
+        forall x1, x2 tm.Term :: {kdf1(x1, x2)} kdf1(x1, x2) == tm.kdf1(x1, x2) 
+    }
+
+    func kdf1_(tm.Term) tm.Term
+    axiom { 
+        forall x tm.Term :: {kdf1_(x)} kdf1_(x) == tm.kdf1_(x) 
+    }
+
+    func kdf2(tm.Term, tm.Term) tm.Term
+    axiom { 
+        forall x1, x2 tm.Term :: {kdf2(x1, x2)} kdf2(x1, x2) == tm.kdf2(x1, x2) 
+    }
+
+    func kdf2_(tm.Term) tm.Term
+    axiom { 
+        forall x tm.Term :: {kdf2_(x)} kdf2_(x) == tm.kdf2_(x) 
+    }
+
+    func kdf3(tm.Term, tm.Term) tm.Term
+    axiom { 
+        forall x1, x2 tm.Term :: {kdf3(x1, x2)} kdf3(x1, x2) == tm.kdf3(x1, x2) 
+    }
+
+    func ok() tm.Term
+    axiom { 
+        ok() == tm.ok() 
+    }
+
+    func aead(tm.Term, tm.Term, tm.Term, tm.Term) tm.Term
+    axiom { 
+        forall x1, x2, x3, x4 tm.Term :: {aead(x1, x2, x3, x4)} aead(x1, x2, x3, x4) == tm.aead(x1, x2, x3, x4) 
+    }
+
+    func const1() tm.Term
+    axiom { 
+        const1() == tm.one() 
+    }
+
+    func exp(tm.Term, tm.Term) tm.Term
+    axiom { 
+        forall x1, x2 tm.Term :: {exp(x1, x2)} exp(x1, x2) == tm.exp(x1, x2) 
+    }
+
+    func mult(tm.Term, tm.Term) tm.Term
+    axiom { 
+        forall x1, x2 tm.Term :: {mult(x1, x2)} mult(x1, x2) == tm.Mult(x1, x2) 
+    }
+
+    func msg(string) tm.Term
+    axiom { 
+        forall s string :: {msg(s)} msg(s) == tm.freshTerm(fresh.fr_msg(s)) 
+    }
+
+    func zeroString(int) tm.Term
+    axiom { 
+        zeroString(0) == tm.pubTerm(pub.const_e_pub()) 
+    }
+    axiom{
+        zeroString(12) == tm.pubTerm(pub.const_0_pub()) 
+    }
+
+    func integer64(uint64) tm.Term
+    axiom { 
+        integer64(0) == tm.pubTerm(pub.const_0_pub()) 
+    }
+
+    func integer32(uint32) tm.Term
+    axiom { 
+        integer32(1) == tm.pubTerm(pub.const_1_pub()) 
+    }
+    axiom { 
+        integer32(2) == tm.pubTerm(pub.const_2_pub()) 
+    }
+    axiom { 
+        integer32(4) == tm.pubTerm(pub.const_4_pub())
+    }
+    axiom { 
+        forall i uint32 :: { integer32(i) } (i != 1 && i != 2 && i != 4) ==> integer32(i) == tm.freshTerm(fresh.fr_integer32(i))
+    }
+
+
+    func infoTerm() tm.Term
+    axiom { 
+        infoTerm() == tm.pubTerm(pub.const_i_pub()) 
+    }
+
+    func prologueTerm() tm.Term
+    axiom { 
+        prologueTerm() == tm.pubTerm(pub.const_p_pub()) 
+    }
+
+    func generator() tm.Term
+    axiom { 
+        generator() == tm.pubTerm(pub.const_g_pub()) 
+    }
+
+    // func subsequent(tm.Term) tm.Term
+
+    // deconstructors
+    
+    func decrypt(tm.Term, tm.Term, tm.Term) tm.Term
+    axiom { 
+        forall x1, x2, x3 tm.Term :: decrypt(x1, x2, x3) == tm.decrypt(x1, x2, x3) 
+    }
+
+    func verify(tm.Term, tm.Term, tm.Term, tm.Term) tm.Term
+    axiom { 
+        forall x1, x2, x3, x4 tm.Term :: verify(x1, x2, x3, x4) == tm.verify(x1, x2, x3, x4) 
+    }
+
+    func inv(tm.Term) tm.Term
+    axiom { 
+        forall x tm.Term :: {inv(x)} inv(x) == tm.inv(x) 
+    }
+ 
+    // // TODO spezialize
+    func getFirst(tm.Term) tm.Term
+    func getSecond(tm.Term) tm.Term
+    func getThird(tm.Term) tm.Term
+    func getForth(tm.Term) tm.Term // spelling
+    func getFifth(tm.Term) tm.Term
+    func getSixth(tm.Term) tm.Term
+    func getSeventh(tm.Term) tm.Term
+
+    // tuple2 deconstructors
+    axiom {
+        forall t1, t2 Term :: { tuple2(t1, t2) } getFirst(tuple2(t1, t2)) == t1 && getSecond(tuple2(t1, t2)) == t2
+    }
+
+    // tuple4 deconstructors
+    axiom {
+        forall t1, t2, t3, t4 Term :: { tuple4(t1, t2, t3, t4) } getFirst(tuple4(t1, t2, t3, t4)) == t1 && getSecond(tuple4(t1, t2, t3, t4)) == t2 && getThird(tuple4(t1, t2, t3, t4)) == t3 && getForth(tuple4(t1, t2, t3, t4)) == t4
+    }
+
+    // tuple5 deconstructors
+    axiom {
+        forall t1, t2, t3, t4, t5 Term :: { tuple5(t1, t2, t3, t4, t5) } getFirst(tuple5(t1, t2, t3, t4, t5)) == t1 && getSecond(tuple5(t1, t2, t3, t4, t5)) == t2 && getThird(tuple5(t1, t2, t3, t4, t5)) == t3 && getForth(tuple5(t1, t2, t3, t4, t5)) == t4 && getFifth(tuple5(t1, t2, t3, t4, t5)) == t5
+    }
+
+    // tuple7 deconstructors
+    axiom {
+        forall t1, t2, t3, t4, t5, t6, t7 Term :: { tuple7(t1, t2, t3, t4, t5, t6, t7) } getFirst(tuple7(t1, t2, t3, t4, t5, t6, t7)) == t1 && getSecond(tuple7(t1, t2, t3, t4, t5, t6, t7)) == t2 && getThird(tuple7(t1, t2, t3, t4, t5, t6, t7)) == t3 && getForth(tuple7(t1, t2, t3, t4, t5, t6, t7)) == t4 && getFifth(tuple7(t1, t2, t3, t4, t5, t6, t7)) == t5 && getSixth(tuple7(t1, t2, t3, t4, t5, t6, t7)) == t6 && getSeventh(tuple7(t1, t2, t3, t4, t5, t6, t7)) == t7
+    }
+}
+
