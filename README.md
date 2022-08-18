@@ -1,4 +1,4 @@
-# Tamarin Model & Verified Go Implementation of the WireGuard VPN Key Exchange Protocol
+# Tamarin Model & Verified Go Implementation of the WireGuard VPN Key Exchange Protocol and Diffie-Hellman
 [![DH & WireGuard Protocol Model Verification](https://github.com/soundverification/wireguard/actions/workflows/model.yml/badge.svg?branch=main)](https://github.com/soundverification/wireguard/actions/workflows/model.yml?query=branch%3Amain)
 [![DH Code Verification](https://github.com/soundverification/wireguard/actions/workflows/dh-code.yml/badge.svg?branch=main)](https://github.com/soundverification/wireguard/actions/workflows/dh-code.yml?query=branch%3Amain)
 [![WireGuard Code Verification](https://github.com/soundverification/wireguard/actions/workflows/wireguard-code.yml/badge.svg?branch=main)](https://github.com/soundverification/wireguard/actions/workflows/wireguard-code.yml?query=branch%3Amain)

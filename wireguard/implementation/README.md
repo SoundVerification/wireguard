@@ -1,6 +1,6 @@
 # Verified Wireguard Implementation
-[![Code Verification](https://github.com/soundverification/wireguard/actions/workflows/code.yml/badge.svg?branch=main)](https://github.com/soundverification/wireguard/actions/workflows/code.yml?query=branch%3Amain)
-[![License: MPL 2.0](https://img.shields.io/badge/License-MPL%202.0-brightgreen.svg)](../LICENSE)
+[![WireGuard Code Verification](https://github.com/soundverification/wireguard/actions/workflows/wireguard-code.yml/badge.svg?branch=main)](https://github.com/soundverification/wireguard/actions/workflows/wireguard-code.yml?query=branch%3Amain)
+[![License: MPL 2.0](https://img.shields.io/badge/License-MPL%202.0-brightgreen.svg)](../../LICENSE)
 
 ## Verifying & Running Initiator & Responder in Docker
 The sources of this verified implementation together with the code verifier Gobra and its dependencies are provided as a Docker image.
@@ -31,19 +31,19 @@ The version of Z3 can be checked by running `z3 -version`.
 Change into the directory `case_studies/wireguard/src`. All subsequent commands are assumed to be executed in this directory.
 To verify the initiator's implementation, run:
 ```
-java -Xss128m -jar <PATH TO GOBRA JAR> -I initiator -I verification -I ./ --module wireguard-gobra/wireguard -i initiator
+java -Xss128m -jar <PATH TO GOBRA JAR> -I verification -I ./ --module wireguard-gobra/wireguard --directory initiator
 ```
 
 Similarly, to verify the responder's implementation, run:
 ```
-java -Xss128m -jar <PATH TO GOBRA JAR> -I responder -I verification -I ./ --module wireguard-gobra/wireguard -i responder
+java -Xss128m -jar <PATH TO GOBRA JAR> -I verification -I ./ --module wireguard-gobra/wireguard --directory responder
 ```
 
 Description of the flags:
 - `-Xss128m` increases the stack size used to run the verifier. The default argument does not suffice and will cause a runtime exception.
-- `-I initiator -I verification -I ./` instructs Gobra to consider the current directory and the `initiator` and `verification` subfolders when performing lookups of imported packages. Note that `initiator` takes precende over `verification` and `verification over the current directory meaning that packages found in these subfolders will be selected over those found in the current directory.
+- `-I verification -I ./` instructs Gobra to consider the current directory and the `verification` subfolders when performing lookups of imported packages. Note that `verification` takes precende over the current directory meaning that packages found in these subfolders will be selected over those found in the current directory.
 - `--module wireguard-gobra/wireguard` informs Gobra that we are currently in this module. This impacts the package resolution as it basically means that Gobra will ignore this prefix. For example, the import statement `import lib "wireguard-gobra/wireguard/library"` results in Gobra looking for the folder `library` in the specified include directories (`-I` option).
-- `-i initiator` specifies the package that is verified
+- `--directory initiator` specifies the package that is verified
 
 
 ## Building & Running this WireGuard Implementation Non-Virtualized

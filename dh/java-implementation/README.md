@@ -1,3 +1,8 @@
+# Java Diffie-Hellman Implementation
+[![DH Code Verification](https://github.com/soundverification/wireguard/actions/workflows/dh-code.yml/badge.svg?branch=main)](https://github.com/soundverification/wireguard/actions/workflows/dh-code.yml?query=branch%3Amain)
+[![License: MPL 2.0](https://img.shields.io/badge/License-MPL%202.0-brightgreen.svg)](../../LICENSE)
+
+## Building & Running the Responder Role
 Build:
 ```
 gradle build
@@ -20,3 +25,9 @@ Keypair 1:
 Keypair 2:
     - sk: "k2gUarJExuxjji+KlwD8NfclZ+ZCZ8xZk3NGzN3ypwgfiia9pqMQ16rFtGI5UItmgZSsRYhWtUC0k+TkmCgRXw=="
     - pk: "H4omvaajENeqxbRiOVCLZoGUrEWIVrVAtJPk5JgoEV8="
+
+## Verifying the Responder Role
+The responder role can successfully be verified using VeriFast release 18.02 using the following command:
+```
+verifast -allow_assume -c src/main/java/dhgobra/responder/Responder.jarsrc
+```
