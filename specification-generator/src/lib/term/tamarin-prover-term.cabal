@@ -1,0 +1,100 @@
+name:               tamarin-prover-term
+
+cabal-version:      >= 1.8
+build-type:         Simple
+version:            1.7.1
+license:            GPL
+license-file:       LICENSE
+category:           Theorem Provers
+author:             Benedikt Schmidt <benedikt.schmidt@inf.ethz.ch>,
+                    Simon Meier <simon.meier@inf.ethz.ch>,
+                    Jannik Dreier <research@jannikdreier.net>,
+                    Ralf Sasse <ralf.sasse@gmail.com>
+maintainer:         Cas Cremers <cremers@cispa.de>,
+                    Jannik Dreier <research@jannikdreier.net>,
+                    Ralf Sasse <ralf.sasse@gmail.com>
+copyright:          Benedikt Schmidt, Simon Meier, Jannik Dreier, Ralf Sasse, ETH Zurich, 2010-2018
+synopsis:           Term manipulation library for the tamarin prover.
+
+description:        This is an internal library of the Tamarin prover for
+                    security protocol verification
+                    (<hackage.haskell.org/package/tamarin-prover>).
+                    .
+                    This library provides term manipulation infrastructure
+                    (matching, unification, narrowing, finite variants) for
+                    the Tamarin prover. It uses maude
+                    (<http://maude.cs.uiuc.edu/>) as a backend for
+                    normalization, equational matching, and unification.
+
+homepage:           https://tamarin-prover.github.io/
+
+
+source-repository head
+  type:     git
+  location: https://github.com/tamarin-prover/tamarin-prover.git
+
+----------------------
+-- library stanzas
+----------------------
+
+library
+    ghc-options:       -Wall -fwarn-tabs
+
+    ghc-prof-options:  -auto-all
+
+    build-depends:
+        HUnit
+      , attoparsec
+      , base
+      , binary
+      , bytestring
+      , containers
+      , deepseq
+      , dlist
+      , mtl
+      , process
+      , safe
+
+      , tamarin-prover-utils
+
+    hs-source-dirs: src
+
+    exposed-modules:
+      Term.Unification
+      Term.VTerm
+      Term.LTerm
+      Term.Positions
+      Term.SubtermRule
+      Term.Subsumption
+      Term.Substitution
+
+      Term.Rewriting.Definitions
+      Term.Rewriting.Norm
+
+      Term.Narrowing.Variants
+      Term.Narrowing.Variants.Check
+      Term.Narrowing.Variants.Compute
+
+      Term.Builtin.Convenience
+      Term.Builtin.Rules
+      Term.Builtin.Signature
+
+      Term.Maude.Process
+      Term.Maude.Signature
+      Term.Maude.Types
+      Term.Maude.Parser
+
+      Term.UnitTests
+      
+      Term.Term.Raw
+      Term.Term.FunctionSymbols
+
+    other-modules:
+      Term.Term
+      Term.Term.Classes
+
+
+      Term.Narrowing.Narrow
+
+      Term.Substitution.SubstVFree
+      Term.Substitution.SubstVFresh

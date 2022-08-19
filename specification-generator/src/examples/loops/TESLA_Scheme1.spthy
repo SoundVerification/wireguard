@@ -1,0 +1,190 @@
+theory TESLA_Scheme1 begin
+
+/*
+  Protocol:    The TESLA protocol, scheme 1
+  Modeler:     Simon Meier
+  Date:        May 2012
+
+  Status:      working
+
+  Original descrption in [1]. This model is based on the following description
+  from [2].
+
+
+    Msg 0a. R -> S: nR
+    Msg 0b. S -> R: {f (k1 ), nR }SK (S )
+    Msg 1.  S -> R: D1 , MAC (k1 , D1 ) where D1 = m1 , f (k2 )
+    Msg 2.  S -> R: D2 , MAC (k2 , D2 ) where D2 = m2 , f (k3 ), k1 .
+
+  For n > 1, the n-th message is:2
+    Msg n. S -> R : Dn , MAC (kn , Dn ) where Dn = mn , f (kn+1 ), kn-1 .
+
+
+  We verify that the use of cryptography is correct under the assumption that
+  the security condition holds. We do not verify that the timing schedule
+  works, as we do not have a notion of time. For a manual, but machine-checked
+  verification of the Scheme 2 of the TESLA protocol with time see [3].
+
+
+  [1] Perrig, Adrian, Ran Canetti, Dawn Song, and Doug Tygar. "The TESLA
+  Broadcast Authentication Protocol." In RSA Cryptobytes, Summer 2002.
+
+  [2] Philippa J. Hopcroft, Gavin Lowe: Analysing a stream authentication
+  protocol using model checking. Int. J. Inf. Sec. 3(1): 2-13 (2004)
+
+  [3] David A. Basin, Srdjan Capkun, Patrick Schaller, Benedikt Schmidt:
+  Formal Reasoning about Physical Properties of Security Protocols. ACM Trans.
+  Inf. Syst. Secur. 14(2): 16 (2011)
+
+*/
+
+builtins: signing
+
+functions: MAC/2, f/1
+
+// PKI
+//////
+
+rule Generate_Keypair:
+    [ Fr(~ltk) ]
+  -->
+    [ !Ltk($A, ~ltk), !Pk($A, pk(~ltk)), Out(pk(~ltk)) ]
+
+// We assume an active adversary.
+rule Reveal_Ltk:
+    [ !Ltk(A, ltk) ]
+  --[ RevealLtk(A) ]->
+    [ Out(ltk) ]
+
+
+// Setup phase
+//////////////
+
+// A sender knows is own identity $S. He chooses a fresh key to start sending
+// a new authenticated stream. We provide facts for sending the stream and for
+// answering receiver connection requests.
+rule Sender_Setup:
+    [ Fr(~k1) ]
+  -->
+    [ Sender1($S, ~k1), !Sender0a($S, ~k1) ]
+
+// Everybody can listen in by sending a request for the commitment to the
+// first key.
+rule Sender0a:
+    [ !Sender0a(S, k1)
+    , In( < R, S, nR> )
+    , !Ltk(S, ltkS)
+    ]
+  -->
+    [ Out( <S, R, f(k1), sign{ f(k1), nR}ltkS> ) ]
+
+// Receivers start by requesting the commitment to the first key and verifying
+// the signature on this commitment. We use the receiver nonce to identify
+// receivers.
+rule Receiver0a:
+    [ Fr( ~nR ) ]
+  -->
+    [ Out( < $R, $S, ~nR > )
+    , Receiver0b( ~nR, $R, $S ) ]
+
+rule Receiver0b:
+    [ Receiver0b ( nR, R, S )
+    , !Pk( S, pkS)
+    , In( <S, R, commit_k1, signature> )
+    , Fr(~rid)             // Fresh name used to identify this receiver thread
+    ]
+  --[ Setup(~rid) ]->
+    [ Receiver0b_check( ~rid, S, commit_k1
+                      , verify(signature, <commit_k1, nR>, pkS)) ]
+
+rule Receiver0b_check:
+    [ Receiver0b_check(nR, S, commit_k1, true), Fr(~rid) ]
+  -->
+    [ Receiver1( nR, S, commit_k1 ) ]
+
+
+// Authenticated broadcasting
+rule Send1:
+  let data1 = <~m1, f(~k2)>
+  in
+    [ Sender1(S, ~k1)
+    , Fr(~m1)
+    , Fr(~k2)
+    ]
+  --[ Sent(S, data1)
+    ]->
+    [ Sender(S, ~k1, ~k2)
+    , Out( < data1, MAC{data1}~k1 > )
+    ]
+
+rule Recv1:
+  let data1 = <m1, commit_k2>
+  in
+    [ Receiver1(rid, S, commit_k1)
+    , In( <data1, mac1> )
+    ]
+  --[ AssumeCommitNotExpired(rid, commit_k1)
+    ]->
+    [ Receiver(rid, S, data1, mac1, commit_k1, commit_k2) ]
+
+rule SendN:
+  let data = <~m, f(~kNew), ~kOld>
+  in
+    [ Sender(S, ~kOld, ~k)
+    , Fr(~m)
+    , Fr(~kNew)
+    ]
+  --[ Sent(S, data)
+    , CommitExpired(f(~kOld))
+    ]->
+    [ Sender(S, ~k, ~kNew)
+    , Out( <data, MAC{data}~k> )
+    ]
+
+rule RecvN:
+  let data = <m, commit_kNew, kOld>
+  in
+    [ In(< data, mac >)
+    , Receiver(rid, S, dataOld, MAC{dataOld}kOld, f(kOld), commit_k)
+    ]
+  --[ FromSender(rid, S, dataOld)
+    , AssumeCommitNotExpired(rid, commit_k)
+    ]->
+    [ Receiver(rid, S, data, mac, commit_k, commit_kNew) ]
+
+
+/*
+The desired security property: if all expiredness assumptions of the test
+thread are given and the server that is sending was not compromised before,
+then received data was sent by the server.
+*/
+lemma authentic [use_induction]:
+  /* For every reciever claiming that it received data 'm' from the server, */
+  "(All rid S m #i. FromSender(rid, S, m) @ i ==>
+       /* the server actually sent that data */
+       ( (Ex #j. Sent(S, m) @ j & j < i)
+       /* or the server's longterm key was compromised before the receiver's
+          setup was complete */
+       | (Ex #s #j. Setup(rid) @ s & RevealLtk(S) @ j & j < s)
+       /* or one of the receivers expiredness assumptions before the claim
+          was not met. */
+       | (Ex commit #ne #e. AssumeCommitNotExpired(rid, commit) @ ne
+                          & CommitExpired(commit) @ e
+                          & e < ne
+                          & ne < i)
+       )
+   )
+  "
+
+// Ensure that the above lemma is not vacuous due to the filtering condition.
+lemma authentic_reachable [use_induction]:
+  exists-trace
+  "(All rid commit #i #j .
+        AssumeCommitNotExpired(rid, commit) @ i
+      & CommitExpired(commit) @ j
+        ==> i < j
+   ) &
+   (Ex rid S m #i. FromSender(rid, S, m) @ i) "
+
+
+end

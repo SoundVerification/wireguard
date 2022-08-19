@@ -1,0 +1,95 @@
+name:               tamarin-prover-utils
+
+cabal-version:      >= 1.8
+build-type:         Simple
+version:            1.7.1
+license:            GPL
+license-file:       LICENSE
+category:           Theorem Provers
+author:             Benedikt Schmidt <benedikt.schmidt@inf.ethz.ch>,
+                    Simon Meier <simon.meier@inf.ethz.ch>,
+                    Jannik Dreier <research@jannikdreier.net>,
+                    Ralf Sasse <ralf.sasse@gmail.com>
+maintainer:         Cas Cremers <cremers@cispa.de>,
+                    Jannik Dreier <research@jannikdreier.net>,
+                    Ralf Sasse <ralf.sasse@gmail.com>
+copyright:          Benedikt Schmidt, Simon Meier, Jannik Dreier, Ralf Sasse, ETH Zurich, 2010-2018
+
+synopsis:           Utility library for the tamarin prover.
+
+description:        This is an internal library of the Tamarin prover for
+                    security protocol verification
+                    (<hackage.haskell.org/package/tamarin-prover>).
+
+homepage:           https://tamarin-prover.github.io/
+
+source-repository head
+  type:     git
+  location: https://github.com/tamarin-prover/tamarin-prover.git
+
+
+----------------------
+-- library stanzas
+----------------------
+
+library
+    ghc-options:       -Wall -fwarn-tabs
+    ghc-prof-options:  -auto-all
+
+    build-depends:
+        SHA
+      , base
+      , base64-bytestring
+      , binary
+      , blaze-builder
+      , bytestring
+      , containers
+      , deepseq
+      , dlist
+      , fclabels
+      , mtl
+      , pretty
+      , safe
+      , syb
+      , time
+      , transformers
+      , exceptions
+
+    hs-source-dirs: src
+
+    exposed-modules:
+        Control.Basics
+        Control.Monad.Fresh
+        Control.Monad.Trans.PreciseFresh
+        Control.Monad.Trans.FastFresh
+        Control.Monad.Bind
+        Control.Monad.Disj
+
+        Data.Color
+        Data.DAG.Simple
+
+        Extension.Prelude
+        Extension.Data.Label
+        Extension.Data.Monoid
+        Extension.Data.ByteString
+
+        Text.Dot
+        Text.Unicode
+        Text.PrettyPrint.Class
+        Text.PrettyPrint.Highlight
+        Text.PrettyPrint.Html
+
+        Logic.Connectives
+
+        System.Timing
+
+        Debug.Trace.Ignore
+
+        Utils.Misc
+
+    other-modules:
+        Control.Monad.Fresh.Class
+
+        Control.Monad.Trans.Disj
+        Control.Monad.Disj.Class
+

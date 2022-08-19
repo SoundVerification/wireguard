@@ -1,0 +1,46 @@
+theory Minimal_Create_Use_Destroy begin
+
+
+
+text{*
+  Author: Simon Meier <simon.meier@inf.ethz.ch>
+  Date:   2011 12 01
+  Status: Working
+
+  One model of the key mechanism for certificate revocation.
+  For every certificate, we create a single fact denoting that
+  it has not yet been revoked. In every use of the certificate,
+  we check that this fact still exists.
+
+*}
+
+rule Create:
+    [ Fr(x) ]
+  --[ Create(x) ]->
+    [ Object(x) ]
+
+rule Use:
+    [ Object(x) ]
+  --[ Use(x) ]->
+    [ Object(x) ]
+
+rule Destroy:
+    [ Object(x) ]
+  --[ Destroy(x) ]->
+    []
+
+lemma Use_charn [reuse, use_induction]:
+  "All x #j. Use(x) @ j ==>
+    (Ex #i. Create(x) @ i & i < j)
+  "
+
+lemma Destroy_charn [reuse, use_induction]:
+  "All x #j. Destroy(x) @ j ==>
+    ( (Ex #i. Create(x) @ i & i < j)
+    & (All #i. Use(x) @ i  ==>  i < j)
+    & (All #i. Destroy(x) @ i  ==>  #i = #j)
+    )
+  "
+
+
+end

@@ -1,0 +1,129 @@
+theory STS_MAC
+begin
+
+builtins: diffie-hellman, hashing, signing
+
+functions: mac/2
+functions: KDF/1
+
+section{* The Station-To-Station Protocol (MAC version) *}
+
+/*
+ * Protocol:	Station-To-Station, MAC variant
+ * Modeler: 	Cas Cremers
+ * Date: 	January 2012
+ * Source:	"Unknown Key-Share Attacks on the Station-to-Station (STS) Protocol"
+ *		Blake-Wilson, Simon and Menezes, Alfred
+ * 		PKC '99, Springer, 1999
+ *
+ * Status: 	working
+ */
+
+// Public key infrastructure
+/**
+ * The !Pk facts can be regarded as certificates
+ *
+ * Here we model that the adversary might (and in fact always does)
+ * re-registers the public keys as his own, i.e., he claims a copy of
+ * the public key for the corrupt name E.
+ */
+rule Register_pk_clone:
+  [ Fr(~ltk) ] 
+  --[ LtkSet($A, ~ltk), Corrupt($E) ]-> 
+  [ !Ltk($A, ~ltk), !Pk($A, pk(~ltk)), !Pk($E, pk(~ltk)), Out(pk(~ltk)) ]
+
+// Protocol
+rule Init_1:
+  let epkI = 'g'^~ekI
+  in
+  [ Fr(~ekI), !Ltk($I, ~ltkI) ]
+  -->
+  [ Init_1( $I, $R, ~ltkI, ~ekI )
+  , Out( <$I, $R, epkI> ) ]
+
+rule Init_2:
+  let epkI = 'g'^~ekI
+      sigI = sign{ epkI, Y }~ltkI
+      sigR = sign{ Y, epkI }~ltkR
+      keymat = Y^~ekI
+      key = KDF(keymat)
+  in
+    [ Init_1( $I, $R, ~ltkI, ~ekI )
+    , !Pk($R, pk(~ltkR))
+    , In( <$R, $I, Y, sigR, mac( keymat, sigR)
+      > ) ]
+  --[ AcceptedI(~ekI,$I,$R,epkI,Y, key) ]->
+    [ Out( <$I, $R, sigI, mac( keymat, sigI) > ),
+      !SessionKey(~ekI,$I,$R, key)
+    ]
+
+rule Resp_1:
+  let epkR = 'g'^~ekR
+      sigI = sign{ X, epkR }~ltkI
+      sigR = sign{ epkR, X }~ltkR
+      keymat = X^~ekR
+      key = KDF(keymat)
+  in
+    [ !Ltk($R, ~ltkR)
+    , Fr(~ekR)
+    , In( <$I, $R, X > ) ]
+  -->
+    [ Resp_1( $I, $R, ~ltkR, ~ekR, X )
+    , Out(< $R, $I, epkR, sigR, mac( keymat, sigR ) >) 
+    ]
+
+
+rule Resp_2:
+  let epkR = 'g'^~ekR
+      sigI = sign{ X, epkR }~ltkI
+      sigR = sign{ epkR, X }~ltkR
+      keymat = X^~ekR
+      key = KDF(keymat)
+  in
+    [ !Pk($I, pk(~ltkI))
+    , Resp_1( $I, $R, ~ltkR, ~ekR, X )
+    , In( <$I, $R, sigI, mac( keymat, sigI ) >)
+    ]
+  --[ AcceptedR(~ekR,$I,$R,X,epkR, key ) ]->
+    [ !SessionKey(~ekR,$I,$R, key) ]
+
+
+
+rule Sessionkey_Reveal:
+    [ !SessionKey(~tid, $I,$R,k) ]
+  --[ SesskRev(~tid) ]->
+    [ Out(k) ]
+
+lemma KI_Perfect_Forward_Secrecy_I:
+  "not (Ex ttest I R sessKey #i1 #k hki hkr.
+     AcceptedI(ttest,I,R,hki,hkr,sessKey) @ i1 &
+     not (Ex #r. Corrupt(I) @ r) &
+     not (Ex #r. Corrupt(R) @ r) &
+     K(sessKey) @ k &
+     // No session key reveal of test
+     not (Ex #i3. SesskRev(ttest) @ i3) &
+     // No session key reveal of partner
+     not (Ex #i3 #i4 tpartner kpartner. SesskRev(tpartner) @ i3
+          & AcceptedR(tpartner,I,R,hki,hkr,kpartner) @ i4
+         ) 
+     )
+  "
+
+lemma KI_Perfect_Forward_Secrecy_R:
+  "not (Ex ttest I R sessKey #i1 #k hki hkr.
+     AcceptedR(ttest,I,R,hki,hkr,sessKey) @ i1 &
+     not (Ex #r. Corrupt(I) @ r) &
+     not (Ex #r. Corrupt(R) @ r) &
+     K(sessKey) @ k &
+     // No session key reveal of test
+     not (Ex #i3. SesskRev(ttest) @ i3) &
+     // No session key reveal of partner
+     not (Ex #i3 #i4 tpartner kpartner. SesskRev(tpartner) @ i3
+          & AcceptedI(tpartner,I,R,hki,hkr,kpartner) @ i4
+         ) 
+     )
+  "
+
+
+
+end

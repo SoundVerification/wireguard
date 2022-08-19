@@ -1,0 +1,9 @@
+
+
+input_file ../../dh/model/dh.spthy
+
+base_dir ../generated_iospecs_dh_gobra
+module dh
+make_go_mod False
+gobra_jar ../../wireguard/implementation/gobra.jar
+verifier gobra

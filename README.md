@@ -6,6 +6,8 @@
 
 This repository provides the following content:
 - [Full paper](./full_paper.pdf) containing the proofs
+- [Full paper with diff](./full_paper_colored.pdf) containing the full paper with changes compared to the previous submission marked in blue
 - Subdirectory `wireguard/model` contains the Tamarin model together with instructions how to verify it
 - Subdirectory `wireguard/implementation` contains the verified Go implementation together with instructions how to verify and execute it.
 - The subdirectory `dh` contains the verified DH protocol model together with a verified Go and Java implementations. Additionally, `dh/faulty-go-implementation` contains a Go implementation that tries to send the DH private key in plaintext for which verification fails because the IO specification does not permit such a send operation.
+- The subdirectory `specification-generator` contains the sources of our tool to generate I/O specifications for Gobra & VeriFast from a Tamarin model.

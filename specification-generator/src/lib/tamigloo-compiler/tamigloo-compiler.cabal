@@ -1,0 +1,86 @@
+name:               tamigloo-compiler
+
+cabal-version:      >= 1.8
+build-type:         Simple
+version:            1
+
+----------------------
+-- library stanzas
+----------------------
+
+library
+    ghc-options:       -Wall -fwarn-tabs
+
+    ghc-prof-options:  -auto-all
+
+    build-depends:
+        aeson
+      , aeson-pretty
+      , base
+      , binary
+      , bytestring
+      , containers
+      , deepseq
+      , dlist
+      , fclabels
+      , filepath
+      , mtl
+      , parallel
+      , parsec
+      , process
+      , safe
+      , text
+      , transformers
+      , uniplate
+      , exceptions
+
+      , tamarin-prover-utils
+      , tamarin-prover-term
+      , tamarin-prover-theory
+      , split
+      , raw-strings-qq
+
+
+    hs-source-dirs: 
+        src
+        src/isabelleGeneratedCode
+
+
+    exposed-modules:
+      TamiglooConfig
+      TamarinToTamigloo
+
+      PrettyIOSpecs.CommonFunctions
+
+      PrettyIOSpecs.Gobra.IOSpecs
+      PrettyIOSpecs.Gobra.PermissionEncoding
+      PrettyIOSpecs.Gobra.Utils
+      PrettyIOSpecs.Gobra.TermEncoding
+      PrettyIOSpecs.Gobra.FactEncoding
+      PrettyIOSpecs.Gobra.Content
+
+      PrettyIOSpecs.VeriFast.TermEncoding
+      PrettyIOSpecs.VeriFast.FactEncoding
+      PrettyIOSpecs.VeriFast.PermissionEncoding
+      PrettyIOSpecs.VeriFast.IOSpecs
+      PrettyIOSpecs.VeriFast.MultiSetEncoding
+      PrettyIOSpecs.VeriFast.Utils
+      PrettyIOSpecs.VeriFast.Content
+      
+
+      DerivingInstances
+
+      Arith
+      Decomposition
+      ForeignImports
+      GenericHelperFunctions
+      HOL
+      InterfaceModel
+      IoSpecs
+      List
+      Option
+      Orderings
+      Product_Type
+      ProtocolFormat
+      Restrictions
+      TamiglooDatatypes

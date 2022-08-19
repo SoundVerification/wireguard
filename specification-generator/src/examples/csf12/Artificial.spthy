@@ -1,0 +1,68 @@
+theory Artificial
+begin
+
+/*
+   Protocol:	Example
+   Modeler: 	Simon Meier, Benedikt Schmidt
+   Date: 	January 2012
+
+   Status: 	working
+
+   This is the example protocol P_{Ex2} in Simon Meier's PhD thesis.
+   It is also the artificial protocol from our CSF'12 paper, which we use to
+   illustrate constraint solving and characterization. Note that, for
+   characerization, you have to call the tamarin-prover as follows.
+
+    tamarin-prover --prove --stop-on-trace=NONE your_protocol.spthy
+
+   The --stop-on-trace=NONE flag ensures that all solved constraint systems
+   are explored by the constraint solver. By default, it stops as soon as the
+   first trace is found. Note that depending on the protocol,
+   characterization might take a long time, as there are many slightly
+   different possible traces.
+
+   As a more interesting example try characterizing the setup of a session-key
+   between two honest agents in the TLS.spthy example, which models a TLS
+   handshake using signatures.
+
+     tamarin-prover --prove --stop-on-trace=NONE TLS.spthy +RTS -N
+
+   Note that we add the +RTS -N to tell the Haskell runtime system that it
+   should use as many cores as your system provides. For TLS, this speeds-up
+   the proof generation/characterization quite a bit. After this call, the
+   tool will output the complete set of cases, which it had to explore for
+   finding all counter-examples to this property. Exactly, two of the cases
+   will be of the form
+
+     SOLVED // trace found
+
+   They correspond to the _only_ two ways of setting up a session-key between
+   honest agents: one for the client and one for the server.
+
+ */
+
+builtins: symmetric-encryption
+
+rule Step1:
+  [ Fr(x), Fr(k) ] --> [ St(x, k), Out(senc(x,k)), Key(k) ]
+
+rule Step2:
+  [ St(x, k), In(x) ] --[ Fin(x, k) ]-> [ ]
+
+rule Reveal_key:
+    [ Key(k) ] --[ Rev(k) ]-> [ Out(k) ]
+
+// We search for trace-existence, as we want to characterize the possible
+// traces satisfying the given formula.
+lemma Characterize_Fin:
+  exists-trace
+  "Ex k S #i.  Fin(S, k) @ i"
+
+lemma Fin_unique:
+  "All S k #i #j. Fin(S, k) @ i & Fin(S, k) @ j ==> #i = #j"
+
+lemma Keys_must_be_revealed:
+  "All k S #i.  Fin(S, k) @ i ==> Ex #j. Rev(k) @ j & j < i"
+
+
+end

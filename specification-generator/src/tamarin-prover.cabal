@@ -1,0 +1,195 @@
+cabal-version:      >= 1.10
+build-type:         Simple
+name:               tamarin-prover
+version:            1.7.1
+license:            GPL
+license-file:       LICENSE
+category:           Theorem Provers
+author:             Benedikt Schmidt <benedikt.schmidt@inf.ethz.ch>,
+                    Simon Meier <simon.meier@inf.ethz.ch>,
+                    Jannik Dreier <research@jannikdreier.net>,
+                    Ralf Sasse <ralf.sasse@gmail.com>
+maintainer:         Cas Cremers <cremers@cispa.de>,
+                    Jannik Dreier <research@jannikdreier.net>,
+                    Ralf Sasse <ralf.sasse@gmail.com>
+copyright:          Benedikt Schmidt, Simon Meier, Jannik Dreier, Ralf Sasse, ETH Zurich, 2010-2020
+synopsis:           The Tamarin prover for security protocol analysis.
+description:
+
+    Note that the @tamarin-prover@ should be installed from source as
+    described in its README at
+    <https://github.com/tamarin-prover/tamarin-prover>.
+    .
+    The Tamarin prover is a tool for the analysis of security protocols. It
+    implements a constraint solving algorithm that supports both falsification
+    and verification of security protocols with respect to an unbounded number
+    of sessions. The underlying security protocol model uses multiset
+    rewriting to specify protocols and adversary capabilities, a guarded
+    fragment of first-order logic to specify security properties, and
+    equational theories to model the algebraic properties of cryptographic
+    operators.
+    .
+    The paper describing the theory underlying the Tamarin prover was
+    accepted at CSF 2012. Its extended version is available from
+    <http://tamarin-prover.github.io>.
+    .
+    The Tamarin prover supports both a batch analysis mode and the
+    interactive construction of security proofs using a GUI. Example protocols
+    and the user guide are installed together with the prover. Just call the
+    @tamarin-prover@ executable without any arguments to get more information.
+    .
+    The Tamarin prover uses maude (<http://maude.cs.illinois.edu/>) as a
+    unification backend and GraphViz (<http://www.graphviz.org/>) to visualize
+    constraint systems. Detailed instructions for installing the Tamarin
+    prover are given at <http://tamarin-prover.github.io>.
+    .
+    The paper describing the theory underlying the extension for observational
+    equivalence is published at CCS 2015. Its extended version is available from 
+    <http://tamarin-prover.github.io>. For observational equivalence proofs just 
+    add the "--diff" flag when calling the @tamarin-prover@.
+
+homepage:           https://tamarin-prover.github.io
+
+
+--------------
+-- extra files
+--------------
+
+extra-source-files:
+  -- cached intruder variants for DH and BP
+  data/intruder_variants_dh.spthy
+  data/intruder_variants_bp.spthy
+
+  -- files for the web-frontend
+  data/img/*.ico
+  data/img/*.gif
+  data/img/*.png
+  data/js/*.js
+  data/css/*.css
+  data/css/smoothness/*.css
+  data/css/smoothness/images/*.png
+
+
+-------------------------
+-- repository information
+-------------------------
+
+source-repository head
+  type:     git
+  location: https://github.com/tamarin-prover/tamarin-prover.git
+
+--------------
+-- build flags
+--------------
+
+flag threaded
+    default: True
+    manual: False
+    description: Build with support for multithreaded execution
+
+flag test-coverage
+    default: True
+    manual: True
+    description: Build with test coverage support
+
+flag build-tests
+    default: False
+    manual: True
+    description: Build unit test driver
+
+
+----------------------
+-- executables stanzas
+----------------------
+
+executable tamarin-prover
+    default-language: Haskell2010
+
+    if flag(threaded)
+        ghc-options:   -threaded -eventlog 
+    
+    -- -XFlexibleInstances
+
+    ghc-options:       -Wall -fwarn-tabs -rtsopts -feager-blackholing -main-is Main
+    ghc-prof-options:  -auto-all
+
+    -- Parallelize by default. Only activated for GHC 7.4, as this flag was
+    -- unstable in earlier -- versions; i.e., it resulted in command-line
+    -- parsing errors.
+    if impl(ghc >= 7.4) && flag(threaded)
+        ghc-options:   -with-rtsopts=-N
+
+    hs-source-dirs:    src
+    main-is:           Main.hs
+
+    build-depends:
+        HUnit
+      , base
+      , binary
+      , binary-orphans
+      , binary-instances
+      , blaze-builder
+      , blaze-html
+      , bytestring
+      , cmdargs
+      , conduit
+      , containers
+      , deepseq
+      , directory
+      , fclabels
+      , file-embed
+      , filepath
+      , gitrev
+      , http-types
+      , mtl
+      , parsec
+      , process
+      , resourcet
+      , safe
+      , shakespeare
+      , template-haskell
+      , text
+      , threads
+      , time
+      , wai
+      , warp
+      , yesod-core
+      , yesod-static
+
+      , tamarin-prover-utils  == 1.7.1
+      , tamarin-prover-term   == 1.7.1
+      , tamarin-prover-theory == 1.7.1
+      , tamarin-prover-sapic == 1.7.1
+      , tamigloo-compiler
+
+    other-modules:
+      Paths_tamarin_prover
+
+      -- Main
+      Main.Console
+      Main.Environment
+      Main.TheoryLoader
+      Main.Utils
+      Main.Mode.Batch
+      Main.Mode.Interactive
+      Main.Mode.Intruder
+      Main.Mode.Test
+      Main.Mode.TamiglooMain
+
+      Web.Dispatch
+      Web.Hamlet
+      Web.Handler
+      Web.Instances
+      Web.Settings
+      Web.Theory
+      Web.Types
+
+      Test.ParserTests
+      
+    other-extensions:
+      TemplateHaskell
+
+
+source-repository head
+  type:     git
+  location: https://github.com/tamarin-prover/tamarin-prover.git

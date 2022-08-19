@@ -1,0 +1,216 @@
+theory TESLA_Scheme2 begin
+
+/*
+  Protocol:    The TESLA protocol, scheme 2
+  Modeler:     Simon Meier
+  Date:        September 2012
+
+  Status:      not yet working
+
+               (We have trouble reasoning about the authenticity check. More
+               precisely, we cannot prove that a successful check implies that
+               the key is a key of the hash-chain. See Minimal_HashChain.spthy
+               for an example of the core problem.)
+
+  Original descrption in [1]. This model is based on the following description
+  from [2].
+
+    Msg 0a. R -> S : nR
+    Msg 0b. S -> R : {k0 , nR }SK (S )
+    Msg 1.  S -> R : m1 , MAC (k1 , m1 ).
+
+  And for n > 1:
+    Msg n. S -> R : Dn , MAC (kn , Dn ) where Dn = mn , kn-1 .
+
+  One aim of this second version is to be able to tolerate an arbitrary number of
+  packet losses, and to drop unauthenticated packets, yet continue to authenticate
+  later packets.
+
+  We verify that the use of cryptography is correct under the assumption that
+  the security condition holds. We do not verify that the timing schedule
+  works, as we do not have a notion of time. For a manual, but machine-checked
+  verification of the Scheme 2 of the TESLA protocol with time see [3].
+
+
+  [1] Perrig, Adrian, Ran Canetti, Dawn Song, and Doug Tygar. "The TESLA
+  Broadcast Authentication Protocol." In RSA Cryptobytes, Summer 2002.
+
+  [2] Philippa J. Hopcroft, Gavin Lowe: Analysing a stream authentication
+  protocol using model checking. Int. J. Inf. Sec. 3(1): 2-13 (2004)
+
+  [3] David A. Basin, Srdjan Capkun, Patrick Schaller, Benedikt Schmidt:
+  Formal Reasoning about Physical Properties of Security Protocols. ACM Trans.
+  Inf. Syst. Secur. 14(2): 16 (2011)
+
+*/
+
+builtins: signing
+
+functions: MAC/2, f/1
+
+// PKI
+//////
+
+rule Generate_Keypair:
+    [ Fr(~ltk) ]
+  -->
+    [ !Ltk($A, ~ltk), !Pk($A, pk(~ltk)), Out(pk(~ltk)) ]
+
+// We assume an active adversary.
+// rule Reveal_Ltk:
+//     [ !Ltk(A, ltk) ]
+//   --[ RevealLtk(A) ]->
+//     [ Out(ltk) ]
+
+
+// Chain setup phase
+////////////////////
+
+// Hash chain generation
+rule Gen_Start:
+  [ Fr(~seed) ] --> [ Gen(~seed, ~seed) ]
+
+// The NextKey-facts are used by the sender rules to store the link between
+// the keys in the chain.
+rule Gen_Step:
+    [ Gen(seed, chain) ]
+  --[ ChainKey(f(chain))
+    ]->
+    [ Gen(seed, f(chain) ) , NextKey( f(chain) , chain ) ]
+
+// At some point the sender decides to stop the hash-chain precomputation.
+rule Gen_Stop:
+    [ Gen(seed, kZero) ]
+  --[ Expired(kZero), KeyZero(seed, kZero) ]->
+    [ Sender(kZero) , !Sender0($S, kZero) ]
+
+// Intial chain key distribution
+////////////////////////////////
+
+// Everybody can listen in by sending a request for k_0.
+rule Sender0:
+  let msgZero = <nR, kZero>
+  in
+    [ !Sender0(S, kZero), !Ltk(S, ltkS), In(nR) ]
+    -->
+    [ Out( <msgZero, sign{msgZero}ltkS> ) ]
+
+// Receivers start by requesting key k_0 adn verifying the signature on this
+// response.
+rule Receiver0a:
+    [ Fr(~nR) ] --> [ Receiver0b($S, ~nR), Out(<$S, ~nR>) ]
+
+rule Receiver0b:
+  let msgZero = <nR, kZero>
+  in
+    [ Receiver0b(S,nR), !Pk(S, pkS), In(<msgZero, signature>) ]
+  --[ Eq( verify(signature, msgZero, pkS), true() ) ]->
+    [ !Receiver(S, kZero) ]
+
+// Sending
+//////////
+
+// We use the convention that k_{n-1} is denoted as kNp, where the 'p' stands
+// for predecessor.
+rule Sender:
+  let msgN = <mN, MAC( kN, mN )>
+  in
+    [ Sender( kNp ), NextKey( kNp, kN), Fr(mN) ]
+  --[ Expired( kNp )
+    , Sent( msgN )
+    ]->
+    [ Sender( kN ), Out(kNp), Out(msgN) ]
+
+// Receiving
+////////////
+
+rule Receiver:
+  let msg = <m, mac>
+  in
+    [ !Receiver(S, kZero), In( msg )
+    , Fr(expiryCheck)
+    ]
+  --[ NotExpiredHere( expiryCheck ) ]->
+    [ CheckAuth(expiryCheck, S, kZero, msg ) ]
+
+rule CheckAuth0:
+  let args = <kZero, expiryCheck, S, k, msg>
+  in
+    [ CheckAuth(expiryCheck, S, kZero, msg)
+    , In(k)
+    , Fr(loopId)
+    ]
+  --[ CheckStart(loopId, args)
+    ]->
+    [ CheckAuthLoop(loopId, k, args) ]
+
+rule CheckAuth:
+    [ CheckAuthLoop(loopId, k, args) ]
+  --[ CheckLoop( loopId, f(k), args )
+    ]->
+    [ CheckAuthLoop(loopId, f(k), args) ]
+
+
+rule CheckAuthClaim:
+  let msg = <m, MAC(kRef,m)>
+  in
+    [ CheckAuthLoop(loopId, kZero, <kZero, expiryCheck, S, kRef, msg>) ]
+  --[ FromSender(msg, S, kRef, expiryCheck)
+    , Success(loopId)
+    ]-> []
+
+
+// Axioms; i.e., universal restrictions on the traces of interest
+/////////////////////////////////////////////////////////////////
+
+restriction Eq_checks_succeed: "(All x y #j. Eq(x, y) @ j ==> x = y)"
+
+restriction Neq_checks_succeed: "(All x #j. Neq(x, x) @ j ==> F)"
+
+// The security condition of TESLA guarantees that
+restriction Security_condition:
+  "All m S k check #i #j #e.
+         FromSender(m, S, k, check) @ i
+       & NotExpiredHere(check) @ j
+       & Expired(k) @ e
+     ==>
+         j < e"
+
+
+// Security properties
+//////////////////////
+
+// The following two lemmas constraint the search space strongly enough to
+// allow reasoning about the authenticity of the received messages.
+
+lemma chain_keys_unique [use_induction, reuse]:
+  "All k #i #j. ChainKey(k) @ i & ChainKey(k) @ j ==> #i = #j"
+
+lemma knows_only_expired_chain_keys [use_induction, reuse]:
+  "All k #i #j. ChainKey(k) @i & KU(k) @ j ==>
+      (Ex #e. Expired(k) @ e & e < j)"
+
+// The current proof idea is to assume this restriction because we cannot yet prove
+// it. Proving it requires support for multisets or repeated function
+// application.
+restriction FromSender_charn: // [use_induction]:
+  // "All m S k0 lid k args check #i.
+  "All lid k args #i #j.
+         // FromSender(m, S, k0, check) @ i
+         Success(lid) @ i
+       & CheckLoop(lid, k, args) @ j
+     ==>
+       (Ex #c. ChainKey(k) @ c)
+  "
+
+lemma authentic [use_induction]:
+  "  (All m S k check #i.
+           FromSender(m, S, k, check) @ i
+         ==>
+           (Ex #j. Sent(m) @ j      & j < i)
+         // | (Ex #j. RevealLtk(S) @ j & j < i)
+     )
+  "
+
+
+end

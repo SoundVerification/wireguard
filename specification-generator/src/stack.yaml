@@ -1,0 +1,11 @@
+flags: {}
+packages:
+- '.'
+- lib/theory/
+- lib/term/
+- lib/utils/
+- lib/sapic/
+- lib/tamigloo-compiler
+resolver: lts-18.13
+nix:
+  packages: [ zlib ]
